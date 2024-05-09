@@ -44,34 +44,33 @@ def main(page: ft.Page):
     # )
     
     # ==============================================
-    # ================= Components =================
+    # ============== Custom Controls ===============
     # ==============================================
-    # >> Header buttons
-    allEntries = ft.Container(
-        padding = 15,
-        alignment=ft.alignment.center,
-        content = ft.ElevatedButton("All Entries", on_click=lambda _: change_view(ALL_ENTRIES), bgcolor=BUTTON_ON_COLOR, color='#000000'),
-        data = ALL_ENTRIES
-    )
-    completed = ft.Container(
-        padding = ft.padding.only(left=50,right=350),
-        alignment=ft.alignment.center,
-        content = ft.ElevatedButton("Completed", on_click=lambda _: change_view(COMPLETED), bgcolor=BUTTON_OFF_COLOR, color='#000000'),
-        data = COMPLETED
-    )
-    ongoing = ft.Container(
-        padding = ft.padding.only(left=50,right=50),
-        alignment=ft.alignment.center,
-        content = ft.ElevatedButton("Ongoing", on_click=lambda _: change_view(ONGOING), bgcolor=BUTTON_OFF_COLOR, color='#000000'),
-        data = ONGOING
-    )
-    watchlist = ft.Container(
-        padding = ft.padding.only(left=350,right=50),
-        alignment=ft.alignment.center,
-        content = ft.ElevatedButton("Watchlist", on_click=lambda _: change_view(WATCHLIST), bgcolor=BUTTON_OFF_COLOR, color='#000000'),
-        data = WATCHLIST
-    )
-
+    class HeaderButton(ft.Container):
+        def __init__(self, ButtonText, ButtonData, ContainerPadding):
+            super().__init__()
+            self.padding = ContainerPadding
+            self.alignment = ft.alignment.center
+            self.content = ft.ElevatedButton(ButtonText, on_click=lambda _: change_view(ButtonData), bgcolor=BUTTON_OFF_COLOR, color='#000000')
+            self.data = ButtonData
+    
+    # ==============================================
+    # ================== Controls ==================
+    # ==============================================
+    # >> Header buttons    
+    # >>>> All Entries button
+    allEntries = HeaderButton("All Entries", ALL_ENTRIES, 15)
+    
+    # >>>> Completed button
+    completed = HeaderButton("Completed", COMPLETED, ft.padding.only(left=50,right=350))
+    
+    # >>>> Ongoing button
+    ongoing = HeaderButton("Ongoing", ONGOING, ft.padding.only(left=50,right=50))
+    
+    # >>>> Watchlist button
+    watchlist = HeaderButton("Watchlist", WATCHLIST, ft.padding.only(left=350,right=50))
+    
+    # >>>> List of header buttons
     header_buttons = [allEntries, completed, ongoing, watchlist]
 
     # >> Header dropdowns
