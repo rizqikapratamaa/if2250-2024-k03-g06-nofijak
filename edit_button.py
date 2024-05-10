@@ -7,3 +7,5 @@ class MyButton(ft.ElevatedButton):
         self.color = ft.colors.BLACK
         self.text = text
         self.on_click = on_click
+
+        

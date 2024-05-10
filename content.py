@@ -1,13 +1,13 @@
 class Content:
-    def __init__(self, id, name, lastplay, duration, summary, genre, rating, lastPLay, gambar):
+    def __init__(self, id, name, releaseDate, duration, summary, genre, rating, watchProgress, gambar):
         self.id = id
         self.name = name
-        self.lastplay = lastplay
+        self.releaseDate = releaseDate
         self.duration = duration
         self.summary = summary
         self.genre = genre
         self.rating = rating
-        self.lastPLay = lastPLay
+        self.watchProgress = watchProgress
         self.gambar = gambar
     
     def getId(self):
@@ -16,8 +16,8 @@ class Content:
     def getName(self):
         return self.name
     
-    def getLastplay(self):
-        return self.lastplay
+    def getReleaseDate(self):
+        return self.releaseDate
     
     def getDuration(self):
         return self.duration
@@ -31,8 +31,8 @@ class Content:
     def getRating(self):
         return self.rating
     
-    def getLastPlay(self):
-        return self.lastPLay
+    def getWatchProgress(self):
+        return self.watchProgress
     
     def getGambar(self):
         return self.gambar
@@ -42,6 +42,9 @@ class Content:
 
     def setName(self, name):
         self.name = name
+
+    def setReleaseDate(self, releaseDate):
+        self.releaseDate = releaseDate
     
     def setLastplay(self, lastplay):
         self.lastplay = lastplay
@@ -58,19 +61,19 @@ class Content:
     def setRating(self, rating):
         self.rating = rating
     
-    def setLastPlay(self, lastPLay):
-        self.lastPLay = lastPLay
+    def setWatchProgress(self, watchProgress):
+        self.watchProgress = watchProgress
     
     def setGambar(self, gambar):
         self.gambar = gambar
 
 class Movie(Content):
-    def __init__(self, id, name, lastplay, duration, summary, genre, rating, lastPLay, gambar):
-        super().__init__(id, name, lastplay, duration, summary, genre, rating, lastPLay, gambar)
+    def __init__(self, id, name, releaseDate, duration, summary, genre, rating, watchProgress, gambar):
+        super().__init__(id, name, releaseDate, duration, summary, genre, rating, watchProgress, gambar)
 
 class Series(Content):
-    def __init__(self, id, name, lastplay, duration, summary, genre, rating, lastPLay, gambar, season, episode):
-        super().__init__(id, name, lastplay, duration, summary, genre, rating, lastPLay, gambar)
+    def __init__(self, id, name, releaseDate, duration, summary, genre, rating, watchProgress, gambar, season, episode):
+        super().__init__(id, name, releaseDate, duration, summary, genre, rating, watchProgress, gambar)
         self.season = season
         self.episode = episode
     
