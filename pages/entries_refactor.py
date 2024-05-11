@@ -1,5 +1,24 @@
 import flet as ft
 
+class EntryCard(ft.Card):
+    def __init__(self):
+        super().__init__()
+        self.content = ft.Row([
+            ft.Image(src="https://via.placeholder.com/150", width=150, height=150),
+            ft.Column([
+                ft.Text("Title", size=20),
+                ft.Text("Description", size=15),
+            ]),
+            ft.Column([
+                ft.Text("Progress", size=20),
+                ft.Text("74% (22 eps)")
+            ]),
+            ft.Column([
+                ft.Text("Rating", size=20),
+                ft.Text("8.5")
+            ]),
+        ])
+        
 def main(page: ft.Page):
     page.title = "NoFiJak"
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
@@ -72,6 +91,7 @@ def main(page: ft.Page):
     
     # >>>> List of header buttons
     header_buttons = [allEntries, completed, ongoing, watchlist]
+    change_view(current_view)
 
     # >> Header dropdowns
     dropdownSort = ft.Dropdown(
@@ -146,9 +166,14 @@ def main(page: ft.Page):
 
                             ),
                             textbox,
+                            ft.Container(
+                                alignment=ft.alignment.center,
+                                width=500,
+                                content = EntryCard(),
+                                bgcolor=BUTTON_ON_COLOR,
+                            ),
                             actionButton,
                         ]),
-
                     )
                 ],
             )
