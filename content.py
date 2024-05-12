@@ -72,19 +72,33 @@ class Movie(Content):
         super().__init__(id, name, releaseDate, duration, summary, genre, rating, watchProgress, gambar)
 
 class Series(Content):
-    def __init__(self, id, name, releaseDate, duration, summary, genre, rating, watchProgress, gambar, season, episode):
+    def __init__(self, id, name, releaseDate, duration, summary, genre, rating, watchProgress, gambar, season, episode, seasonProgress, episodeProgress):
         super().__init__(id, name, releaseDate, duration, summary, genre, rating, watchProgress, gambar)
         self.season = season
+        self.seasonProgress = seasonProgress
         self.episode = episode
+        self.episodeProgress = episodeProgress
     
     def getSeason(self):
         return self.season
     
+    def getSeasonProgress(self):
+        return self.seasonProgress
+    
     def getEpisode(self):
         return self.episode
+    
+    def getEpisodeProgress(self):
+        return self.episodeProgress
     
     def setSeason(self, season):
         self.season = season
     
+    def setSeasonProgress(self, seasonProgress):
+        self.seasonProgress = seasonProgress
+    
     def setEpisode(self, episode):
         self.episode = episode
+
+    def setEpisodeProgress(self, episodeProgress):
+        self.episodeProgress = episodeProgress
