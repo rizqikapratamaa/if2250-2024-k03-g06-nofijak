@@ -8,9 +8,10 @@ variables:
   MYSQL_DATABASE: repel
 
 before_script:
-  - cd $CI_PROJECT_DIR
   - pip install pytest pymysql
 
 pytest:
   script:
+    - cd $CI_PROJECT_DIR
+    - ls
     - pytest
