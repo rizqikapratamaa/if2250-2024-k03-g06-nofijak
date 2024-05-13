@@ -1,5 +1,16 @@
 DROP TABLE review_series, ongoing_series, finished_series, watchlist_series, series, review_movies, ongoing_movies, finished_movies, watchlist_movies, movies;
 
+DELETE FROM review_series;
+DELETE FROM ongoing_series;
+DELETE FROM finished_series;
+DELETE FROM watchlist_series;
+DELETE FROM series;
+DELETE FROM review_movies;
+DELETE FROM ongoing_movies;
+DELETE FROM finished_movies;
+DELETE FROM watchlist_movies;
+DELETE FROM movies;
+
 CREATE TABLE movies (
     movies_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50),
