@@ -1,30 +1,7 @@
 import flet as ft
 
 class EntryCard(ft.Card):
-    # def __init__(self):
-    #     super().__init__()
-    #     self.width = 500
-    #     self.color = "#092143"
-    #     self.content = ft.Row([
-    #         ft.Container(
-    #             padding=ft.padding.only(right=20, top=10, bottom=10, left=10),
-    #             content = ft.Image(src="https://via.placeholder.com/150", width=115, height=115, fit=ft.ImageFit.COVER),
-    #         ),
-    #         ft.Column([
-    #             ft.Text("Title", size=20, color="#DAAB2D", ),
-    #             ft.Text("Description", size=15),
-    #         ]),
-    #         ft.Column([
-    #             ft.Text("Progress", size=20, color="#DAAB2D"),
-    #             ft.Text("74% (22 eps)")
-    #         ]),
-    #         ft.Column([
-    #             ft.Text("Rating", size=20, color="#DAAB2D"),
-    #             ft.Text("8.5")
-    #         ]),
-    #     ],
-    #     spacing=25)
-    
+    # Constructor entry card dengan parameter
     def __init__(self, title, description, progress, jumlahepisode, rating, imagepath):
         super().__init__()
         self.width = 600
@@ -58,7 +35,7 @@ class ScrollableCard(ft.Column):
         self.width = 600
         self.scroll = ft.ScrollMode.ALWAYS
     
-    #Method untuk menambahkan film pada halaman entries
+    # Method untuk menambahkan film pada halaman entries
     def tambahCard(self, title, description, progress, jumlahEpisode, rating, imagepath):
         self.controls.append(
             EntryCard(title, description, progress, jumlahEpisode, rating, imagepath)
