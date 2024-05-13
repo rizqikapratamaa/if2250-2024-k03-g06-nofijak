@@ -1,23 +1,71 @@
 import flet as ft
 
 class EntryCard(ft.Card):
-    def __init__(self):
+    # def __init__(self):
+    #     super().__init__()
+    #     self.width = 500
+    #     self.color = "#092143"
+    #     self.content = ft.Row([
+    #         ft.Container(
+    #             padding=ft.padding.only(right=20, top=10, bottom=10, left=10),
+    #             content = ft.Image(src="https://via.placeholder.com/150", width=115, height=115, fit=ft.ImageFit.COVER),
+    #         ),
+    #         ft.Column([
+    #             ft.Text("Title", size=20, color="#DAAB2D", ),
+    #             ft.Text("Description", size=15),
+    #         ]),
+    #         ft.Column([
+    #             ft.Text("Progress", size=20, color="#DAAB2D"),
+    #             ft.Text("74% (22 eps)")
+    #         ]),
+    #         ft.Column([
+    #             ft.Text("Rating", size=20, color="#DAAB2D"),
+    #             ft.Text("8.5")
+    #         ]),
+    #     ],
+    #     spacing=25)
+    
+    def __init__(self, title, description, progress, jumlahepisode, rating, imagepath):
         super().__init__()
+        self.width = 600
+        self.color = "#092143"
         self.content = ft.Row([
-            ft.Image(src="https://via.placeholder.com/150", width=150, height=150),
+            ft.Container(
+                padding=ft.padding.only(top=10, bottom=10, left=10),
+                content=ft.Image(src=imagepath, width=115, height=115, fit=ft.ImageFit.COVER),
+            ),
             ft.Column([
-                ft.Text("Title", size=20),
-                ft.Text("Description", size=15),
+                ft.Text(title, size=20, color="#DAAB2D"),
+                ft.Text(description, size=15),
             ]),
             ft.Column([
-                ft.Text("Progress", size=20),
-                ft.Text("74% (22 eps)")
+                ft.Text("Progress", size=20, color="#DAAB2D"),
+                ft.Text(f"{progress}% ({jumlahepisode} eps)"),
             ]),
             ft.Column([
-                ft.Text("Rating", size=20),
-                ft.Text("8.5")
+                ft.Text("Rating", size=20, color="#DAAB2D"),
+                ft.Text(str(rating))
             ]),
-        ])
+        ],
+        spacing=25)
+
+class ScrollableCard(ft.Column):
+    def __init__(self):
+        # Inisialisasi base class dari ft.Column
+        super().__init__()
+        # Properti untuk scrollable card
+        self.height = 250
+        self.width = 600
+        self.scroll = ft.ScrollMode.ALWAYS
+    
+    #Method untuk menambahkan film pada halaman entries
+    def tambahCard(self, title, description, progress, jumlahEpisode, rating, imagepath):
+        self.controls.append(
+            EntryCard(title, description, progress, jumlahEpisode, rating, imagepath)
+        )
+
+
+
         
 def main(page: ft.Page):
     page.title = "NoFiJak"
@@ -41,6 +89,14 @@ def main(page: ft.Page):
     # Functions
     def tambahFilmSeries(e):
         page.go("/tambah-film-series")
+        scrollCard.tambahCard(
+            "Adventure Time",
+            "Adventure, Melodrama, Animation",
+            74,
+            45,
+            8.5,
+            "https://yt3.googleusercontent.com/ytc/AIdro_kECsRD-CffXuBZyiBFW6eTnfhnvc3Rkmw9EwXWH9TSUw=s900-c-k-c0x00ffffff-no-rj"
+        )
 
     def textbox_changed(e):
         t.value = e.control.value
@@ -57,10 +113,6 @@ def main(page: ft.Page):
                 button.content.bgcolor = BUTTON_OFF_COLOR
                 
         page.update()
-    # appBar = ft.Container(
-    #     padding = 10,
-    #     content = ft.AppBar(title=ft.Text("Flet app"))
-    # )
     
     # ==============================================
     # ============== Custom Controls ===============
@@ -139,6 +191,8 @@ def main(page: ft.Page):
         )
     )
 
+    scrollCard = ScrollableCard()
+
     def route_change(route):
         page.views.clear()
         page.views.append(
@@ -168,9 +222,7 @@ def main(page: ft.Page):
                             textbox,
                             ft.Container(
                                 alignment=ft.alignment.center,
-                                width=500,
-                                content = EntryCard(),
-                                bgcolor=BUTTON_ON_COLOR,
+                                content = scrollCard,
                             ),
                             actionButton,
                         ]),
