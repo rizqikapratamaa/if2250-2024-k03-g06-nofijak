@@ -1,41 +1,105 @@
-import flet as ft
+import sqlite3
 
-def main(page: ft.Page):
-    page.title = "AlertDialog examples"
+# Connect to the SQLite database file
+conn = sqlite3.connect('database.db')
 
-    dlg = ft.AlertDialog(
-        title=ft.Text("Hello, you!"), on_dismiss=lambda e: print("Dialog dismissed!")
-    )
+try:
+    # Create a cursor object
+    cursor = conn.cursor()
 
-    def close_dlg(e):
-        dlg_modal.open = False
-        page.update()
+    # Commit changes
+    conn.commit()
 
-    dlg_modal = ft.AlertDialog(
-        modal=True,
-        title=ft.Text("Please confirm"),
-        content=ft.Text("Do you really want to delete all those files?"),
-        actions=[
-            ft.TextButton("Yes", on_click=close_dlg),
-            ft.TextButton("No", on_click=close_dlg),
-        ],
-        actions_alignment=ft.MainAxisAlignment.END,
-        on_dismiss=lambda e: print("Modal dialog dismissed!"),
-    )
+    # Retrieve data from the table
+    # Fetch movies and store in a dictionary
+    cursor.execute("SELECT * FROM movies")
+    movies = cursor.fetchall()
+    movies_dict = {}
+    for row in movies:
+        movies_dict[row[0]] = list(row)
 
-    def open_dlg(e):
-        page.dialog = dlg
-        dlg.open = True
-        page.update()
+    # Fetch series and store in a dictionary
+    cursor.execute("SELECT * FROM series")
+    series = cursor.fetchall()
+    series_dict = {}
+    for row in series:
+        series_dict[row[0]] = list(row)
 
-    def open_dlg_modal(e):
-        page.dialog = dlg_modal
-        dlg_modal.open = True
-        page.update()
+    # Fetch finished movies and store in a dictionary
+    cursor.execute("SELECT * FROM finished_movies")
+    finished_movies = cursor.fetchall()
+    finished_movies_dict = {}
+    for row in finished_movies:
+        finished_movies_dict[row[0]] = list(row)
 
-    page.add(
-        ft.ElevatedButton("Open dialog", on_click=open_dlg),
-        ft.ElevatedButton("Open modal dialog", on_click=open_dlg_modal),
-    )
+    
 
-ft.app(target=main)
+    cursor.execute("SELECT * FROM finished_series")
+    finished_series = cursor.fetchall()
+    finished_series_dict = {}
+    for row in finished_series:
+        finished_series_dict[row[0]] = list(row)
+
+    cursor.execute("SELECT * FROM ongoing_movies")
+    ongoing_movies = cursor.fetchall()
+    ongoing_movies_dict = {}
+    for row in ongoing_movies:
+        ongoing_movies_dict[row[0]] = list(row)
+    
+    cursor.execute("SELECT * FROM ongoing_series")
+    ongoing_series = cursor.fetchall()
+    ongoing_series_dict = {}
+    for row in ongoing_series:
+        ongoing_series_dict[row[0]] = list(row)
+
+
+    cursor.execute("SELECT * FROM review_movies")
+    review_movies = cursor.fetchall()
+    review_movies_dict = {}
+    for row in review_movies:
+        review_movies_dict[row[0]] = list(row)
+
+    cursor.execute("SELECT * FROM review_series")
+    review_series = cursor.fetchall()
+    review_series_dict = {}
+    for row in review_series:
+        review_series_dict[row[0]] = list(row)
+
+    cursor.execute("SELECT * FROM watchlist_movies")
+    watchlist_movies = cursor.fetchall()
+    watchlist_movies_dict = {}
+    for row in watchlist_movies:
+        watchlist_movies_dict[row[0]] = list(row)
+
+    cursor.execute("SELECT * FROM watchlist_movies")
+    watchlist_movies = cursor.fetchall()
+    watchlist_movies_dict = {}
+    for row in watchlist_movies:
+        watchlist_movies_dict[row[0]] = list(row)
+
+    cursor.execute("SELECT * FROM watchlist_series")
+    watchlist_series = cursor.fetchall()
+    watchlist_series_dict = {}
+    for row in watchlist_series:
+        watchlist_series_dict[row[0]] = list(row)
+    
+    def make_movies(id):
+        id = movies_dict[id][0] if id in movies_dict else None
+        name = movies_dict[id][1] if id in movies_dict else None
+        releaseDate = movies_dict[id][3] if id in movies_dict else None
+        duration = movies_dict[id][2] if id in movies_dict else None
+        synopsis = movies_dict[id][5] if id in movies_dict else None
+        genre = movies_dict[id][4] if id in movies_dict else None
+        rating = review_movies_dict[id][1] if id in review_movies_dict else None
+        watchProgress = ongoing_movies_dict[id][1] if id in ongoing_movies_dict else None
+
+        print("id:", id, "name:", name, "releaseDate:", releaseDate, "duration:", duration, "synopsis:", synopsis, "genre:", genre, "rating:", rating, "watchProgress:", watchProgress)
+        
+    make_movies(3)
+
+except sqlite3.Error as e:
+    print("An error occurred:", e)
+
+finally:
+    # Close connection
+    conn.close()

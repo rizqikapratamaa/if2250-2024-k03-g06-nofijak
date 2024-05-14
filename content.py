@@ -1,8 +1,8 @@
 class Content:
-    def __init__(self, id, name, releaseDate, duration, summary, genre, rating, watchProgress, gambar):
+    def __init__(self, id, name, releaseYear, duration, summary, genre, rating, watchProgress, gambar):
         self.id = id
         self.name = name
-        self.releaseDate = releaseDate
+        self.releaseYear = releaseYear
         self.duration = duration
         self.summary = summary
         self.genre = genre
@@ -16,8 +16,8 @@ class Content:
     def getName(self):
         return self.name
     
-    def getReleaseDate(self):
-        return self.releaseDate
+    def getReleaseYear(self):
+        return self.releaseYear
     
     def getDuration(self):
         return self.duration
@@ -43,8 +43,8 @@ class Content:
     def setName(self, name):
         self.name = name
 
-    def setReleaseDate(self, releaseDate):
-        self.releaseDate = releaseDate
+    def setReleaseYear(self, releaseYear):
+        self.releaseYear = releaseYear
     
     def setLastplay(self, lastplay):
         self.lastplay = lastplay
@@ -68,12 +68,12 @@ class Content:
         self.gambar = gambar
 
 class Movie(Content):
-    def __init__(self, id, name, releaseDate, duration, summary, genre, rating, watchProgress, gambar):
-        super().__init__(id, name, releaseDate, duration, summary, genre, rating, watchProgress, gambar)
+    def __init__(self, id, name, releaseYear, duration, summary, genre, rating, watchProgress, gambar):
+        super().__init__(id, name, releaseYear, duration, summary, genre, rating, watchProgress, gambar)
 
 class Series(Content):
-    def __init__(self, id, name, releaseDate, duration, summary, genre, rating, watchProgress, gambar, season, episode, seasonProgress, episodeProgress):
-        super().__init__(id, name, releaseDate, duration, summary, genre, rating, watchProgress, gambar)
+    def __init__(self, id, name, releaseYear, duration, summary, genre, rating, watchProgress, gambar, season, episode, seasonProgress, episodeProgress):
+        super().__init__(id, name, releaseYear, duration, summary, genre, rating, watchProgress, gambar)
         self.season = season
         self.seasonProgress = seasonProgress
         self.episode = episode
