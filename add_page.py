@@ -1,6 +1,6 @@
 import datetime
-import os
-import shutil
+import sqlite3
+from popup import *
 import flet as ft
 from content import *
 from button import OptionButton, SubmitButton
@@ -82,7 +82,7 @@ class AddPage:
                     label="Jam", 
                     border_radius=50,
                     alignment=ft.alignment.center, 
-                    value=0, 
+                    value=None, 
                     width=65,
                     options = [ft.dropdown.Option(str(i)) for i in range(60)], 
                     bgcolor=ft.colors.WHITE, 
@@ -91,25 +91,21 @@ class AddPage:
                     border_color="#000D20",
                     color=ft.colors.BLACK
                 )
-        
-        self.duration_table = ft.Row(
-            [
-                self.jam_duration,
-                ft.Dropdown(
+        self.menit_duration = ft.Dropdown(
                     label="Menit",
                     border_radius=50,
-                    value=0,
+                    value=None,
                     width=65, 
                     options= [ft.dropdown.Option(str(i)) for i in range(60)],
                     label_style= ft.TextStyle(color="#FED466", font_family="Consolas", bgcolor="#000D20"),
                     focused_border_color="#FED466",
                     bgcolor=ft.colors.WHITE,
                     color=ft.colors.BLACK
-                ),
-                ft.Dropdown(
+                )
+        self.detik_duration = ft.Dropdown(
                     label="Detik", 
                     border_radius=50, 
-                    value=0, 
+                    value=None, 
                     width=65, 
                     options= [ft.dropdown.Option(str(i)) for i in range(60)], 
                     label_style= ft.TextStyle(color="#FED466", font_family="Consolas", bgcolor="#000D20"),
@@ -117,36 +113,17 @@ class AddPage:
                     bgcolor=ft.colors.WHITE, 
                     color=ft.colors.BLACK
                 )
+        self.duration_table = ft.Row(
+            [
+                self.jam_duration,
+                self.menit_duration,
+                self.detik_duration
             ])
 
-        self.watch_progress_table = ft.Container(
-            ft.Row([
-                ft.Dropdown(
+        self.jam_watch_progress = ft.Dropdown(
                     label="Jam",
                     border_radius=50, 
-                    value=0, 
-                    width=65, 
-                    options = [ft.dropdown.Option(str(i)) for i in range(60)], 
-                    label_style= ft.TextStyle(color="#FED466", font_family="Consolas", bgcolor="#000D20"),
-                    focused_border_color="#FED466",
-                    bgcolor=ft.colors.WHITE, 
-                    color=ft.colors.BLACK
-                ),
-                ft.Dropdown(
-                    label="Menit", 
-                    border_radius=50, 
-                    value=0, 
-                    width=65, 
-                    options = [ft.dropdown.Option(str(i)) for i in range(60)], 
-                    label_style= ft.TextStyle(color="#FED466", font_family="Consolas", bgcolor="#000D20"),
-                    focused_border_color="#FED466",
-                    bgcolor=ft.colors.WHITE, 
-                    color=ft.colors.BLACK
-                ),
-                ft.Dropdown(
-                    label="Detik", 
-                    border_radius=50, 
-                    value=0, 
+                    value=None, 
                     width=65, 
                     options = [ft.dropdown.Option(str(i)) for i in range(60)], 
                     label_style= ft.TextStyle(color="#FED466", font_family="Consolas", bgcolor="#000D20"),
@@ -154,6 +131,33 @@ class AddPage:
                     bgcolor=ft.colors.WHITE, 
                     color=ft.colors.BLACK
                 )
+        self.menit_watch_progress = ft.Dropdown(
+                    label="Menit", 
+                    border_radius=50, 
+                    value=None, 
+                    width=65, 
+                    options = [ft.dropdown.Option(str(i)) for i in range(60)], 
+                    label_style= ft.TextStyle(color="#FED466", font_family="Consolas", bgcolor="#000D20"),
+                    focused_border_color="#FED466",
+                    bgcolor=ft.colors.WHITE, 
+                    color=ft.colors.BLACK
+                )
+        self.detik_watch_progress = ft.Dropdown(
+                    label="Detik", 
+                    border_radius=50, 
+                    value=None, 
+                    width=65,
+                    options = [ft.dropdown.Option(str(i)) for i in range(60)], 
+                    label_style= ft.TextStyle(color="#FED466", font_family="Consolas", bgcolor="#000D20"),
+                    focused_border_color="#FED466",
+                    bgcolor=ft.colors.WHITE, 
+                    color=ft.colors.BLACK
+                )
+        self.watch_progress_table = ft.Container(
+            ft.Row([
+                self.jam_watch_progress,
+                self.menit_watch_progress,
+                self.detik_watch_progress
             ]),
             padding=ft.padding.only(left=40)
         )
@@ -225,20 +229,17 @@ class AddPage:
             padding=ft.padding.only(left=10, right=10, top=10)
         )
 
-        self.summary = ft.Container(
-            ft.TextField(
-                value=None,
-                text_align=ft.TextAlign.LEFT,
-                width=480, shift_enter=True,
-                fill_color=ft.colors.WHITE,
-                color=ft.colors.BLACK, hover_color="#FED466",
-                border_radius=50, max_length=500,
-                border_color="#000D20",
-                focused_border_color="#FED466",
-                selection_color="#FED466",
-                label_style= ft.TextStyle(color="#FED466", font_family="Consolas")
-            ),
-            padding=ft.padding.only(right=10)
+        self.summary = ft.TextField(
+            value=None,
+            text_align=ft.TextAlign.LEFT,
+            width=480, shift_enter=True,
+            fill_color=ft.colors.WHITE,
+            color=ft.colors.BLACK, smart_dashes_type=True,
+            border_radius=50, max_length=500,
+            border_color="#000D20", hover_color="#FED466",
+            focused_border_color="#FED466",
+            selection_color="#FED466",
+            label_style= ft.TextStyle(color="#FED466", font_family="Consolas")
         )
 
         self.poster = ft.Container(
@@ -284,7 +285,7 @@ class AddPage:
             for f in e.files:
                 print(f"File name: {f.name}, size: {f.size} bytes")
 
-    def submit_click(self, e, page: ft.Page):
+    def submit_click(self, e, page: ft.Page, series_dict, ongoing_series_dict, review_series_dict, watchlist_series_dict):
         return
 
     def change_date(self, e, page: ft.Page):
@@ -358,21 +359,80 @@ class AddPage:
         )
         
 class MovieAddPage(AddPage):
-    def __init__(self, page: ft.Page):
+    def __init__(self, page: ft.Page, movie_dict: dict, ongoing_movie_dict: dict, review_movie_dict: dict, watchlist_movie_dict: dict, finished_movie_dict: dict):
         super().__init__(page)
         self.edit_text = ft.Container(
             ft.Text("Add Movie", size=20, color="#FFFFFF")
         )
 
-    def film_button_clicked(e):
-        movie = Movie(" ", " ", "2020-07-20", 0, " ", "Adventure", 0, 0, "https://www.themoviedb.org/t/p/original/6kbAMLteGO8yyewYau6bJ683sw7.jpg")
-        film_page = MovieAddPage(movie)
-        film_page.show_page(ft.Page())
+        self.submit_button = ft.Container(
+            ft.Row([
+                SubmitButton("Submit", on_click=lambda e: self.submit_click(e, page, movie_dict, ongoing_movie_dict, review_movie_dict, watchlist_movie_dict, finished_movie_dict))
+            ]),
+            padding=ft.padding.only(top=20, left= 20)
+        )
 
-    def series_button_clicked(e):
-        series = Series("", "", "2020-0-0", 0, "", "Adventure", 0, 0, "https://www.themoviedb.org/t/p/original/6kbAMLteGO8yyewYau6bJ683sw7.jpg", 1, 8)
-        series_page = SeriesAddPage(series)
-        series_page.show_page(ft.Page())
+    def submit_click(self, e, page: ft.Page, movie_dict: dict, ongoing_movie_dict: dict, review_movie_dict: dict, watchlist_movie_dict: dict, finished_movie_dict: dict):
+        def is_overlap():
+            return self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value) <= self.hours_to_seconds(self.jam_watch_progress.value, self.menit_watch_progress.value, self.detik_watch_progress.value)
+        if self.name_table.value is None:
+            PopUp("Name cannot be empty", page).open_dlg_modal(e, page)
+            return
+        elif not 0 <= float(self.rating.value) <= 10:
+            PopUp("Rating must be between 0 and 10", page).open_dlg_modal(e, page)
+            return
+        elif self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value) == 0:
+            PopUp("Duration cannot be 0", page).open_dlg_modal(e, page)
+            return
+        elif self.release_year_table.value is None:
+            PopUp("Release Date cannot be empty", page).open_dlg_modal(e, page)
+            return
+        elif self.genre.value is None:
+            PopUp("Genre cannot be empty", page).open_dlg_modal(e, page)
+            return
+        elif is_overlap():
+            PopUp("Watch Progress cannot be more than Duration", page).open_dlg_modal(e, page)
+            return
+        else:
+            conn = sqlite3.connect('database.db')
+            cursor = conn.cursor()
+            # if self.file_picker.result != None and self.file_picker.result.files != None:
+            #     for f in self.file_picker.result.files:
+            #         shutil.copy(f.path, os.path.join('assets/img/', movie.getId() + '.jpg'))
+            def generate_new_key(dictionary):
+                key = 1
+                while key in dictionary:
+                    key += 1
+                return key
+            id = generate_new_key(movie_dict)
+            name = self.name_table.value
+            duration = self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value)
+            watchProgress = self.hours_to_seconds(self.jam_watch_progress.value, self.menit_watch_progress.value, self.detik_watch_progress.value)
+            release_year = self.release_year_table.value
+            genre = self.genre.value
+            rating = self.rating.value
+            synopsis = self.summary.value
+            cursor.execute("INSERT INTO movies VALUES (?, ?, ?, ?, ?, ?)", (id, name, duration, release_year, genre, synopsis))
+            movie_dict[id] = [id, name, duration, release_year, genre, synopsis]
+            cursor.execute("INSERT INTO review_movies VALUES (?, ?)", (id, rating))
+            review_movie_dict[id] = [id, rating]
+            if watchProgress != 0:
+                cursor.execute("INSERT INTO ongoing_movies VALUES (?, ?)", (id, watchProgress))
+                ongoing_movie_dict[id] = [id, watchProgress]
+            else:
+                cursor.execute("INSERT INTO watchlist_movies VALUES (?)", (id))
+                watchlist_movie_dict[id] = [id]
+
+            if duration == watchProgress:
+                cursor.execute("INSERT INTO finished_movies VALUES (?, CURDATE())", (id))
+                finished_movie_dict[id] = [id]
+            conn.commit()
+            
+            
+
+
+        
+        
 
     def movies_show_page(self, page: ft.Page):
         page.clean()
@@ -432,7 +492,7 @@ class MovieAddPage(AddPage):
         )
     
 class SeriesAddPage(AddPage):
-    def __init__(self, page: ft.Page):
+    def __init__(self, page: ft.Page, series_dict: dict, ongoing_series_dict: dict, review_series_dict: dict, watchlist_series_dict: dict):
         super().__init__(page)
 
         self.edit_text = ft.Container(
@@ -522,6 +582,10 @@ class SeriesAddPage(AddPage):
             input_filter=ft.InputFilter(allow=True ,regex_string = r'\b[0-9]+\b', replacement_string="")
         )
 
+    def submit_click(self, e, page: ft.Page, series_dict: dict, ongoing_series_dict: dict, review_series_dict: dict, watchlist_series_dict: dict):
+        conn = sqlite3.connect('database.db')
+        cursor = conn.cursor()
+        return
 
     def series_show_page(self, page: ft.Page):
         page.clean()
