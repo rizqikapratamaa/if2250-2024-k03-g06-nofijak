@@ -3,11 +3,10 @@ import os
 import shutil
 import flet as ft
 from content import *
-from content import Content
-from edit_button import MyButton
+from button import OptionButton, SubmitButton
 
 class AddPage:
-    def __init__(self, content: Content, page: ft.Page, route: str):
+    def __init__(self, page: ft.Page):
         self.edit_text = ft.Container(
             ft.Text("Edit Information", size=20, color="#FFFFFF")
         )
@@ -18,7 +17,7 @@ class AddPage:
         )
         
         self.name_table = ft.TextField(
-            value=content.getName(), 
+            value=None, 
             text_align=ft.TextAlign.LEFT, 
             width=400, smart_dashes_type=True,
             fill_color=ft.colors.WHITE, 
@@ -30,7 +29,7 @@ class AddPage:
             label_style= ft.TextStyle(color="#FED466", font_family="Consolas")
         )
         
-        self.release_date_text = ft.Container(
+        self.release_year_text = ft.Container(
             ft.Text("Release Date", color="#FFFFFF"),
             padding=ft.padding.only(left=10, right=10, top=10)
         )
@@ -43,9 +42,9 @@ class AddPage:
             last_date=datetime.datetime(2030, 10, 1), 
         )
 
-        self.release_date_table = ft.TextField(
-            value=content.getReleaseDate(), 
-            text_align=ft.TextAlign.LEFT, 
+        self.release_year_table = ft.TextField(
+            value=None, 
+            text_align=ft.TextAlign.CENTER, 
             width=120, 
             fill_color=ft.colors.WHITE, 
             color=ft.colors.BLACK, 
@@ -56,6 +55,7 @@ class AddPage:
             disabled=True,
             label_style= ft.TextStyle(color="#FED466", font_family="Consolas")
         )
+
 
         self.calendar = ft.Container(
             content=ft.ElevatedButton(
@@ -82,7 +82,7 @@ class AddPage:
                     label="Jam", 
                     border_radius=50,
                     alignment=ft.alignment.center, 
-                    value=content.getDuration() // 3600, 
+                    value=0, 
                     width=65,
                     options = [ft.dropdown.Option(str(i)) for i in range(60)], 
                     bgcolor=ft.colors.WHITE, 
@@ -98,7 +98,7 @@ class AddPage:
                 ft.Dropdown(
                     label="Menit",
                     border_radius=50,
-                    value=(content.getDuration() % 3600) // 60,
+                    value=0,
                     width=65, 
                     options= [ft.dropdown.Option(str(i)) for i in range(60)],
                     label_style= ft.TextStyle(color="#FED466", font_family="Consolas", bgcolor="#000D20"),
@@ -109,7 +109,7 @@ class AddPage:
                 ft.Dropdown(
                     label="Detik", 
                     border_radius=50, 
-                    value=content.getDuration() % 60, 
+                    value=0, 
                     width=65, 
                     options= [ft.dropdown.Option(str(i)) for i in range(60)], 
                     label_style= ft.TextStyle(color="#FED466", font_family="Consolas", bgcolor="#000D20"),
@@ -122,9 +122,9 @@ class AddPage:
         self.watch_progress_table = ft.Container(
             ft.Row([
                 ft.Dropdown(
-                    label="Jam",\
+                    label="Jam",
                     border_radius=50, 
-                    value=content.getWatchProgress() // 3600, 
+                    value=0, 
                     width=65, 
                     options = [ft.dropdown.Option(str(i)) for i in range(60)], 
                     label_style= ft.TextStyle(color="#FED466", font_family="Consolas", bgcolor="#000D20"),
@@ -135,7 +135,7 @@ class AddPage:
                 ft.Dropdown(
                     label="Menit", 
                     border_radius=50, 
-                    value=(content.getWatchProgress() % 3600) // 60, 
+                    value=0, 
                     width=65, 
                     options = [ft.dropdown.Option(str(i)) for i in range(60)], 
                     label_style= ft.TextStyle(color="#FED466", font_family="Consolas", bgcolor="#000D20"),
@@ -146,7 +146,7 @@ class AddPage:
                 ft.Dropdown(
                     label="Detik", 
                     border_radius=50, 
-                    value=content.getWatchProgress() % 60, 
+                    value=0, 
                     width=65, 
                     options = [ft.dropdown.Option(str(i)) for i in range(60)], 
                     label_style= ft.TextStyle(color="#FED466", font_family="Consolas", bgcolor="#000D20"),
@@ -159,10 +159,10 @@ class AddPage:
         )
 
         self.rating = ft.TextField(
-            value = str(content.getRating()), 
+            value = None, 
             text_align=ft.TextAlign.CENTER, 
-            width=80,
-            border_radius=50,
+            width=80, smart_dashes_type=True,
+            border_radius=50, hover_color="#FED466",
             border_color="#000D20",
             focused_border_color="#FED466",
             selection_color="#FED466",
@@ -183,7 +183,7 @@ class AddPage:
         self.genre = ft.Dropdown(
                 border_radius=50, 
                 
-                value=(content.getGenre()), 
+                value=None, 
                 width=120, 
                 options = [
                     ft.dropdown.Option("Adventure"),
@@ -227,11 +227,11 @@ class AddPage:
 
         self.summary = ft.Container(
             ft.TextField(
-                value=content.getSummary(),
+                value=None,
                 text_align=ft.TextAlign.LEFT,
                 width=480, shift_enter=True,
                 fill_color=ft.colors.WHITE,
-                color=ft.colors.BLACK,
+                color=ft.colors.BLACK, hover_color="#FED466",
                 border_radius=50, max_length=500,
                 border_color="#000D20",
                 focused_border_color="#FED466",
@@ -242,127 +242,75 @@ class AddPage:
         )
 
         self.poster = ft.Container(
-            ft.Image(content.getGambar(), width=300, height=450, border_radius=30),
+            ft.Image("assets/img/1", width=300, height=450, border_radius=30),
             padding=ft.padding.only(left=20, top=70)
         )
         
         self.submit_button = ft.Container(
             ft.Row([
-                MyButton("Submit", on_click=lambda e: self.submit_click(e, content, page))
+                SubmitButton("Add", on_click=lambda e: self.submit_click(e, page))
             ]),
             padding=ft.padding.only(top=20, left= 20)
         )
-        
-        self.route = route
 
-        self.navbar = AddPage.NavBar(self.route)
+        self.option_button = ft.Container(
+            content= ft.Row(
+                [
+                    OptionButton("Movies", on_click=lambda e: MovieAddPage(page).movies_show_page(page)),
+                    OptionButton("Series", on_click=lambda e: SeriesAddPage(page).series_show_page(page))
+                ],
+                alignment= ft.MainAxisAlignment.CENTER,
+                spacing= 0
+                
+            ),
+            animate=True,
+            bgcolor="#FED466",
+            alignment= ft.alignment.center,
+            width=200,
+            height=50,
+            border_radius= 30,
+            padding=0,
+            shape= ft.RoundedRectangleBorder(radius=30)
+        )
 
+    def show_series(page: ft.Page):
+        return SeriesAddPage(page).show_page(page)
+    
+    def show_movie(page: ft.Page):
+        return MovieAddPage(page).show_page(page)
+    
     def on_file_picker_result(self, e: ft.FilePickerResultEvent):
         if e.files is not None:
             for f in e.files:
                 print(f"File name: {f.name}, size: {f.size} bytes")
 
-    def submit_click(self, e,  content: Content, page: ft.Page):
-        if self.file_picker.result != None and self.file_picker.result.files != None:
-            for f in self.file_picker.result.files:
-                shutil.copy(f.path, os.path.join('assets/img/', content.getId() + '.jpg'))
-        content.setName(self.name_table.value)
-        if self.date_picker.value != None:
-            content.setReleaseDate(self.date_picker.value.date())
-        content.setGenre(self.genre.value)
-        page.update()
-        print(content.getName())
-        print(content.getReleaseDate())
-        print(content.getGenre())
+    def submit_click(self, e, page: ft.Page):
+        return
 
     def change_date(self, e, page: ft.Page):
-            self.release_date_table.value = self.date_picker.value.date()
+            self.release_year_table.value = self.date_picker.value.year
             page.update()
             print(f"Date picker changed, value is {self.date_picker.value}")
 
     def date_picker_dismissed(self, e):
         print(f"Date picker dismissed, value is {self.date_picker.value}")
-
-    def convert_seconds(self, seconds):
-        hours = seconds // 3600
-        remaining_seconds = seconds % 3600
-        minutes = remaining_seconds // 60
-        seconds = remaining_seconds % 60
-        return hours, minutes, seconds
         
-    def convert_hours(self, hour, minutes, seconds):
-        return (hour * 3600) + (minutes * 60) + seconds
-    
-    def film_button_clicked(e):
-        movie = Movie(" ", " ", "2020-07-20", 0, " ", "Adventure", 0, 0, "https://www.themoviedb.org/t/p/original/6kbAMLteGO8yyewYau6bJ683sw7.jpg")
-        film_page = MovieAddPage(movie)
-        film_page.show_page(ft.Page())
-
-        # print("Film Button Clicked")
-
-    def Film_button(current_page):
-        return ft.TextButton(
-            text="Film",
-            width=100,
-            height=50,
-        
-            style=ft.ButtonStyle(
-                bgcolor="#CBA133" if current_page == "Movie" else "#FED466",
-                color=ft.colors.BLACK,
-                shape= ft.RoundedRectangleBorder(),
-            ),
-            on_click=AddPage.film_button_clicked
-
-        )
-
-    def series_button_clicked(e):
-        series = Series("", "", "2020-0-0", 0, "", "Adventure", 0, 0, "https://www.themoviedb.org/t/p/original/6kbAMLteGO8yyewYau6bJ683sw7.jpg", 1, 8)
-        series_page = SeriesAddPage(series)
-        series_page.show_page(ft.Page())
-
-    def Series_button(current_page):
-        return ft.TextButton(
-            text="Series",
-            width=100,
-            height=50,
-            style=ft.ButtonStyle(
-                bgcolor="#CBA133" if current_page == "Series" else "#FED466",
-                color=ft.colors.BLACK,
-                shape= ft.RoundedRectangleBorder(),
-            ),
-            on_click=AddPage.series_button_clicked
-
-        )
-    def NavBar(current_page):
-        return ft.Container(
-            content= ft.Row(
-                [
-                    AddPage.Film_button(current_page),
-                    AddPage.Series_button(current_page)
-                ],
-                alignment= ft.MainAxisAlignment.CENTER,
-                spacing= 0,
-                
-            ),
-            alignment= ft.alignment.center,
-            width=200,
-            height=50,
-            border_radius= 30,
-            padding=0
-        )
+    def hours_to_seconds(self, hours, minutes, seconds):
+        return int(hours) * 3600 + int(minutes) * 60 + int(seconds)
     
     def show_page(self, page: ft.Page):
+        page.clean()
         page.overlay.append(self.date_picker)
         page.overlay.append(self.file_picker)
         route = page.route
         page.add(
         ft.IconButton(ft.icons.ARROW_BACK, icon_color="#FED466", on_click=lambda e: page.update_async()),
-        self.navbar,
         ft.Container(
             content= 
             ft.Row([
                 ft.Container(
                     ft.Column([
+                        self.option_button,
                         self.edit_text,
                         self.name_text,
                         self.name_table,
@@ -374,9 +322,9 @@ class AddPage:
                             self.duration_table,
                             self.watch_progress_table,
                         ]),
-                        self.release_date_text,
+                        self.release_year_text,
                         ft.Row([
-                            self.release_date_table,
+                            self.release_year_table,
                             self.calendar
                         ]),
                         ft.Row([
@@ -410,8 +358,11 @@ class AddPage:
         )
         
 class MovieAddPage(AddPage):
-    def __init__(self, movie: Movie, page: ft.Page, route):
-        super().__init__(movie, ft.Page, "Movie")
+    def __init__(self, page: ft.Page):
+        super().__init__(page)
+        self.edit_text = ft.Container(
+            ft.Text("Add Movie", size=20, color="#FFFFFF")
+        )
 
     def film_button_clicked(e):
         movie = Movie(" ", " ", "2020-07-20", 0, " ", "Adventure", 0, 0, "https://www.themoviedb.org/t/p/original/6kbAMLteGO8yyewYau6bJ683sw7.jpg")
@@ -423,9 +374,77 @@ class MovieAddPage(AddPage):
         series_page = SeriesAddPage(series)
         series_page.show_page(ft.Page())
 
+    def movies_show_page(self, page: ft.Page):
+        page.clean()
+        page.overlay.append(self.date_picker)
+        page.overlay.append(self.file_picker)
+        page.add(
+        ft.IconButton(ft.icons.ARROW_BACK, icon_color="#FED466", on_click=lambda e: page.update_async()),
+        ft.Container(
+            content= 
+            ft.Row([
+                ft.Container(
+                    ft.Column([
+                        self.option_button,
+                        self.edit_text,
+                        self.name_text,
+                        self.name_table,
+                        ft.Row([
+                            self.duration_text,
+                            self.watch_progress_text
+                        ]),
+                        ft.Row([
+                            self.duration_table,
+                            self.watch_progress_table,
+                        ]),
+                        self.release_year_text,
+                        ft.Row([
+                            self.release_year_table,
+                            self.calendar
+                        ]),
+                        ft.Row([
+                            self.genre_text,
+                            self.rating_text
+                        ]),
+                        ft.Row([
+                            self.genre,
+                            self.rating
+                        ]),
+                        ft.Row([
+                            self.summary_text
+                        ]),
+                        self.summary,
+                    ])
+                ),
+                ft.Container(
+                    ft.Column([
+                        self.poster,
+                        self.poster_button,
+                        self.submit_button,
+                        ],
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER
+                    ),
+                    padding=ft.padding.only(left=150)
+                )
+            ]),
+            padding=ft.padding.only(left=50,right=50)
+        ),
+        )
+    
 class SeriesAddPage(AddPage):
-    def __init__(self, series: Series):
-        super().__init__(series, ft.Page, "Series")
+    def __init__(self, page: ft.Page):
+        super().__init__(page)
+
+        self.edit_text = ft.Container(
+            ft.Text("Add Series", size=20, color="#FFFFFF")
+        )
+
+        self.submit_button = ft.Container(
+            ft.Row([
+                SubmitButton("Submit", on_click=lambda e: self.submit_click(e))
+            ]),
+            padding=ft.padding.only(top=20, left= 20)
+        )
 
         self.season_text = ft.Container(
             ft.Text("Season"),
@@ -433,16 +452,36 @@ class SeriesAddPage(AddPage):
         )
 
         self.season_table = ft.TextField(
-            value=str(series.season),
-            text_align=ft.TextAlign.LEFT,
-            width=300,
+            value=None,
+            text_align=ft.TextAlign.CENTER,
+            width=80, smart_dashes_type=True,
             fill_color=ft.colors.WHITE,
-            color=ft.colors.BLACK,
+            color=ft.colors.BLACK, hover_color="#FED466",
             border_radius=50,
             border_color="#000D20",
             focused_border_color="#FED466",
             selection_color="#FED466",
-            label_style= ft.TextStyle(color="#FED466", font_family="Consolas")
+            label_style= ft.TextStyle(color="#FED466", font_family="Consolas"),
+            input_filter=ft.InputFilter(allow=True ,regex_string = r'\b[0-9]+\b', replacement_string="")
+        )
+
+        self.season_progress_text = ft.Container(
+            ft.Text("Season Progress"),
+            padding=ft.padding.only(left=75, top=10)
+        )
+
+        self.season_progress_table = ft.TextField(
+            value=None,
+            text_align=ft.TextAlign.CENTER,
+            width=80, smart_dashes_type=True,
+            fill_color=ft.colors.WHITE,
+            color=ft.colors.BLACK, hover_color="#FED466",
+            border_radius=50,
+            border_color="#000D20",
+            focused_border_color="#FED466",
+            selection_color="#FED466",
+            label_style= ft.TextStyle(color="#FED466", font_family="Consolas"),
+            input_filter=ft.InputFilter(allow=True ,regex_string = r'\b[0-9]+\b', replacement_string="")
         )
 
         self.episode_text = ft.Container(
@@ -451,75 +490,117 @@ class SeriesAddPage(AddPage):
         )
 
         self.episode_table = ft.TextField(
-            value=str(series.episode),
-            text_align=ft.TextAlign.LEFT,
-            width=300,
+            value=None,
+            text_align=ft.TextAlign.CENTER,
+            width=80, smart_dashes_type=True,
             fill_color=ft.colors.WHITE,
-            color=ft.colors.BLACK,
+            color=ft.colors.BLACK, hover_color="#FED466",
             border_radius=50,
             border_color="#000D20",
             focused_border_color="#FED466",
             selection_color="#FED466",
-            label_style= ft.TextStyle(color="#FED466", font_family="Consolas")
+            label_style= ft.TextStyle(color="#FED466", font_family="Consolas"),
+            input_filter=ft.InputFilter(allow=True ,regex_string = r'\b[0-9]+\b', replacement_string="")
         )
 
-    def film_button_clicked(e):
-        movie = Movie(" ", " ", "2020-07-20", 0, " ", "Adventure", 0, 0, "https://www.themoviedb.org/t/p/original/6kbAMLteGO8yyewYau6bJ683sw7.jpg")
-        film_page = MovieAddPage(movie)
-        film_page.show_page(ft.Page())
+        self.episode_progress_text = ft.Container(
+            ft.Text("Episode Progress"),
+            padding=ft.padding.only(left=70, top=10)
+        )
 
-    def series_button_clicked(e):
-        series = Series("", "", "2020-0-0", 0, "", "Adventure", 0, 0, "https://www.themoviedb.org/t/p/original/6kbAMLteGO8yyewYau6bJ683sw7.jpg", 1, 8)
-        series_page = SeriesAddPage(series)
-        series_page.show_page(ft.Page())
+        self.episode_progress_table = ft.TextField(
+            value=None,
+            text_align=ft.TextAlign.CENTER,
+            width=80, smart_dashes_type=True,
+            fill_color=ft.colors.WHITE,
+            color=ft.colors.BLACK, hover_color="#FED466",
+            border_radius=50,
+            border_color="#000D20",
+            focused_border_color="#FED466",
+            selection_color="#FED466",
+            label_style= ft.TextStyle(color="#FED466", font_family="Consolas"),
+            input_filter=ft.InputFilter(allow=True ,regex_string = r'\b[0-9]+\b', replacement_string="")
+        )
 
-    def show_page(self, page: ft.Page):
+
+    def series_show_page(self, page: ft.Page):
+        page.clean()
         page.overlay.append(self.date_picker)
         page.add(
         ft.IconButton(ft.icons.ARROW_BACK, icon_color="#FED466", on_click=lambda e: page.update()),
         ft.Container(
             content= 
             ft.Row([
-                ft.Column([
-                    self.edit_text,
-                    self.name_text,
-                    self.name_table,
-                    ft.Row([
-                        self.season_text,
-                        self.episode_text
-                    ]),
-                    ft.Row([
-                        self.season_table,
-                        self.episode_table
-                    ]),
-                    ft.Row([
-                        self.duration_text,
-                        self.watch_progress_text
-                    ]),
-                    ft.Row([
-                        self.duration_table,
-                        self.watch_progress_table,
-                    ]),
-                    self.release_date_text,
-                    self.calendar,
-                    ft.Row([
-                        self.genre_text,
-                        self.rating_text
-                    ]),
-                    ft.Row([
-                        self.genre,
-                        self.rating
-                    ]),
-                    ft.Row([
-                        self.summary_text
-                    ]),
-                    self.summary,
-                    self.submit_button
-                ]),
-                self.poster
+                ft.Container(
+                    ft.Column([
+                        self.option_button,
+                        self.edit_text,
+                        self.name_text,
+                        self.name_table,
+                        ft.Row([
+                            self.season_text,
+                            self.season_progress_text
+                        ]),
+                        ft.Row([
+                            self.season_table,
+                            ft.Container(
+                                self.season_progress_table,
+                                padding=ft.padding.only(left=50)
+                            ),
+                        ]),
+                        ft.Row([
+                            self.episode_text,
+                            self.episode_progress_text
+                        ]),
+                        ft.Row([
+                            self.episode_table,
+                            ft.Container(
+                                self.episode_progress_table,
+                                padding=ft.padding.only(left=50)
+                            )
+                        ]),
+                        ft.Row([
+                            self.duration_text,
+                            self.watch_progress_text
+                        ]),
+                        ft.Row([
+                            self.duration_table,
+                            self.watch_progress_table,
+                        ]),
+                        self.release_year_text,
+                        ft.Row([
+                            self.release_year_table,
+                            self.calendar
+                        ]),
+                        ft.Row([
+                            self.genre_text,
+                            self.rating_text
+                        ]),
+                        ft.Row([
+                            self.genre,
+                            ft.Container(
+                                self.rating,
+                                padding=ft.padding.only(left=10)
+                            )
+                        ]),
+                        ft.Row([
+                            self.summary_text
+                        ]),
+                        self.summary,
+                    ])
+                ),
+                ft.Container(
+                    ft.Column([
+                        self.poster,
+                        self.poster_button,
+                        self.submit_button,
+                        ],
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER
+                    ),
+                    padding=ft.padding.only(left=150)
+                )
             ]),
             padding=ft.padding.only(left=50,right=50)
         ),
+
         )
-
-
