@@ -1,4 +1,11 @@
 import flet as ft
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from content import Movie, Series
+from film_information import FilmInformation
 
 class informasiFilmSeries(ft.Container):
     def __init__(self, page):
@@ -11,70 +18,72 @@ class informasiFilmSeries(ft.Container):
 
 class EntryCard(ft.ElevatedButton):
     # Constructor entry card dengan parameter
-    def __init__(self, title, description, progress, jumlahepisode, rating, imagepath, page, informasi):
+    def __init__(self, movie : Movie, page, informasi):
         super().__init__()
         self.width = 600
         self.bgcolor = "#092143"
-        self.on_click = self.informasiFilmSeries(title, description, progress, jumlahepisode, rating, imagepath, page, informasi)
+        self.on_click = lambda _: self.informasiFilm(movie, page, informasi)
         self.style=ft.ButtonStyle(
                 shape=ft.RoundedRectangleBorder(radius=10),
             )
         self.content = ft.Row([
             ft.Container(
                 padding=ft.padding.only(top=10, bottom=10, left=-15),
-                content=ft.Image(src=imagepath, width=115, height=115, fit=ft.ImageFit.COVER),
+                content=ft.Image(src=movie.getGambar(), width=115, height=115, fit=ft.ImageFit.COVER),
             ),
             ft.Column([
-                ft.Text(title, size=20, color="#DAAB2D"),
-                ft.Text(description, size=15),
+                ft.Text(movie.getName(), size=20, color="#DAAB2D"),
+                ft.Text(movie.getGenre(), size=15),
             ]),
             ft.Column([
                 ft.Text("Progress", size=20, color="#DAAB2D"),
-                ft.Text(f"{progress}% ({jumlahepisode} eps)"),
+                ft.Text("{:.2f}%".format(movie.getWatchProgress()/movie.getDuration()*100)),
             ]),
             ft.Column([
                 ft.Text("Rating", size=20, color="#DAAB2D"),
-                ft.Text(str(rating))
+                ft.Text(str(movie.getRating()))
             ]),
         ],
         spacing=18)
     
-    def informasiFilmSeries(self, title, description, progress, jumlahepisode, rating, imagepath, page, informasi : ft.Column):
+    def informasiFilm(self, movie: Movie , page, informasi : ft.Column):
+        informasi.controls.clear()
         informasi.controls.append(
-            ft.ElevatedButton(
-                width=600,
-                bgcolor="#092143",
-                style=ft.ButtonStyle(
-                    shape=ft.RoundedRectangleBorder(radius=10),
-                ),
-                content=ft.Row(
-                    [
-                        ft.Container(
-                            padding=ft.padding.only(top=10, bottom=10, left=-15),
-                            content=ft.Image(src=imagepath, width=115, height=115, fit=ft.ImageFit.COVER),
-                        ),
-                        ft.Column(
-                            [
-                                ft.Text(title, size=20, color="#DAAB2D"),
-                                ft.Text(description, size=15),
-                            ]
-                        ),
-                        ft.Column(
-                            [
-                                ft.Text("Progress", size=20, color="#DAAB2D"),
-                                ft.Text(f"{progress}% ({jumlahepisode} eps)"),
-                            ]
-                        ),
-                        ft.Column(
-                            [
-                                ft.Text("Rating", size=20, color="#DAAB2D"),
-                                ft.Text(str(rating))
-                            ]
-                        ),
-                    ],
-                    spacing=18
-                )
-            )
+            FilmInformation(movie, page)
+            # ft.ElevatedButton(
+            #     width=600,
+            #     bgcolor="#092143",
+            #     style=ft.ButtonStyle(
+            #         shape=ft.RoundedRectangleBorder(radius=10),
+            #     ),
+            #     content=ft.Row(
+            #         [
+            #             ft.Container(
+            #                 padding=ft.padding.only(top=10, bottom=10, left=-15),
+            #                 content=ft.Image(src=movie.getGambar(), width=115, height=115, fit=ft.ImageFit.COVER),
+            #             ),
+            #             ft.Column(
+            #                 [
+            #                     ft.Text(movie.getName(), size=20, color="#DAAB2D"),
+            #                     ft.Text(movie.getGenre(), size=15),
+            #                 ]
+            #             ),
+            #             ft.Column(
+            #                 [
+            #                     ft.Text("Progress", size=20, color="#DAAB2D"),
+            #                     ft.Text("{:.2f}%".format(movie.getWatchProgress()/movie.getDuration()*100)),
+            #                 ]
+            #             ),
+            #             ft.Column(
+            #                 [
+            #                     ft.Text("Rating", size=20, color="#DAAB2D"),
+            #                     ft.Text(str(movie.getRating()))
+            #                 ]
+            #             ),
+            #         ],
+            #         spacing=18
+            #     )
+            # )
         )
         page.go("/informasi-film-series")      
         # page.views.append(
@@ -99,9 +108,9 @@ class ScrollableCard(ft.Column):
         self.scroll = ft.ScrollMode.ALWAYS
     
     # Method untuk menambahkan film pada halaman entries
-    def tambahCard(self, title, description, progress, jumlahEpisode, rating, imagepath, page, Informasi):
+    def tambahCard(self, movie, page, Informasi):
         self.controls.append(
-            EntryCard(title, description, progress, jumlahEpisode, rating, imagepath, page, Informasi)
+            EntryCard(movie, page, Informasi)
         )
 
 
@@ -133,17 +142,17 @@ def main(page: ft.Page):
         width = page.window_width,
         height = page.window_height,
         bgcolor = '#000D20',
-        content = kolomInformasi
+        content = ft.Column(
+            [
+                kolomInformasi
+            ]
+        )
     )
     # Functions
     def tambahFilmSeries(e):
+        movie = Movie(1, "Adventure Time", 2010, 74, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur quis nibh vitae purus consectetur facilisis sed vitae ipsum. Quisque faucibus sed nulla placerat sagittis. Phasellus condimentum risus vitae nulla vestibulum auctor. Curabitur scelerisque, nibh eget imperdiet consequat, odio ante tempus diam, sed volutpat nisl erat eget turpis. Sed viverra, diam sit amet blandit vulputate, mi tellus dapibus lorem, vitae vehicula diam mauris placerat diam. Morbi sit amet pretium turpis, et consequat ligula. Nulla velit sem, suscipit sit amet dictum non, tincidunt sed nulla. Aenean pellentesque odio porttitor sagittis aliquam. Nam varius at metus vitae vulputate. Praesent faucibus nibh lorem, eu pretium dolor dictum nec. Phasellus eget dui laoreet, viverra magna vitae, pellentesque diam.", "Adventure, Melodrama, Animation", 8.5, 45, "https://yt3.googleusercontent.com/ytc/AIdro_kECsRD-CffXuBZyiBFW6eTnfhnvc3Rkmw9EwXWH9TSUw=s900-c-k-c0x00ffffff-no-rj")
         scrollCard.tambahCard(
-            "Adventure Time",
-            "Adventure, Melodrama, Animation",
-            74,
-            45,
-            8.5,
-            "https://yt3.googleusercontent.com/ytc/AIdro_kECsRD-CffXuBZyiBFW6eTnfhnvc3Rkmw9EwXWH9TSUw=s900-c-k-c0x00ffffff-no-rj",
+            movie,
             page,
             kolomInformasi
         )
