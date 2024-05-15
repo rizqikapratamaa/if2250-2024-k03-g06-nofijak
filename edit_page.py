@@ -466,6 +466,8 @@ class SeriesEditPage(EditPage):
     def __init__(self, series: Series, page: ft.Page, series_dict: dict, ongoing_series_dict: dict, review_series_dict: dict, watchlist_series_dict: dict):
         super().__init__(series, page)
 
+        self.body = series
+
         self.submit_button = ft.Container(
             ft.Row([
                 MyButton("Submit", on_click=lambda e: self.submit_click(e, series, page, series_dict, ongoing_series_dict, review_series_dict, watchlist_series_dict))

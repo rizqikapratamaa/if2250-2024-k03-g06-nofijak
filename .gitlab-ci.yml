@@ -1,0 +1,10 @@
+image: python:3.9
+
+before_script:
+  - pip install pytest pymysql
+  - pip install flet
+  - pip install sqlite3
+
+pytest:
+  script:
+    - pytest
