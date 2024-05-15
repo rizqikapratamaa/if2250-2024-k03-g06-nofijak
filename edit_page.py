@@ -254,7 +254,7 @@ class EditPage:
 
 
     def hours_to_seconds(self, hours, minutes, seconds):
-        return int(hours * 3600) + int(minutes * 60) + int(seconds)
+        return int(hours) * 3600 + int(minutes) * 60 + int(seconds)
 
 
     def on_file_picker_result(self, e: ft.FilePickerResultEvent):
@@ -273,9 +273,10 @@ class EditPage:
             return
         elif (float(self.rating.value) < 0 or float(self.rating.value) > 10) and is_overlap():
             PopUp("Rating must be between 0 and 10 and watch progress must be less than duration", page).open_dlg_modal(e, page)
+            return
         elif float(self.rating.value) < 0 or float(self.rating.value) > 10:
             PopUp("Rating must be between 0 and 10", page).open_dlg_modal(e, page)
-        elif is_overlap():
+        elif not is_overlap():
             PopUp("Watch progress must be less than duration", page).open_dlg_modal(e, page)
         else:
             conn = sqlite3.connect('database.db')
@@ -418,6 +419,10 @@ class MovieEditPage(EditPage):
                 cursor.execute(f"DELETE FROM ongoing_movies WHERE movies_id = {movie.getId()}")
                 watchlist_movies_dict[movie.getId()] = [movie.getId()]
                 cursor.execute(f"INSERT INTO watchlist_movies VALUES ({movie.getId()})")
+            else:
+                movie.setWatchProgress(self.hours_to_seconds(self.jam_watch_progress.value, self.menit_watch_progress.value, self.detik_watch_progress.value))
+                ongoing_movies_dict[movie.getId()][1] = movie.getWatchProgress()
+                cursor.execute(f"UPDATE ongoing_movies SET watched_duration = {movie.getWatchProgress()} WHERE movies_id = {movie.getId()}")
 
             if self.date_picker.value != None:
                 movie.setReleaseYear(self.date_picker.value.year)
@@ -458,8 +463,15 @@ class MovieEditPage(EditPage):
             print("Synopsis: ", movie.getSummary())
 
 class SeriesEditPage(EditPage):
-    def __init__(self, series: Series, page: ft.Page):
+    def __init__(self, series: Series, page: ft.Page, series_dict: dict, ongoing_series_dict: dict, review_series_dict: dict, watchlist_series_dict: dict):
         super().__init__(series, page)
+
+        self.submit_button = ft.Container(
+            ft.Row([
+                MyButton("Submit", on_click=lambda e: self.submit_click(e, series, page, series_dict, ongoing_series_dict, review_series_dict, watchlist_series_dict))
+            ]),
+            padding=ft.padding.only(top=20, left= 20)
+        )
 
         self.season_text = ft.Container(
             ft.Text("Season"),
@@ -537,7 +549,10 @@ class SeriesEditPage(EditPage):
             input_filter=ft.InputFilter(allow=True ,regex_string = r'\b[0-9]+\b', replacement_string="")
         )
 
-    def submit_click(self, e,  series: Series, page: ft.Page):
+    def submit_click(self, e,  series: Series, page: ft.Page, series_dict: dict, ongoing_series_dict: dict, review_series_dict: dict, watchlist_series_dict: dict):
+        conn = sqlite3.connect('database.db')
+        cursor = conn.cursor()
+
         def is_overlap():
             return self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value) <= self.hours_to_seconds(self.jam_watch_progress.value, self.menit_watch_progress.value, self.detik_watch_progress.value)
         if self.name_table.value == "":
@@ -548,9 +563,6 @@ class SeriesEditPage(EditPage):
             return
         elif (int(self.season_table.value) < 1):
             PopUp("Season must be greater than 0", page).open_dlg_modal(e, page)
-            return
-        elif  self.season_progress_table.value == "":
-            PopUp("Season progress must be filled", page).open_dlg_modal(e, page)
             return
         elif (int(self.season_progress_table.value) < 0):
             PopUp("Season progress must be greater than or equal to 0", page).open_dlg_modal(e, page)
@@ -573,8 +585,14 @@ class SeriesEditPage(EditPage):
         elif (int(self.episode_progress_table.value) > int(self.episode_table.value)):
             PopUp("Episode progress must be less than or equal to episode", page).open_dlg_modal(e, page)
             return
-        elif self.rating.value == "":
-            PopUp("Rating must be filled", page).open_dlg_modal(e, page)
+        elif (int(self.episode_progress_table.value) == 0 and int(self.episode_table.value) != 0):
+            PopUp("Episode shouldn't be 0 for an Ongoing Season", page).open_dlg_modal(e, page)
+            return
+        elif (int(self.episode_progress_table.value) != 0 and int(self.season_progress_table.value) == 0):
+            PopUp("Season progress shouldn't be 0 for an Ongoing Watch", page).open_dlg_modal(e, page)
+            return
+        elif (int(self.episode_progress_table.value) == 0 and int(self.season_progress_table.value) == 0 and int(self.watch_progress_table) != 0):
+            PopUp("Watch progress should be 0 for an Unwatched Series", page).open_dlg_modal(e, page)
             return
         elif (float(self.rating.value) < 0 or float(self.rating.value) > 10) and is_overlap():
             PopUp("Rating must be between 0 and 10 and watch progress must be less than duration", page).open_dlg_modal(e, page)
@@ -589,30 +607,109 @@ class SeriesEditPage(EditPage):
             if self.file_picker.result != None and self.file_picker.result.files != None:
                 for f in self.file_picker.result.files:
                     shutil.copy(f.path, os.path.join('assets/img/', series.getId() + '.jpg'))
+            
             series.setName(self.name_table.value)
+            series_dict[series.getId()][1] = series.getName()
+            cursor.execute(f"UPDATE series SET name = '{series.getName()}' WHERE series_id = {series.getId()}")
+
             series.setSeason(int(self.season_table.value))
-            series.setSeasonProgress(int(self.season_progress_table.value))
+            series_dict[series.getId()][5] = series.getSeason()
+            cursor.execute(f"UPDATE series SET season = {series.getSeason()} WHERE series_id = {series.getId()}")
+
+            if series.getSeasonProgress() == 0 and (int(self.season_progress_table.value) != 0 or int(self.episode_progress_table.value) != 0):
+                series.setSeasonProgress(int(self.season_progress_table.value))
+                ongoing_series_dict[series.getId()][1] = series.getSeasonProgress()
+                cursor.execute(f"UPDATE ongoing_series SET season_progress = {series.getSeasonProgress()} WHERE series_id = {series.getId()}")
+                watchlist_series_dict.pop(series.getId())
+                cursor.execute(f"DELETE FROM watchlist_series WHERE series_id = {series.getId()}")
+                ongoing_series_dict[series.getId()] = [series.getId(), int(self.season_progress_table.value)]
+                cursor.execute(f"INSERT INTO ongoing_series VALUES ({series.getId()}, {int(self.season_progress_table.value)})")
+            elif series.getSeasonProgress() != 0 and int(self.season_progress_table.value) == 0 :
+                series.setSeasonProgress(0)
+                ongoing_series_dict[series.getId()][1] = series.getSeasonProgress()
+                cursor.execute(f"UPDATE ongoing_series SET season_progress = {series.getSeasonProgress()} WHERE series_id = {series.getId()}")
+                ongoing_series_dict.pop(series.getId())
+                cursor.execute(f"DELETE FROM ongoing_series WHERE series_id = {series.getId()}")
+                watchlist_series_dict[series.getId()] = [series.getId()]
+                cursor.execute(f"INSERT INTO watchlist_series VALUES ({series.getId()})")
+            else:
+                series.setSeasonProgress(int(self.season_progress_table.value))
+                ongoing_series_dict[series.getId()][1] = series.getSeasonProgress()
+                cursor.execute(f"UPDATE ongoing_series SET season_progress = {series.getSeasonProgress()} WHERE series_id = {series.getId()}")
+
             series.setEpisode(int(self.episode_table.value))
-            series.setEpisodeProgress(int(self.episode_progress_table.value))
+            series_dict[series.getId()][6] = series.getEpisode()
+            cursor.execute(f"UPDATE series SET episode = {series.getEpisode()} WHERE series_id = {series.getId()}")
+
+            if series.getEpisodeProgress() == 0 and (int(self.episode_progress_table.value) != 0 or int(self.season_progress_table.value) != 0):
+                series.setEpisodeProgress(int(self.episode_progress_table.value))
+                ongoing_series_dict[series.getId()][2] = series.getEpisodeProgress()
+                cursor.execute(f"UPDATE ongoing_series SET episode_progress = {series.getEpisodeProgress()} WHERE series_id = {series.getId()}")
+                watchlist_series_dict.pop(series.getId())
+                cursor.execute(f"DELETE FROM watchlist_series WHERE series_id = {series.getId()}")
+                ongoing_series_dict[series.getId()] = [series.getId(), int(self.episode_progress_table.value)]
+                cursor.execute(f"INSERT INTO ongoing_series VALUES ({series.getId()}, {int(self.episode_progress_table.value)})")
+            elif series.getEpisodeProgress() != 0 and (int(self.episode_progress_table.value) == 0 or series.getSeasonProgress() == 0):
+                series.setEpisodeProgress(0)
+                ongoing_series_dict[series.getId()][2] = series.getEpisodeProgress()
+                cursor.execute(f"UPDATE ongoing_series SET episode_progress = {series.getEpisodeProgress()} WHERE series_id = {series.getId()}")
+                ongoing_series_dict.pop(series.getId())
+                cursor.execute(f"DELETE FROM ongoing_series WHERE series_id = {series.getId()}")
+                watchlist_series_dict[series.getId()] = [series.getId()]
+                cursor.execute(f"INSERT INTO watchlist_series VALUES ({series.getId()})")
+            else:
+                series.setEpisodeProgress(int(self.episode_progress_table.value))
+                ongoing_series_dict[series.getId()][2] = series.getEpisodeProgress()
+                cursor.execute(f"UPDATE ongoing_series SET episode_progress = {series.getEpisodeProgress()} WHERE series_id = {series.getId()}")
+            
             series.setDuration(self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value))
+            series_dict[series.getId()][2] = series.getDuration()
+            cursor.execute(f"UPDATE series SET duration = {series.getDuration()} WHERE series_id = {series.getId()}")
+
             series.setWatchProgress(self.hours_to_seconds(self.jam_watch_progress.value, self.menit_watch_progress.value, self.detik_watch_progress.value))
+            ongoing_series_dict[series.getId()][3] = series.getWatchProgress()
+            cursor.execute(f"UPDATE ongoing_series SET watched_duration = {series.getWatchProgress()} WHERE series_id = {series.getId()}")
+            
             if self.date_picker.value != None:
-                series.setReleaseYear(self.date_picker.value.date())
+                series.setReleaseYear(self.date_picker.value.year)
+                series_dict[series.getId()][3] = series.getReleaseYear()
+                cursor.execute(f"UPDATE series SET release_year = '{series.getReleaseYear()}' WHERE series_id = {series.getId()}")
+
             series.setGenre(self.genre.value)
-            series.setRating(float(self.rating.value))
+            series_dict[series.getId()][4] = series.getGenre()
+            cursor.execute(f"UPDATE series SET genre = '{series.getGenre()}' WHERE series_id = {series.getId()}")
+
+            if self.rating.value != "" and series.getId() in review_series_dict:
+                series.setRating(float(self.rating.value))
+                review_series_dict[series.getId()][1] = series.getRating()
+                cursor.execute(f"UPDATE review_series SET rating = {series.getRating()} WHERE series_id = {series.getId()}")
+            elif self.rating.value != "" and series.getId() not in review_series_dict:
+                series.setRating(float(self.rating.value))
+                review_series_dict[series.getId()] = [series.getId(), series.getRating()]
+                cursor.execute(f"INSERT INTO review_series VALUES ({series.getId()}, {series.getRating()}, 'Ini review apaan njir')")
+            elif self.rating.value == "" and series.getId() in review_series_dict:
+                series.setRating(None)
+                review_series_dict.pop(series.getId())
+                cursor.execute(f"DELETE FROM review_series WHERE series_id = {series.getId()}")
+            
             series.setSummary(self.summary.value)
+            series_dict[series.getId()][5] = series.getSummary()
+            cursor.execute(f"UPDATE series SET synopsis = '{series.getSummary()}' WHERE series_id = {series.getId()}")
+
+            conn.commit()
+
             page.update()
-            print(series.getName())
-            print(series.getSeason())
-            print(series.getSeasonProgress())
-            print(series.getEpisode())
-            print(series.getEpisodeProgress())
-            print(series.getDuration())
-            print(series.getWatchProgress())
-            print(series.getReleaseYear())
-            print(series.getGenre())
-            print(series.getRating())
-            print(series.getSummary())
+            print("Name: ", series.getName())
+            print("Season: ", series.getSeason())
+            print("Season Progress: ", series.getSeasonProgress())
+            print("Episode: ", series.getEpisode())
+            print("Episode Progress: ", series.getEpisodeProgress())
+            print("Duration: ", series.getDuration())
+            print("Watch Progress: ", series.getWatchProgress())
+            print("Release Year: ", series.getReleaseYear())
+            print("Genre: ", series.getGenre())
+            print("Rating: ", series.getRating())
+            print("Summary: ", series.getSummary())
 
     def show_page(self, page: ft.Page):
         page.overlay.append(self.date_picker)

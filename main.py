@@ -104,15 +104,16 @@ try:
         synopsis = series_dict[id][5] if id in series_dict else None
         genre = series_dict[id][4] if id in series_dict else None
         rating = review_series_dict[id][1] if id in review_series_dict else None
-        watchProgress = ongoing_series_dict[id][1] if id in ongoing_series_dict else None
+        watchProgress = ongoing_series_dict[id][3] if id in ongoing_series_dict else None
         season = series_dict[id][6] if id in series_dict else None
         episode = series_dict[id][7] if id in series_dict else None
-        current_season = series_dict[id][8] if id in series_dict else None
-        current_episode = series_dict[id][9] if id in series_dict else None
+        current_season = ongoing_series_dict[id][1] if id in ongoing_series_dict else None
+        current_episode = ongoing_series_dict[id][2] if id in ongoing_series_dict else None
 
         return Series(id, name, releaseDate, duration, synopsis, genre, rating, watchProgress, "assets/img/" + str(id) + ".jpg", season, episode, current_season, current_episode)
 
     tes_mov = make_movies(1)
+    tes_series = make_series(1)
     movie = Movie("1", "The Falcon and The Winter Soldier", "2020-07-20", 5000, "Sam Wilson and Bucky Barnes realize that their futures are anything but normal.", "Horror", 8.0, 1000, "assets/img/1.jpg")
     series = Series("2", "The Falcon and The Winter Soldier", "2020-07-20", 5000, None, "Horror", 8.0, 1000, "https://www.themoviedb.org/t/p/original/6kbAMLteGO8yyewYau6bJ683sw7.jpg", 1, 8, 1, 4)
     def main(page: ft.Page):
@@ -121,7 +122,8 @@ try:
         page.bgcolor = "#000D20"
 
         page.vertical_alignment = ft.MainAxisAlignment.START
-        edit_page = MovieEditPage(tes_mov, page, movies_dict, ongoing_movies_dict, review_movies_dict, watchlist_movies_dict)
+        # edit_page = MovieEditPage(tes_mov, page, movies_dict, ongoing_movies_dict, review_movies_dict, watchlist_movies_dict)
+        edit_page = SeriesEditPage(tes_series, page, series_dict, ongoing_series_dict, review_series_dict, watchlist_series_dict)
         edit_page.show_page(page)
 
     ft.app(target=main, upload_dir="assets/img", assets_dir="assets")

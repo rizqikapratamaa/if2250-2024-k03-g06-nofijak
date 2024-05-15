@@ -1,4 +1,5 @@
 import sqlite3
+import content
 
 # Connect to the SQLite database file
 conn = sqlite3.connect('database.db')
@@ -95,8 +96,23 @@ try:
 
         print("id:", id, "name:", name, "releaseDate:", releaseDate, "duration:", duration, "synopsis:", synopsis, "genre:", genre, "rating:", rating, "watchProgress:", watchProgress)
         
-    make_movies(3)
+    def make_series(id):
+        id = series_dict[id][0] if id in series_dict else None
+        name = series_dict[id][1] if id in series_dict else None
+        releaseDate = series_dict[id][3] if id in series_dict else None
+        duration = series_dict[id][2] if id in series_dict else None
+        synopsis = series_dict[id][5] if id in series_dict else None
+        genre = series_dict[id][4] if id in series_dict else None
+        rating = review_series_dict[id][1] if id in review_series_dict else None
+        watchProgress = ongoing_series_dict[id][3] if id in ongoing_series_dict else None
+        season = series_dict[id][6] if id in series_dict else None
+        episode = series_dict[id][7] if id in series_dict else None
+        current_season = ongoing_series_dict[id][1] if id in ongoing_series_dict else None
+        current_episode = ongoing_series_dict[id][2] if id in ongoing_series_dict else None
+        print("id:", id, "name:", name, "releaseDate:", releaseDate, "duration:", duration, "synopsis:", synopsis, "genre:", genre, "rating:", rating, "watchProgress:", watchProgress, "season:", season, "episode:", episode, "current_season:", current_season, "current_episode:", current_episode)
 
+    # make_series(1)
+    print(make_series(1))
 except sqlite3.Error as e:
     print("An error occurred:", e)
 
