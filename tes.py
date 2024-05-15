@@ -109,7 +109,7 @@ try:
 
         print("id: ", id, "name: ", name, "releaseDate: ", releaseDate, "duration: ", duration, "synopsis: ", synopsis, "genre: ", genre, "rating: ", rating, "watchProgress: ", watchProgress, "season: ", season, "episode: ", episode, "current_season: ", current_season, "current_episode: ", current_episode)
 
-    print(movies_dict)
+    print(finished_series_dict)
 
 except sqlite3.Error as e:
     print("An error occurred:", e)

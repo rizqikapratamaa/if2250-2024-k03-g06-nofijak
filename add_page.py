@@ -359,10 +359,30 @@ class AddPage:
         )
         
 class MovieAddPage(AddPage):
-    def __init__(self, page: ft.Page, movie_dict: dict, ongoing_movie_dict: dict, review_movie_dict: dict, watchlist_movie_dict: dict, finished_movie_dict: dict):
+    def __init__(self, page: ft.Page, movie_dict: dict, ongoing_movie_dict: dict, review_movie_dict: dict, watchlist_movie_dict: dict, finished_movie_dict: dict, series_dict: dict, ongoing_series_dict: dict, review_series_dict: dict, watchlist_series_dict: dict, finished_series_dict: dict):
         super().__init__(page)
         self.edit_text = ft.Container(
             ft.Text("Add Movie", size=20, color="#FFFFFF")
+        )
+
+        self.option_button = ft.Container(
+            content= ft.Row(
+                [
+                    OptionButton("Movies", on_click=lambda e: MovieAddPage(page, movie_dict, ongoing_movie_dict, review_movie_dict, watchlist_movie_dict, finished_movie_dict, series_dict, ongoing_series_dict, review_series_dict, watchlist_series_dict, finished_series_dict).movies_show_page(page)),
+                    OptionButton("Series", on_click=lambda e: SeriesAddPage(page, movie_dict, ongoing_movie_dict, review_movie_dict, watchlist_movie_dict, finished_movie_dict, series_dict, ongoing_series_dict, review_series_dict, watchlist_series_dict, finished_series_dict).series_show_page(page))
+                ],
+                alignment= ft.MainAxisAlignment.CENTER,
+                spacing= 0
+                
+            ),
+            animate=True,
+            bgcolor="#FED466",
+            alignment= ft.alignment.center,
+            width=200,
+            height=50,
+            border_radius= 30,
+            padding=0,
+            shape= ft.RoundedRectangleBorder(radius=30)
         )
 
         self.submit_button = ft.Container(
@@ -428,11 +448,6 @@ class MovieAddPage(AddPage):
                 finished_movie_dict[id] = [id]
             conn.commit()
             
-            
-
-
-        
-        
 
     def movies_show_page(self, page: ft.Page):
         page.clean()
@@ -492,16 +507,36 @@ class MovieAddPage(AddPage):
         )
     
 class SeriesAddPage(AddPage):
-    def __init__(self, page: ft.Page, series_dict: dict, ongoing_series_dict: dict, review_series_dict: dict, watchlist_series_dict: dict):
+    def __init__(self, page: ft.Page, movie_dict, ongoing_movie_dict, review_movie_dict, watchlist_movie_dict, finished_movie_dict, series_dict, ongoing_series_dict, review_series_dict, watchlist_series_dict, finished_series_dict):
         super().__init__(page)
 
         self.edit_text = ft.Container(
             ft.Text("Add Series", size=20, color="#FFFFFF")
         )
 
+        self.option_button = ft.Container(
+            content= ft.Row(
+                [
+                    OptionButton("Movies", on_click=lambda e: MovieAddPage(page, movie_dict, ongoing_movie_dict, review_movie_dict, watchlist_movie_dict, finished_movie_dict, series_dict, ongoing_series_dict, review_series_dict, watchlist_series_dict, finished_series_dict).movies_show_page(page)),
+                    OptionButton("Series", on_click=lambda e: SeriesAddPage(page, movie_dict, ongoing_movie_dict, review_movie_dict, watchlist_movie_dict, finished_movie_dict, series_dict, ongoing_series_dict, review_series_dict, watchlist_series_dict, finished_series_dict).series_show_page(page))
+                ],
+                alignment= ft.MainAxisAlignment.CENTER,
+                spacing= 0
+                
+            ),
+            animate=True,
+            bgcolor="#FED466",
+            alignment= ft.alignment.center,
+            width=200,
+            height=50,
+            border_radius= 30,
+            padding=0,
+            shape= ft.RoundedRectangleBorder(radius=30)
+        )
+
         self.submit_button = ft.Container(
             ft.Row([
-                SubmitButton("Submit", on_click=lambda e: self.submit_click(e))
+                SubmitButton("Submit", on_click=lambda e: self.submit_click(e, page, series_dict, ongoing_series_dict, review_series_dict, watchlist_series_dict, finished_series_dict))
             ]),
             padding=ft.padding.only(top=20, left= 20)
         )
@@ -582,10 +617,79 @@ class SeriesAddPage(AddPage):
             input_filter=ft.InputFilter(allow=True ,regex_string = r'\b[0-9]+\b', replacement_string="")
         )
 
-    def submit_click(self, e, page: ft.Page, series_dict: dict, ongoing_series_dict: dict, review_series_dict: dict, watchlist_series_dict: dict):
-        conn = sqlite3.connect('database.db')
-        cursor = conn.cursor()
-        return
+    def submit_click(self, e, page: ft.Page, series_dict: dict, ongoing_series_dict: dict, review_series_dict: dict, watchlist_series_dict: dict, finished_series_dict: dict):
+        
+        
+        def is_overlap():
+            return self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value) <= self.hours_to_seconds(self.jam_watch_progress.value, self.menit_watch_progress.value, self.detik_watch_progress.value)
+        if self.name_table.value is None:
+            PopUp("Name cannot be empty", page).open_dlg_modal(e, page)
+            return
+        elif not 0 <= float(self.rating.value) <= 10:
+            PopUp("Rating must be between 0 and 10", page).open_dlg_modal(e, page)
+            return
+        elif self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value) == 0:
+            PopUp("Duration cannot be 0", page).open_dlg_modal(e, page)
+            return
+        elif self.release_year_table.value is None:
+            PopUp("Release Date cannot be empty", page).open_dlg_modal(e, page)
+            return
+        elif self.genre.value is None:
+            PopUp("Genre cannot be empty", page).open_dlg_modal(e, page)
+            return
+        elif is_overlap():
+            PopUp("Watch Progress cannot be more than Duration", page).open_dlg_modal(e, page)
+            return
+        elif self.season_table.value is None:
+            PopUp("Season cannot be empty", page).open_dlg_modal(e, page)
+            return
+        elif self.episode_table.value is None:
+            PopUp("Episode cannot be empty", page).open_dlg_modal(e, page)
+            return
+        else:
+            conn = sqlite3.connect('database.db')
+            cursor = conn.cursor()
+            def generate_new_key(dictionary):
+                key = 1
+                while key in dictionary:
+                    key += 1
+                return key
+
+            id = generate_new_key(series_dict)
+            name = self.name_table.value
+            season = self.season_table.value
+            episode = self.episode_table.value
+            season_progress = self.season_progress_table.value
+            episode_progress = self.episode_progress_table.value
+            duration = self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value)
+            watchProgress = self.hours_to_seconds(self.jam_watch_progress.value, self.menit_watch_progress.value, self.detik_watch_progress.value)
+            release_year = self.release_year_table.value
+            genre  = self.genre.value
+            rating = self.rating.value
+            synopsis = self.summary.value
+
+            cursor.execute("INSERT INTO series VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (id, name, duration, release_year, genre, synopsis, season, episode))
+            series_dict[id] = [id, name, duration, release_year, genre, synopsis, season, episode]
+
+            if self.rating.value is not None:
+                cursor.execute("INSERT INTO review_series VALUES (?, ?, ?)", (id, rating, "Selamat anda menemukan easter egg"))
+                review_series_dict[id] = [id, rating, "Selamat anda menemukan easter egg"]
+            
+            if (season_progress is None or season_progress == 0) or (episode_progress is None or episode_progress == 0):
+                cursor.execute("INSERT INTO watchlist_series VALUES (?)", (id))
+                watchlist_series_dict[id] = [id]
+            
+            if (season_progress is not None or season_progress != 0) or (episode_progress is not None or episode_progress != 0):
+                cursor.execute("INSERT INTO ongoing_series VALUES (?, ?, ?, ?)", (id, season_progress, episode_progress, watchProgress))
+                ongoing_series_dict[id] = [id, season_progress, episode_progress, watchProgress]
+            
+            if season == season_progress and episode == episode_progress and duration == watchProgress:
+                cursor.execute("INSERT INTO finished_series VALUES (?, CURDATE())", (id))
+                finished_series_dict[id] = [id]
+            
+            conn.commit()
+
+            print("id: ", id, "name: ", name, "releaseDate: ", release_year, "duration: ", duration, "synopsis: ", synopsis, "genre: ", genre, "rating: ", rating, "watchProgress: ", watchProgress, "season: ", season, "episode: ", episode, "current_season: ", season_progress, "current_episode: ", episode_progress)
 
     def series_show_page(self, page: ft.Page):
         page.clean()

@@ -119,7 +119,7 @@ try:
         page.bgcolor = "#000D20"
 
         page.vertical_alignment = ft.MainAxisAlignment.START
-        edit_page = MovieAddPage(page, movies_dict, ongoing_movies_dict, review_movies_dict, watchlist_movies_dict, finished_movies_dict)
+        edit_page = SeriesAddPage(page, movies_dict, ongoing_movies_dict, review_movies_dict, watchlist_movies_dict, finished_movies_dict, series_dict, ongoing_series_dict, review_series_dict, watchlist_series_dict, finished_series_dict)
         edit_page.show_page(page)
 
     ft.app(target=main, upload_dir="assets/img", assets_dir="assets")
