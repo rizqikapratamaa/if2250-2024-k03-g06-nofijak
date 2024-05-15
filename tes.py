@@ -1,8 +1,8 @@
-from edit_page import *
 import sqlite3
-import flet as ft
+import content
 
-conn = sqlite3.connect("database.db")
+# Connect to the SQLite database file
+conn = sqlite3.connect('database.db')
 
 try:
     # Create a cursor object
@@ -83,19 +83,19 @@ try:
     watchlist_series_dict = {}
     for row in watchlist_series:
         watchlist_series_dict[row[0]] = list(row)
-        
+    
     def make_movies(id):
         id = movies_dict[id][0] if id in movies_dict else None
         name = movies_dict[id][1] if id in movies_dict else None
         releaseDate = movies_dict[id][3] if id in movies_dict else None
-        duration = movies_dict[id][2] if id in movies_dict else 0
+        duration = movies_dict[id][2] if id in movies_dict else None
         synopsis = movies_dict[id][5] if id in movies_dict else None
         genre = movies_dict[id][4] if id in movies_dict else None
         rating = review_movies_dict[id][1] if id in review_movies_dict else None
-        watchProgress = ongoing_movies_dict[id][1] if id in ongoing_movies_dict else 0
+        watchProgress = ongoing_movies_dict[id][1] if id in ongoing_movies_dict else None
 
-        return Movie(id, name, releaseDate, duration, synopsis, genre, rating, watchProgress, "assets/img/" + str(id) + ".jpg")
-    
+        print("id:", id, "name:", name, "releaseDate:", releaseDate, "duration:", duration, "synopsis:", synopsis, "genre:", genre, "rating:", rating, "watchProgress:", watchProgress)
+        
     def make_series(id):
         id = series_dict[id][0] if id in series_dict else None
         name = series_dict[id][1] if id in series_dict else None
@@ -109,25 +109,10 @@ try:
         episode = series_dict[id][7] if id in series_dict else None
         current_season = ongoing_series_dict[id][1] if id in ongoing_series_dict else None
         current_episode = ongoing_series_dict[id][2] if id in ongoing_series_dict else None
+        print("id:", id, "name:", name, "releaseDate:", releaseDate, "duration:", duration, "synopsis:", synopsis, "genre:", genre, "rating:", rating, "watchProgress:", watchProgress, "season:", season, "episode:", episode, "current_season:", current_season, "current_episode:", current_episode)
 
-        return Series(id, name, releaseDate, duration, synopsis, genre, rating, watchProgress, "assets/img/" + str(id) + ".jpg", season, episode, current_season, current_episode)
-
-    tes_mov = make_movies(1)
-    tes_series = make_series(1)
-    movie = Movie("1", "The Falcon and The Winter Soldier", "2020-07-20", 5000, "Sam Wilson and Bucky Barnes realize that their futures are anything but normal.", "Horror", 8.0, 1000, "assets/img/1.jpg")
-    series = Series("2", "The Falcon and The Winter Soldier", "2020-07-20", 5000, None, "Horror", 8.0, 1000, "https://www.themoviedb.org/t/p/original/6kbAMLteGO8yyewYau6bJ683sw7.jpg", 1, 8, 1, 4)
-    def main(page: ft.Page):
-        page.scroll = True
-        page.title = "Nofijak"
-        page.bgcolor = "#000D20"
-
-        page.vertical_alignment = ft.MainAxisAlignment.START
-        # edit_page = MovieEditPage(tes_mov, page, movies_dict, ongoing_movies_dict, review_movies_dict, watchlist_movies_dict)
-        edit_page = SeriesEditPage(tes_series, page, series_dict, ongoing_series_dict, review_series_dict, watchlist_series_dict)
-        edit_page.show_page(page)
-
-    ft.app(target=main, upload_dir="assets/img", assets_dir="assets")
-
+    # make_series(1)
+    print(make_series(1))
 except sqlite3.Error as e:
     print("An error occurred:", e)
 
