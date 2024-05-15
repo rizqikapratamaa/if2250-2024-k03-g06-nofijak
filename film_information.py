@@ -52,7 +52,11 @@ class FilmInformation:
                 self.duration,
                 self.lastPlay,
                 ft.ElevatedButton("Edit Information")
-            ])
+            ], alignment=ft.MainAxisAlignment.SPACE_EVENLY),
+            bgcolor="#092143",
+            margin=ft.margin.only(left=20),
+            height=450,
+            width= page.window_width - 500
         )
         
         self.content = ft.Container(
@@ -74,13 +78,18 @@ class FilmInformation:
                 self.header,
                 self.content,
                 self.delete
-            ]),
+                ]),
+            width = page.window_width,
+            height = page.window_height,
             bgcolor="#000D20"
         ))
         
 series = Movie("1", "The Falcon and The Winter Soldier", 50, "Sam Wilson and Bucky Barnes realize that their futures are anything but normal.", ["Action", "Adventure", "Drama"], 8.0, "2021-04-23", "https://www.themoviedb.org/t/p/original/6kbAMLteGO8yyewYau6bJ683sw7.jpg")
 
 def main(Page: ft.Page):
+    Page.window_height = 720
+    Page.window_width = 1280
+    
     film = FilmInformation(series, Page)
     
     film.show_page(Page)
