@@ -1,14 +1,27 @@
 import flet as ft
 
-class EntryCard(ft.Card):
+class informasiFilmSeries(ft.Container):
+    def __init__(self, page):
+        super().__init__()
+        self.width = page.window_width,
+        self.height = page.window_height,
+        self.bgcolor = '#000D20'
+
+   
+
+class EntryCard(ft.ElevatedButton):
     # Constructor entry card dengan parameter
-    def __init__(self, title, description, progress, jumlahepisode, rating, imagepath):
+    def __init__(self, title, description, progress, jumlahepisode, rating, imagepath, page, informasi):
         super().__init__()
         self.width = 600
-        self.color = "#092143"
+        self.bgcolor = "#092143"
+        self.on_click = self.informasiFilmSeries(title, description, progress, jumlahepisode, rating, imagepath, page, informasi)
+        self.style=ft.ButtonStyle(
+                shape=ft.RoundedRectangleBorder(radius=10),
+            )
         self.content = ft.Row([
             ft.Container(
-                padding=ft.padding.only(top=10, bottom=10, left=10),
+                padding=ft.padding.only(top=10, bottom=10, left=-15),
                 content=ft.Image(src=imagepath, width=115, height=115, fit=ft.ImageFit.COVER),
             ),
             ft.Column([
@@ -24,11 +37,61 @@ class EntryCard(ft.Card):
                 ft.Text(str(rating))
             ]),
         ],
-        spacing=25)
+        spacing=18)
+    
+    def informasiFilmSeries(self, title, description, progress, jumlahepisode, rating, imagepath, page, informasi : ft.Column):
+        informasi.controls.append(
+            ft.ElevatedButton(
+                width=600,
+                bgcolor="#092143",
+                style=ft.ButtonStyle(
+                    shape=ft.RoundedRectangleBorder(radius=10),
+                ),
+                content=ft.Row(
+                    [
+                        ft.Container(
+                            padding=ft.padding.only(top=10, bottom=10, left=-15),
+                            content=ft.Image(src=imagepath, width=115, height=115, fit=ft.ImageFit.COVER),
+                        ),
+                        ft.Column(
+                            [
+                                ft.Text(title, size=20, color="#DAAB2D"),
+                                ft.Text(description, size=15),
+                            ]
+                        ),
+                        ft.Column(
+                            [
+                                ft.Text("Progress", size=20, color="#DAAB2D"),
+                                ft.Text(f"{progress}% ({jumlahepisode} eps)"),
+                            ]
+                        ),
+                        ft.Column(
+                            [
+                                ft.Text("Rating", size=20, color="#DAAB2D"),
+                                ft.Text(str(rating))
+                            ]
+                        ),
+                    ],
+                    spacing=18
+                )
+            )
+        )
+        page.go("/informasi-film-series")      
+        # page.views.append(
+        #     ft.View(
+        #         [
+        #             ft.Container(
+        #             width = page.window_width,
+        #             height = page.window_height,
+        #             bgcolor = '#000D20',
+        #             )
+        #         ],
+        #     )
+        # )
 
 class ScrollableCard(ft.Column):
     def __init__(self):
-        # Inisialisasi base class dari ft.Column
+        # Inisialisasi base class dari ft.ColumnF
         super().__init__()
         # Properti untuk scrollable card
         self.height = 250
@@ -36,9 +99,9 @@ class ScrollableCard(ft.Column):
         self.scroll = ft.ScrollMode.ALWAYS
     
     # Method untuk menambahkan film pada halaman entries
-    def tambahCard(self, title, description, progress, jumlahEpisode, rating, imagepath):
+    def tambahCard(self, title, description, progress, jumlahEpisode, rating, imagepath, page, Informasi):
         self.controls.append(
-            EntryCard(title, description, progress, jumlahEpisode, rating, imagepath)
+            EntryCard(title, description, progress, jumlahEpisode, rating, imagepath, page, Informasi)
         )
 
 
@@ -62,19 +125,30 @@ def main(page: ft.Page):
     WATCHLIST = 'watchlist'
     
     header_buttons = []
-    
+    kolomInformasi = ft.Column(
+        width = page.window_width,
+        height = page.window_height
+    )
+    informasi =  ft.Container(
+        width = page.window_width,
+        height = page.window_height,
+        bgcolor = '#000D20',
+        content = kolomInformasi
+    )
     # Functions
     def tambahFilmSeries(e):
-        page.go("/tambah-film-series")
         scrollCard.tambahCard(
             "Adventure Time",
             "Adventure, Melodrama, Animation",
             74,
             45,
             8.5,
-            "https://yt3.googleusercontent.com/ytc/AIdro_kECsRD-CffXuBZyiBFW6eTnfhnvc3Rkmw9EwXWH9TSUw=s900-c-k-c0x00ffffff-no-rj"
+            "https://yt3.googleusercontent.com/ytc/AIdro_kECsRD-CffXuBZyiBFW6eTnfhnvc3Rkmw9EwXWH9TSUw=s900-c-k-c0x00ffffff-no-rj",
+            page,
+            kolomInformasi
         )
-
+        page.update()
+    
     def textbox_changed(e):
         t.value = e.control.value
         page.update()
@@ -150,6 +224,8 @@ def main(page: ft.Page):
         padding=ft.padding.only(right=50),
         content=ft.FloatingActionButton(icon=ft.icons.ADD, on_click=tambahFilmSeries, bgcolor=BUTTON_ON_COLOR, foreground_color='#000000', shape=ft.RoundedRectangleBorder(radius=50))
     )
+
+    
     
     # >> Search box
     t = ft.Text()
@@ -205,8 +281,20 @@ def main(page: ft.Page):
                         ]),
                     )
                 ],
+
             )
         )
+
+
+        if page.route == "/informasi-film-series":
+            page.views.append(
+                ft.View(
+                    "/informasi-film-series",
+                    [
+                        informasi
+                    ],
+                )
+            )
         page.update()
 
 
