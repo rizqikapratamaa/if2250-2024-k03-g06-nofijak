@@ -13,7 +13,7 @@ DELETE FROM movies;
 
 CREATE TABLE movies (
     movies_id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(50),
+    name VARCHAR(100),
     duration INT,
     release_year INT,
     genre VARCHAR(30), 
@@ -45,7 +45,7 @@ CREATE TABLE review_movies (
 
 CREATE TABLE series (
     series_id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(50),
+    name VARCHAR(100),
     duration INT,
     release_year INT,
     genre VARCHAR(30), 

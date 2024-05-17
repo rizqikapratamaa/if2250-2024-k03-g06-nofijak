@@ -1,0 +1,16 @@
+insert into finished_series (series_id, finished_date) values (44, '2024-04-04');
+insert into finished_series (series_id, finished_date) values (50, '2024-02-10');
+insert into finished_series (series_id, finished_date) values (38, '2024-02-16');
+insert into finished_series (series_id, finished_date) values (48, '2024-03-09');
+insert into finished_series (series_id, finished_date) values (47, '2024-01-04');
+insert into finished_series (series_id, finished_date) values (15, '2024-03-15');
+insert into finished_series (series_id, finished_date) values (21, '2024-01-21');
+insert into finished_series (series_id, finished_date) values (4,  '2024-01-29');
+insert into finished_series (series_id, finished_date) values (41, '2024-04-20');
+insert into finished_series (series_id, finished_date) values (19, '2024-03-20');
+insert into finished_series (series_id, finished_date) values (34, '2024-01-30');
+insert into finished_series (series_id, finished_date) values (40, '2024-02-22');
+insert into finished_series (series_id, finished_date) values (32, '2024-03-22');
+insert into finished_series (series_id, finished_date) values (30, '2024-02-25');
+insert into finished_series (series_id, finished_date) values (13, '2024-04-20');
+insert into finished_series (series_id, finished_date) values (37, '2024-01-24');

@@ -1,0 +1,16 @@
+insert into watchlist_movies (movies_id) values (39);
+insert into watchlist_movies (movies_id) values (23);
+insert into watchlist_movies (movies_id) values (29);
+insert into watchlist_movies (movies_id) values (8); 
+insert into watchlist_movies (movies_id) values (27);
+insert into watchlist_movies (movies_id) values (5); 
+insert into watchlist_movies (movies_id) values (11);
+insert into watchlist_movies (movies_id) values (44);
+insert into watchlist_movies (movies_id) values (35);
+insert into watchlist_movies (movies_id) values (32);
+insert into watchlist_movies (movies_id) values (43);
+insert into watchlist_movies (movies_id) values (28);
+insert into watchlist_movies (movies_id) values (30);
+insert into watchlist_movies (movies_id) values (7); 
+insert into watchlist_movies (movies_id) values (12);
+insert into watchlist_movies (movies_id) values (24);

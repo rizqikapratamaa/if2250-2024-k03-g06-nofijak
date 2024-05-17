@@ -1,0 +1,16 @@
+insert into review_series (series_id, rating, review) values (44, 10, "anjay");
+insert into review_series (series_id, rating, review) values (50, 7, "anjay");
+insert into review_series (series_id, rating, review) values (38, 7, "anjay");
+insert into review_series (series_id, rating, review) values (48, 7, "anjay");
+insert into review_series (series_id, rating, review) values (47, 7, "anjay");
+insert into review_series (series_id, rating, review) values (15, 7, "anjay");
+insert into review_series (series_id, rating, review) values (21, 8, "anjay");
+insert into review_series (series_id, rating, review) values (4,  8, "anjay");
+insert into review_series (series_id, rating, review) values (41, 8, "anjay");
+insert into review_series (series_id, rating, review) values (19, 8, "anjay");
+insert into review_series (series_id, rating, review) values (34, 8, "anjay");
+insert into review_series (series_id, rating, review) values (40, 8, "anjay");
+insert into review_series (series_id, rating, review) values (32, 10, "anjay");
+insert into review_series (series_id, rating, review) values (30, 10, "anjay");
+insert into review_series (series_id, rating, review) values (13, 10, "anjay");
+insert into review_series (series_id, rating, review) values (37, 10, "anjay");

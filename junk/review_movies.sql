@@ -1,0 +1,16 @@
+insert into review_movies (movies_id, rating) values (16, 7);
+insert into review_movies (movies_id, rating) values (4,  7);
+insert into review_movies (movies_id, rating) values (25, 7);
+insert into review_movies (movies_id, rating) values (21, 7);
+insert into review_movies (movies_id, rating) values (34, 8);
+insert into review_movies (movies_id, rating) values (46, 8);
+insert into review_movies (movies_id, rating) values (15, 8);
+insert into review_movies (movies_id, rating) values (50, 8);
+insert into review_movies (movies_id, rating) values (33, 8);
+insert into review_movies (movies_id, rating) values (31, 9);
+insert into review_movies (movies_id, rating) values (49, 9);
+insert into review_movies (movies_id, rating) values (9,  9);
+insert into review_movies (movies_id, rating) values (22, 9);
+insert into review_movies (movies_id, rating) values (14, 7);
+insert into review_movies (movies_id, rating) values (48, 7);
+insert into review_movies (movies_id, rating) values (37, 7);

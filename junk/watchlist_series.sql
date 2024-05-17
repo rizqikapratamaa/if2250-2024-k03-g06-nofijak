@@ -1,0 +1,16 @@
+insert into watchlist_series (series_id) values (25);
+insert into watchlist_series (series_id) values (18);
+insert into watchlist_series (series_id) values (20);
+insert into watchlist_series (series_id) values (5); 
+insert into watchlist_series (series_id) values (49);
+insert into watchlist_series (series_id) values (12);
+insert into watchlist_series (series_id) values (8); 
+insert into watchlist_series (series_id) values (10);
+insert into watchlist_series (series_id) values (27);
+insert into watchlist_series (series_id) values (29);
+insert into watchlist_series (series_id) values (43);
+insert into watchlist_series (series_id) values (35);
+insert into watchlist_series (series_id) values (1); 
+insert into watchlist_series (series_id) values (3); 
+insert into watchlist_series (series_id) values (24);
+insert into watchlist_series (series_id) values (7); 
