@@ -86,7 +86,7 @@ class EditPage(ft.Container):
                     label="Jam", 
                     border_radius=50,
                     alignment=ft.alignment.center, 
-                    value=content.getDuration() // 3600, 
+                    value=content.getDuration() // 3600 if content.getDuration() != None else 0, 
                     width=65,
                     options = [ft.dropdown.Option(str(i)) for i in range(60)], 
                     bgcolor=ft.colors.WHITE, 
@@ -98,7 +98,7 @@ class EditPage(ft.Container):
         self.menit_duration = ft.Dropdown(
                     label="Menit",
                     border_radius=50,
-                    value=(content.getDuration() % 3600) // 60,
+                    value=(content.getDuration() % 3600) // 60 if content.getDuration() != None else 0,
                     width=65, 
                     options= [ft.dropdown.Option(str(i)) for i in range(60)],
                     label_style= ft.TextStyle(color="#FED466", font_family="Consolas", bgcolor="#000D20"),
@@ -109,7 +109,7 @@ class EditPage(ft.Container):
         self.detik_duration = ft.Dropdown(
                     label="Detik", 
                     border_radius=50, 
-                    value=content.getDuration() % 60, 
+                    value=content.getDuration() % 60 if content.getDuration() != None else 0, 
                     width=65, 
                     options= [ft.dropdown.Option(str(i)) for i in range(60)], 
                     label_style= ft.TextStyle(color="#FED466", font_family="Consolas", bgcolor="#000D20"),
@@ -127,7 +127,7 @@ class EditPage(ft.Container):
         self.jam_watch_progress = ft.Dropdown(
                     label="Jam",
                     border_radius=50, 
-                    value=content.getWatchProgress() // 3600, 
+                    value=content.getWatchProgress() // 3600 if content.getWatchProgress() != None else 0, 
                     width=65, 
                     options = [ft.dropdown.Option(str(i)) for i in range(60)], 
                     label_style= ft.TextStyle(color="#FED466", font_family="Consolas", bgcolor="#000D20"),
@@ -138,7 +138,7 @@ class EditPage(ft.Container):
         self.menit_watch_progress = ft.Dropdown(
                     label="Menit", 
                     border_radius=50, 
-                    value=(content.getWatchProgress() % 3600) // 60, 
+                    value=(content.getWatchProgress() % 3600) // 60 if content.getWatchProgress() != None else 0, 
                     width=65, 
                     options = [ft.dropdown.Option(str(i)) for i in range(60)], 
                     label_style= ft.TextStyle(color="#FED466", font_family="Consolas", bgcolor="#000D20"),
@@ -149,7 +149,7 @@ class EditPage(ft.Container):
         self.detik_watch_progress = ft.Dropdown(
                     label="Detik", 
                     border_radius=50, 
-                    value=content.getWatchProgress() % 60, 
+                    value=content.getWatchProgress() % 60 if content.getWatchProgress() != None else 0, 
                     width=65,
                     options = [ft.dropdown.Option(str(i)) for i in range(60)], 
                     label_style= ft.TextStyle(color="#FED466", font_family="Consolas", bgcolor="#000D20"),
@@ -388,6 +388,8 @@ class EditPage(ft.Container):
 class MovieEditPage(EditPage):
     def __init__(self, movie: Movie, page: ft.Page, movies_dict: dict, ongoing_movies_dict: dict, review_movies_dict: dict, watchlist_movies_dict: dict):
         super().__init__(movie, page)
+        self.width = page.window_width,
+        self.height = page.window_height+100,
         self.submit_button = ft.Container(
             ft.Row([
                 SubmitButton("Submit", on_click=lambda e: self.submit_click(e, movie, page, movies_dict, ongoing_movies_dict, review_movies_dict, watchlist_movies_dict))
@@ -482,7 +484,8 @@ class MovieEditPage(EditPage):
 class SeriesEditPage(EditPage):
     def __init__(self, series: Series, page: ft.Page, series_dict: dict, ongoing_series_dict: dict, review_series_dict: dict, watchlist_series_dict: dict):
         super().__init__(series, page)
-
+        self.width = page.window_width,
+        self.height = page.window_height+150,
         self.body = series
 
         self.submit_button = ft.Container(
@@ -632,7 +635,7 @@ class SeriesEditPage(EditPage):
                                             ]),
                                             self.summary
                                         ]),
-                                        padding=ft.padding.only(left=50,right=50)
+                                        padding=ft.padding.only(left=50,right=50, bottom=300)
                                     ),
                                     
                                 ]),

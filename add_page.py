@@ -229,17 +229,21 @@ class AddPage:
             padding=ft.padding.only(left=10, right=10, top=10)
         )
 
-        self.summary = ft.TextField(
-            value=None,
-            text_align=ft.TextAlign.LEFT,
-            width=480, shift_enter=True,
-            fill_color=ft.colors.WHITE,
-            color=ft.colors.BLACK, smart_dashes_type=True,
-            border_radius=50, max_length=500,
-            border_color="#000D20", hover_color="#FED466",
-            focused_border_color="#FED466",
-            selection_color="#FED466",
-            label_style= ft.TextStyle(color="#FED466", font_family="Consolas")
+        self.summary = ft.Container(
+            padding=ft.padding.only(bottom=25),
+            content = ft.TextField(
+                value=None,
+                text_align=ft.TextAlign.LEFT,
+                width=480, shift_enter=True,
+                fill_color=ft.colors.WHITE,
+                color=ft.colors.BLACK, smart_dashes_type=True,
+                border_radius=50, max_length=500,
+                border_color="#000D20", hover_color="#FED466",
+                focused_border_color="#FED466",
+                selection_color="#FED466",
+                label_style= ft.TextStyle(color="#FED466", font_family="Consolas"),
+            ),
+
         )
 
         self.poster = ft.Container(
@@ -461,64 +465,84 @@ class MovieAddPage(AddPage):
                 [
                     ft.Container(
                         bgcolor="#000D20",
-                        content = ft.Row([
-                            ft.Container(
-                                ft.Column([
-                                    ft.Container(
-                                        ft.IconButton(ft.icons.ARROW_BACK, icon_color="#FED466", on_click=lambda e: page.go("/"))
-                                    ),
-                                    ft.Container(
-                                        ft.Column([
-                                            self.option_button,
-                                            self.edit_text,
-                                            self.name_text,
-                                            self.name_table,
-                                            ft.Row([
-                                                self.duration_text,
-                                                self.watch_progress_text
-                                            ]),
-                                            ft.Row([
-                                                self.duration_table,
-                                                self.watch_progress_table,
-                                            ]),
-                                            self.release_year_text,
-                                            ft.Row([
-                                                self.release_year_table,
-                                                self.calendar
-                                            ]),
-                                            ft.Row([
-                                                self.genre_text,
-                                                self.rating_text
-                                            ]),
-                                            ft.Row([
-                                                self.genre,
-                                                self.rating
-                                            ]),
-                                            ft.Row([
-                                                self.summary_text
-                                            ]),
-                                            self.summary
-                                        ]),
-                                        padding=ft.padding.only(left=50,right=50)
-                                    ),
-                                    
-                                ]),
-                            ),
-                            ft.Container(
-                                ft.Column([
-                                    self.poster,
-                                    self.poster_button,
-                                    self.submit_button,
-                                    ],
-                                    horizontal_alignment=ft.CrossAxisAlignment.CENTER
+                        content=ft.Row(
+                            [
+                                ft.Container(
+                                    content=ft.Column(
+                                        [
+                                            ft.Container(
+                                                content=ft.IconButton(ft.icons.ARROW_BACK, icon_color="#FED466", on_click=lambda e: page.go("/"))
+                                            ),
+                                            ft.Container(
+                                                content=ft.Column(
+                                                    [
+                                                        self.option_button,
+                                                        self.edit_text,
+                                                        self.name_text,
+                                                        self.name_table,
+                                                        ft.Row(
+                                                            controls=[
+                                                                self.duration_text,
+                                                                self.watch_progress_text
+                                                            ]
+                                                        ),
+                                                        ft.Row(
+                                                            controls=[
+                                                                self.duration_table,
+                                                                self.watch_progress_table,
+                                                            ]
+                                                        ),
+                                                        self.release_year_text,
+                                                        ft.Row(
+                                                            controls=[
+                                                                self.release_year_table,
+                                                                self.calendar
+                                                            ]
+                                                        ),
+                                                        ft.Row(
+                                                            controls=[
+                                                                self.genre_text,
+                                                                self.rating_text
+                                                            ]
+                                                        ),
+                                                        ft.Row(
+                                                            controls=[
+                                                                self.genre,
+                                                                self.rating
+                                                            ]
+                                                        ),
+                                                        ft.Row(
+                                                            controls=[
+                                                                self.summary_text
+                                                            ]
+                                                        ),
+                                                        self.summary
+                                                    ]
+                                                ),
+                                                padding=ft.padding.only(left=50, right=50)
+                                            ),
+                                        ]
+                                    )
                                 ),
-                                padding=ft.padding.only(left=150)
-                            )
-                        ]),
+                                ft.Container(
+                                    content=ft.Column(
+                                        [
+                                            self.poster,
+                                            self.poster_button,
+                                            self.submit_button,
+                                        ],
+                                        horizontal_alignment=ft.CrossAxisAlignment.CENTER
+                                    ),
+                                    padding=ft.padding.only(left=150)
+                                )
+                            ]
+                        ),
                     )
                 ],
+                scroll=ft.ScrollMode.AUTO  # Enable scrolling for the view
             )
         )
+        page.update()  
     
 class SeriesAddPage(AddPage):
     def __init__(self, page: ft.Page, series_dict, ongoing_series_dict, review_series_dict, watchlist_series_dict, finished_series_dict):
@@ -797,5 +821,6 @@ class SeriesAddPage(AddPage):
                         ]),
                     )
                 ],
+                scroll=ft.ScrollMode.AUTO 
             )
         )
