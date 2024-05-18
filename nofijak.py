@@ -120,7 +120,13 @@ class ScrollableCard(ft.Column):
 
         
 def main(page: ft.Page):
+    movie_add_page = MovieAddPage(page, database.getMovies(), database.getOngoingMovies(), database.getReviewMovies(), database.getWatchlistMovies(), database.getFinishedMovies())
+    series_add_page = SeriesAddPage(page, database.getSeries(), database.getOngoingSeries(), database.getReviewSeries(), database.getWatchlistSeries(), database.getFinishedSeries())
+    
     page.title = "NoFiJak"
+    page.overlay.append(movie_add_page.date_picker)
+    page.overlay.append(movie_add_page.file_picker)
+    
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
 
@@ -171,8 +177,6 @@ def main(page: ft.Page):
         )
     )
 
-    movie_add_page = MovieAddPage(page, database.getMovies(), database.getOngoingMovies(), database.getReviewMovies(), database.getWatchlistMovies(), database.getFinishedMovies())
-    series_add_page = SeriesAddPage(page, database.getSeries(), database.getOngoingSeries(), database.getReviewSeries(), database.getWatchlistSeries(), database.getFinishedSeries())
 
     # Functions
     def tambahFilm(e):

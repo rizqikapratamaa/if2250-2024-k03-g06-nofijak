@@ -313,6 +313,8 @@ class EditPage(ft.Container):
                             )
                         ]),
                     )
+        page.overlay.append(self.date_picker)
+        page.overlay.append(self.file_picker)
 
     def go_back(self, page: ft.Page):
         page.go("/informasi-film-series")

@@ -113,11 +113,14 @@ class FilmInformation(ft.Container):
     
     def handleEditMovie(self, movie:Movie, page: ft.Page, kolomHalaman: ft.Column, database: Database):
         #TODO: Implementasi injeksi objek Edit Movie pada halaman edit film series (pakai variabel kolomHalaman dan jangan lupa clear isi kolomHalaman sebelum melakukan append)
+        page.overlay.append(MovieEditPage(movie, page, database.getMovies(),database.getOngoingMovies(), database.getReviewMovies(), database.getWatchlistMovies()).file_picker)
+        page.overlay.append(MovieEditPage(movie, page, database.getMovies(),database.getOngoingMovies(), database.getReviewMovies(), database.getWatchlistMovies()).date_picker)
         kolomHalaman.controls.clear()
         kolomHalaman.controls.append(
             #TODO: append Objek Edit Movie
             MovieEditPage(movie, page, database.getMovies(),database.getOngoingMovies(), database.getReviewMovies(), database.getWatchlistMovies())
         )
+        
         page.go("/edit-film-series")
 
     def deleteMovie(e, self, movie: Movie, page: ft.Page, database: Database):
