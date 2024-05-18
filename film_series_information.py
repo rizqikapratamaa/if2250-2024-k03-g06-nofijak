@@ -130,6 +130,7 @@ class FilmInformation(ft.Container):
             success_popup = PopUp("Success!", "Movie has been deleted", page)
             success_popup.open_dlg_modal(e, page)
             success_popup.dlg_modal.on_dismiss = lambda e: page.go("/")
+            
         
         def on_no(e):
             pass

@@ -22,7 +22,7 @@ class EntryCardMovie(ft.ElevatedButton):
     # Constructor entry card dengan parameter
     def __init__(self, movie : Movie, page, informasi, informasiEdit):
         super().__init__()
-        self.width = 900
+        self.width = 1100
         self.bgcolor = "#092143"
         self.on_click = lambda _: self.informasiFilm(movie, page, informasi, informasiEdit, database)
         self.style=ft.ButtonStyle(
@@ -59,7 +59,7 @@ class EntryCardSeries(ft.ElevatedButton):
     # Constructor entry card dengan parameter
     def __init__(self, series : Series, page, informasi, informasiEdit):
         super().__init__()
-        self.width = 900
+        self.width = 1100
         self.bgcolor = "#092143"
         self.on_click = lambda _: self.informasiSeries(series, page, informasi, informasiEdit, database)
         self.style=ft.ButtonStyle(
@@ -99,7 +99,7 @@ class ScrollableCard(ft.Column):
         super().__init__()
         # Properti untuk scrollable card
         self.height = 250
-        self.width = 800
+        self.width = 1100
         self.scroll = ft.ScrollMode.ALWAYS
     
     # Method untuk menambahkan film pada halaman entries
@@ -139,8 +139,8 @@ def main(page: ft.Page):
     header_buttons = []
     kolomHalaman = ft.Column(
         width = page.window_width-50,
-        height = page.window_height-80,
-        scroll = ft.ScrollMode.AUTO,
+        height = page.window_height,
+        scroll = ft.ScrollMode.ALWAYS,
     )
     
     halaman =  ft.Container(
@@ -155,9 +155,9 @@ def main(page: ft.Page):
     )
 
     kolomHalamanEdit = ft.Column(
-        width = page.window_width-50,
-        height = page.window_height-80,
-        scroll = ft.ScrollMode.AUTO,
+        width = page.window_width-25,
+        height = page.window_height-10,
+        scroll = ft.ScrollMode.ADAPTIVE,
     )
     
     halamanEdit =  ft.Container(
@@ -329,13 +329,39 @@ def main(page: ft.Page):
             kolomHalamanEdit
         )
 
+    def load_data():
+        scrollCard = ScrollableCard()
+
+        for i in database.getMovies():
+            movie = database.make_movies(i)
+            scrollCard.tambahCardMovie(
+                movie,
+                page,
+                kolomHalaman,
+                kolomHalamanEdit
+            )
+
+        for i in database.getSeries():
+            series = database.make_series(i)
+            scrollCard.tambahCardSeries(
+                series,
+                page,
+                kolomHalaman,
+                kolomHalamanEdit
+            )
+
+        return scrollCard
 
     def route_change(route):
-        page.views.clear()
+        page.views.clear(),
+        global database
+        database = Database()
+        scrollCard = load_data()
         page.views.append(
             ft.View(
                 "/",
                 [
+                    
                     ft.Container(
                         width = page.window_width,
                         height = page.window_height,
