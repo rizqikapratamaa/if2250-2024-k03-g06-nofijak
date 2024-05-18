@@ -516,7 +516,7 @@ class MovieEditPage(EditPage):
 
 class SeriesEditPage(EditPage):
     def __init__(self, series: Series, page: ft.Page, series_dict: dict, ongoing_series_dict: dict, review_series_dict: dict, watchlist_series_dict: dict):
-        super().__init__(series, page)
+        super().__init__(series, page, series_dict, ongoing_series_dict, review_series_dict, watchlist_series_dict)
         self.width = page.window_width,
         self.height = page.window_height+150,
         self.body = series

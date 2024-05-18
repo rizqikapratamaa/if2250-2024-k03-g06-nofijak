@@ -2,13 +2,13 @@ import flet as ft
 from content import Content, Movie, Series
 from popup import *
 from database import Database
-from edit_page import MovieEditPage, SeriesEditPage 
+from edit_page import MovieEditPage, SeriesEditPage
 import sqlite3
 
 import flet as ft
 
 class FilmInformation(ft.Container):
-    def __init__(self, movie : Movie, page: ft.Page, kolomHalaman: ft.Column, informasiEdit : ft.Column, database: Movie):
+    def __init__(self, movie : Movie, page: ft.Page, informasiEdit : ft.Column, database: Movie):
         super().__init__()
         self.width = page.window_width
         self.height = page.window_height
@@ -129,6 +129,7 @@ class FilmInformation(ft.Container):
             database.removeReviewMovie(movie.getId())
             success_popup = PopUp("Success!", "Movie has been deleted", page)
             success_popup.open_dlg_modal(e, page)
+
             success_popup.dlg_modal.on_dismiss = lambda e: page.go("/")
             
         

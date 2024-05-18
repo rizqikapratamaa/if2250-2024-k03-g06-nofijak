@@ -22,7 +22,7 @@ class EntryCardMovie(ft.ElevatedButton):
     # Constructor entry card dengan parameter
     def __init__(self, movie : Movie, page, informasi, informasiEdit):
         super().__init__()
-        self.width = 1100
+        self.width = 1000
         self.bgcolor = "#092143"
         self.on_click = lambda _: self.informasiFilm(movie, page, informasi, informasiEdit, database)
         self.style=ft.ButtonStyle(
@@ -51,7 +51,7 @@ class EntryCardMovie(ft.ElevatedButton):
     def informasiFilm(self, movie: Movie , page, informasi : ft.Column, informasiEdit : ft.Column, database: Database):
         informasi.controls.clear()
         informasi.controls.append(
-            FilmInformation(movie, page, informasi, informasiEdit, database)
+            FilmInformation(movie, page, informasiEdit, database)
         )
         page.go("/informasi-film-series")
 
@@ -59,7 +59,7 @@ class EntryCardSeries(ft.ElevatedButton):
     # Constructor entry card dengan parameter
     def __init__(self, series : Series, page, informasi, informasiEdit):
         super().__init__()
-        self.width = 1100
+        self.width = 1000
         self.bgcolor = "#092143"
         self.on_click = lambda _: self.informasiSeries(series, page, informasi, informasiEdit, database)
         self.style=ft.ButtonStyle(
@@ -99,7 +99,7 @@ class ScrollableCard(ft.Column):
         super().__init__()
         # Properti untuk scrollable card
         self.height = 250
-        self.width = 1100
+        self.width = 1000
         self.scroll = ft.ScrollMode.ALWAYS
     
     # Method untuk menambahkan film pada halaman entries
@@ -187,17 +187,90 @@ def main(page: ft.Page):
         t.value = e.control.value
         page.update()
 
-    def change_view(new_view: str):
+    def change_view(new_view: str, scrollCard : ScrollableCard):
         global current_view
         current_view = new_view
 
         for button in header_buttons:
             if button.data == new_view:
                 button.content.bgcolor = BUTTON_ON_COLOR
+                if (new_view == ALL_ENTRIES):
+                    scrollCard.inisialisasiCard()
+                    for i in database.getMovies():
+                        movie = database.make_movies(i)
+                        scrollCard.tambahCardMovie(
+                            movie,
+                            page,
+                            kolomHalaman,
+                            kolomHalamanEdit
+                        )
+                    for i in database.getSeries():
+                        series = database.make_series(i)
+                        scrollCard.tambahCardSeries(
+                            series,
+                            page,
+                            kolomHalaman,
+                            kolomHalamanEdit
+                        )
+                if (new_view == WATCHLIST):
+                    scrollCard.inisialisasiCard()
+                    for i in database.getWatchlistMovies():
+                        movie = database.make_movies(i)
+                        scrollCard.tambahCardMovie(
+                            movie,
+                            page,
+                            kolomHalaman,
+                            kolomHalamanEdit
+                        )
+                    for i in database.getWatchlistSeries():
+                        series = database.make_series(i)
+                        scrollCard.tambahCardSeries(
+                            series,
+                            page,
+                            kolomHalaman,
+                            kolomHalamanEdit
+                        )
+                if (new_view == ONGOING):
+                    scrollCard.inisialisasiCard()
+                    for i in database.getOngoingMovies():
+                        movie = database.make_movies(i)
+                        scrollCard.tambahCardMovie(
+                            movie,
+                            page,
+                            kolomHalaman,
+                            kolomHalamanEdit
+                        )
+                    for i in database.getOngoingSeries():
+                        series = database.make_series(i)
+                        scrollCard.tambahCardSeries(
+                            series,
+                            page,
+                            kolomHalaman,
+                            kolomHalamanEdit
+                        )
+                if (new_view == COMPLETED):
+                    scrollCard.inisialisasiCard()
+                    for i in database.getFinishedMovies():
+                        movie = database.make_movies(i)
+                        scrollCard.tambahCardMovie(
+                            movie,
+                            page,
+                            kolomHalaman,
+                            kolomHalamanEdit
+                        )
+                    for i in database.getFinishedMovies():
+                        series = database.make_series(i)
+                        scrollCard.tambahCardSeries(
+                            series,
+                            page,
+                            kolomHalaman,
+                            kolomHalamanEdit
+                        )
             else:
                 button.content.bgcolor = BUTTON_OFF_COLOR
                 
         page.update()
+
 
     def dropdownFilterchange(e):
         dropdownFilter.value
@@ -221,7 +294,8 @@ def main(page: ft.Page):
                     kolomHalamanEdit
                 )
         page.update()
-        
+
+
 
     
     # ==============================================
@@ -232,7 +306,7 @@ def main(page: ft.Page):
             super().__init__()
             self.padding = ContainerPadding
             self.alignment = ft.alignment.center
-            self.content = ft.ElevatedButton(ButtonText, on_click=lambda _: change_view(ButtonData), bgcolor=BUTTON_OFF_COLOR, color='#000000')
+            self.content = ft.ElevatedButton(ButtonText, on_click=lambda _: change_view(ButtonData, scrollCard), bgcolor=BUTTON_OFF_COLOR, color='#000000')
             self.data = ButtonData
     
 
@@ -251,10 +325,12 @@ def main(page: ft.Page):
     
     # >>>> Watchlist button
     watchlist = HeaderButton("Watchlist", WATCHLIST, ft.padding.only(left=350,right=50))
+
+    scrollCard = ScrollableCard()
     
     # >>>> List of header buttons
     header_buttons = [allEntries, completed, ongoing, watchlist]
-    change_view(current_view)
+    change_view(current_view, scrollCard)
 
     # >> Header dropdowns
     dropdownSort = ft.Dropdown(
@@ -269,7 +345,7 @@ def main(page: ft.Page):
         ],
     )
     dropdownFilter = ft.Dropdown(
-        padding = ft.padding.only(top=50,left=25),
+        padding=ft.padding.only(top=50, left=25),
         label="Filter",
         bgcolor='#092143',
         hint_text="Filter items by..",
@@ -356,7 +432,6 @@ def main(page: ft.Page):
         page.views.clear(),
         global database
         database = Database()
-        scrollCard = load_data()
         page.views.append(
             ft.View(
                 "/",
