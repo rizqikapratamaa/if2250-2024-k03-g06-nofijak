@@ -1,9 +1,9 @@
 import flet as ft
 
 class OptionButton(ft.TextButton):
-    def __init__(self, text, on_click):
+    def __init__(self, text, on_click, bgcolor):
         super().__init__()
-        self.bgcolor = "#FED466"
+        self.bgcolor = bgcolor
         self.content = ft.Text(text, color=ft.colors.BLACK)
         self.width=200,
         self.height=75,
