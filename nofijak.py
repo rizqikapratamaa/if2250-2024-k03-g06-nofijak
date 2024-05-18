@@ -132,7 +132,7 @@ class EntryCardMovie(ft.ElevatedButton):
     # Constructor entry card dengan parameter
     def __init__(self, movie : Movie, page, informasi):
         super().__init__()
-        self.width = 900
+        self.width = 1000
         self.bgcolor = "#092143"
         self.on_click = lambda _: self.informasiFilm(movie, page, informasi)
         self.style=ft.ButtonStyle(
@@ -169,7 +169,7 @@ class EntryCardSeries(ft.ElevatedButton):
     # Constructor entry card dengan parameter
     def __init__(self, series : Series, page, informasi):
         super().__init__()
-        self.width = 900
+        self.width = 1000
         self.bgcolor = "#092143"
         self.on_click = lambda _: self.informasiSeries(series, page, informasi)
         self.style=ft.ButtonStyle(
@@ -209,7 +209,7 @@ class ScrollableCard(ft.Column):
         super().__init__()
         # Properti untuk scrollable card
         self.height = 250
-        self.width = 800
+        self.width = 1000
         self.scroll = ft.ScrollMode.ALWAYS
     
     # Method untuk menambahkan film pada halaman entries
@@ -272,13 +272,77 @@ def main(page: ft.Page):
         t.value = e.control.value
         page.update()
 
-    def change_view(new_view: str):
+    def change_view(new_view: str, scrollCard : ScrollableCard):
         global current_view
         current_view = new_view
 
         for button in header_buttons:
             if button.data == new_view:
                 button.content.bgcolor = BUTTON_ON_COLOR
+                if (new_view == ALL_ENTRIES):
+                    scrollCard.inisialisasiCard()
+                    for i in movies_dict:
+                        movie = make_movies(i)
+                        scrollCard.tambahCardMovie(
+                            movie,
+                            page,
+                            kolomHalaman
+                        )
+                    for i in series_dict:
+                        series = make_series(i)
+                        scrollCard.tambahCardSeries(
+                            series,
+                            page,
+                            kolomHalaman
+                        )
+                if (new_view == WATCHLIST):
+                    scrollCard.inisialisasiCard()
+                    for i in watchlist_movies_dict:
+                        movie = make_movies(i)
+                        scrollCard.tambahCardMovie(
+                            movie,
+                            page,
+                            kolomHalaman
+                        )
+                    for i in watchlist_series_dict:
+                        series = make_series(i)
+                        scrollCard.tambahCardSeries(
+                            series,
+                            page,
+                            kolomHalaman
+                        )
+                if (new_view == ONGOING):
+                    scrollCard.inisialisasiCard()
+                    for i in ongoing_movies_dict:
+                        movie = make_movies(i)
+                        scrollCard.tambahCardMovie(
+                            movie,
+                            page,
+                            kolomHalaman
+                        )
+                    for i in ongoing_series_dict:
+                        series = make_series(i)
+                        scrollCard.tambahCardSeries(
+                            series,
+                            page,
+                            kolomHalaman
+                        )
+                if (new_view == COMPLETED):
+                    scrollCard.inisialisasiCard()
+                    for i in finished_movies_dict:
+                        movie = make_movies(i)
+                        scrollCard.tambahCardMovie(
+                            movie,
+                            page,
+                            kolomHalaman
+                        )
+                    for i in finished_series_dict:
+                        series = make_series(i)
+                        scrollCard.tambahCardSeries(
+                            series,
+                            page,
+                            kolomHalaman
+                        )
             else:
                 button.content.bgcolor = BUTTON_OFF_COLOR
                 
@@ -315,7 +379,7 @@ def main(page: ft.Page):
             super().__init__()
             self.padding = ContainerPadding
             self.alignment = ft.alignment.center
-            self.content = ft.ElevatedButton(ButtonText, on_click=lambda _: change_view(ButtonData), bgcolor=BUTTON_OFF_COLOR, color='#000000')
+            self.content = ft.ElevatedButton(ButtonText, on_click=lambda _: change_view(ButtonData, scrollCard), bgcolor=BUTTON_OFF_COLOR, color='#000000')
             self.data = ButtonData
     
 
@@ -337,7 +401,8 @@ def main(page: ft.Page):
     
     # >>>> List of header buttons
     header_buttons = [allEntries, completed, ongoing, watchlist]
-    change_view(current_view)
+
+    allEntries.content.bgcolor = BUTTON_ON_COLOR
 
     # >> Header dropdowns
     dropdownSort = ft.Dropdown(
