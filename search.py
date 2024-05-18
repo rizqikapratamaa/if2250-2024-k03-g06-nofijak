@@ -52,8 +52,6 @@ def searchSeries(serieName):
         else:
             rating = rating[0][0]
 
-        print(rating)
-
         cursor.execute("SELECT watched_duration, season_progress, episode_progress FROM ongoing_series WHERE series_id = " + str(id[i][0]))
         duration = cursor.fetchall()
         seasonProgress = None
@@ -62,8 +60,6 @@ def searchSeries(serieName):
             watchProgress = duration[0][0]
             seasonProgress = duration[0][1]
             episodeProgress = duration[0][2]
-
-        print(duration)
 
         result.append(Series(id[i][0], series[0][0], series[0][1], series[0][2], series[0][3], series[0][4], rating, watchProgress, str(id), series[0][5], series[0][6], seasonProgress, episodeProgress))
 
