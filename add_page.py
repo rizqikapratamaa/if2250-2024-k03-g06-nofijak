@@ -247,7 +247,7 @@ class AddPage:
         )
 
         self.poster = ft.Container(
-            ft.Image("assets/img/1", width=300, height=450, border_radius=30),
+            ft.Image("assets/img/blank.png", width=300, height=450, border_radius=30),
             padding=ft.padding.only(left=20, top=70)
         )
         
@@ -714,7 +714,7 @@ class SeriesAddPage(AddPage):
                 cursor.execute("INSERT INTO review_series VALUES (?, ?, ?)", (id, rating, "Selamat anda menemukan easter egg"))
                 review_series_dict[id] = [id, rating, "Selamat anda menemukan easter egg"]
             
-            if (season_progress is None or season_progress == 0) or (episode_progress is None or episode_progress == 0):
+            if (season_progress == "" or season_progress == 0) or (episode_progress == "" or episode_progress == 0):
                 cursor.execute("INSERT INTO watchlist_series VALUES (?)", (id))
                 watchlist_series_dict[id] = [id]
             
