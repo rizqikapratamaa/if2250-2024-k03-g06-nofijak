@@ -4,6 +4,7 @@ from popup import *
 from database import Database
 from edit_page import MovieEditPage, SeriesEditPage
 import sqlite3
+import os
 
 import flet as ft
 
@@ -130,6 +131,12 @@ class FilmInformation(ft.Container):
             database.removeFinishedMovie(movie.getId())
             database.removeOngoingMovie(movie.getId())
             database.removeReviewMovie(movie.getId())
+
+            # Delete image file
+            image_path = f"assets/img/{movie.getId()}.jpg"  # Adjust the file extension if necessary
+            if os.path.isfile(image_path):
+                os.remove(image_path)
+
             success_popup = PopUp("Success!", "Movie has been deleted", page)
             success_popup.open_dlg_modal(e, page)
 
@@ -264,6 +271,11 @@ class SeriesInformation(ft.Container):
             database.removeFinishedSeries(series.getId())
             database.removeOngoingSeries(series.getId())
             database.removeReviewSeries(series.getId())
+
+            image_path = f"assets/img/{series.getId()}.jpg"
+            if os.path.isfile(image_path):
+                os.remove(image_path)
+
             success_popup = PopUp("Success!", "Series has been deleted", page)
             success_popup.open_dlg_modal(e, page)
             success_popup.dlg_modal.on_dismiss = lambda e: page.go("/")
