@@ -20,11 +20,11 @@ class informasiFilmSeries(ft.Container):
 
 class EntryCardMovie(ft.ElevatedButton):
     # Constructor entry card dengan parameter
-    def __init__(self, movie : Movie, page, informasi):
+    def __init__(self, movie : Movie, page, informasi, informasiEdit):
         super().__init__()
         self.width = 900
         self.bgcolor = "#092143"
-        self.on_click = lambda _: self.informasiFilm(movie, page, informasi, database)
+        self.on_click = lambda _: self.informasiFilm(movie, page, informasi, informasiEdit, database)
         self.style=ft.ButtonStyle(
                 shape=ft.RoundedRectangleBorder(radius=10),
             )
@@ -48,20 +48,20 @@ class EntryCardMovie(ft.ElevatedButton):
         ],
         spacing=18)
     
-    def informasiFilm(self, movie: Movie , page, informasi : ft.Column, database: Database):
+    def informasiFilm(self, movie: Movie , page, informasi : ft.Column, informasiEdit : ft.Column, database: Database):
         informasi.controls.clear()
         informasi.controls.append(
-            FilmInformation(movie, page, informasi, database)
+            FilmInformation(movie, page, informasi, informasiEdit, database)
         )
         page.go("/informasi-film-series")
 
 class EntryCardSeries(ft.ElevatedButton):
     # Constructor entry card dengan parameter
-    def __init__(self, series : Series, page, informasi):
+    def __init__(self, series : Series, page, informasi, informasiEdit):
         super().__init__()
         self.width = 900
         self.bgcolor = "#092143"
-        self.on_click = lambda _: self.informasiSeries(series, page, informasi, database)
+        self.on_click = lambda _: self.informasiSeries(series, page, informasi, informasiEdit, database)
         self.style=ft.ButtonStyle(
                 shape=ft.RoundedRectangleBorder(radius=10),
             )
@@ -86,10 +86,10 @@ class EntryCardSeries(ft.ElevatedButton):
         ],
         spacing=18)
     
-    def informasiSeries(self, series: Series , page, informasi : ft.Column, database: Database):
+    def informasiSeries(self, series: Series , page, informasi : ft.Column, informasiEdit : ft.Column, database: Database):
         informasi.controls.clear()
         informasi.controls.append(
-            SeriesInformation(series, page, informasi, database)
+            SeriesInformation(series, page, informasiEdit, database)
         )
         page.go("/informasi-film-series")
 
@@ -103,14 +103,14 @@ class ScrollableCard(ft.Column):
         self.scroll = ft.ScrollMode.ALWAYS
     
     # Method untuk menambahkan film pada halaman entries
-    def tambahCardMovie(self, movie, page, Informasi):
+    def tambahCardMovie(self, movie, page, Informasi, informasiEdit):
         self.controls.append(
-            EntryCardMovie(movie, page, Informasi)
+            EntryCardMovie(movie, page, Informasi, informasiEdit)
         )
     
-    def tambahCardSeries(self, series, page, Informasi):
+    def tambahCardSeries(self, series, page, Informasi, InformasiEdit):
         self.controls.append(
-            EntryCardSeries(series, page, Informasi)
+            EntryCardSeries(series, page, Informasi, InformasiEdit)
         )
 
     def inisialisasiCard(self):
@@ -138,9 +138,11 @@ def main(page: ft.Page):
     
     header_buttons = []
     kolomHalaman = ft.Column(
-        width = page.window_width,
-        height = page.window_height
+        width = page.window_width-50,
+        height = page.window_height-80,
+        scroll = ft.ScrollMode.AUTO,
     )
+    
     halaman =  ft.Container(
         width = page.window_width,
         height = page.window_height,
@@ -148,6 +150,23 @@ def main(page: ft.Page):
         content = ft.Column(
             [
                 kolomHalaman
+            ]
+        )
+    )
+
+    kolomHalamanEdit = ft.Column(
+        width = page.window_width-50,
+        height = page.window_height-80,
+        scroll = ft.ScrollMode.AUTO,
+    )
+    
+    halamanEdit =  ft.Container(
+        width = page.window_width,
+        height = page.window_height,
+        bgcolor = '#000D20',
+        content = ft.Column(
+            [
+                kolomHalamanEdit
             ]
         )
     )
@@ -189,7 +208,8 @@ def main(page: ft.Page):
                 scrollCard.tambahCardMovie(
                     movie,
                     page,
-                    kolomHalaman
+                    kolomHalaman,
+                    kolomHalamanEdit
                 )
         if(dropdownFilter.value == "Series"):
             for i in database.getSeries():
@@ -197,7 +217,8 @@ def main(page: ft.Page):
                 scrollCard.tambahCardSeries(
                     series,
                     page,
-                    kolomHalaman
+                    kolomHalaman,
+                    kolomHalamanEdit
                 )
         page.update()
         
@@ -295,7 +316,8 @@ def main(page: ft.Page):
         scrollCard.tambahCardMovie(
             movie,
             page,
-            kolomHalaman
+            kolomHalaman,
+            kolomHalamanEdit
         )
 
     for i in database.getSeries():
@@ -303,7 +325,8 @@ def main(page: ft.Page):
         scrollCard.tambahCardSeries(
             series,
             page,
-            kolomHalaman
+            kolomHalaman,
+            kolomHalamanEdit
         )
 
 
@@ -369,7 +392,7 @@ def main(page: ft.Page):
                     "/edit-film-series",
                     [
                         #TODO: Implementasi halaman edit film/series (caranya mirip kaya informasi-film-series)
-                        halaman
+                        halamanEdit
                     ],
                 )
             )

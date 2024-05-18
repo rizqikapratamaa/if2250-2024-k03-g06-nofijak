@@ -201,7 +201,7 @@ class Database:
         if id in self.movies_dict:
             conn = sqlite3.connect("database.db")
             cursor = conn.cursor()
-            cursor.execute("DELETE FROM movies WHERE id = ?", (id,))
+            cursor.execute("DELETE FROM movies WHERE movies_id = ?", (id,))
             del self.movies_dict[id]
             conn.commit()
             conn.close()
@@ -210,7 +210,7 @@ class Database:
         if id in self.series_dict:
             conn = sqlite3.connect("database.db")
             cursor = conn.cursor()
-            cursor.execute("DELETE FROM series WHERE id = ?", (id,))
+            cursor.execute("DELETE FROM series WHERE series_id = ?", (id,))
             del self.series_dict[id]
             conn.commit()
             conn.close()
@@ -219,7 +219,7 @@ class Database:
         if id in self.finished_movies_dict:
             conn = sqlite3.connect("database.db")
             cursor = conn.cursor()
-            cursor.execute("DELETE FROM finished_movies WHERE id = ?", (id,))
+            cursor.execute("DELETE FROM finished_movies WHERE movies_id = ?", (id,))
             del self.finished_movies_dict[id]
             conn.commit()
             conn.close()
@@ -228,7 +228,7 @@ class Database:
         if id in self.finished_series_dict:
             conn = sqlite3.connect("database.db")
             cursor = conn.cursor()
-            cursor.execute("DELETE FROM finished_series WHERE id = ?", (id,))
+            cursor.execute("DELETE FROM finished_series WHERE series_id = ?", (id,))
             del self.finished_series_dict[id]
             conn.commit()
             conn.close()
@@ -237,7 +237,7 @@ class Database:
         if id in self.ongoing_movies_dict:
             conn = sqlite3.connect("database.db")
             cursor = conn.cursor()
-            cursor.execute("DELETE FROM ongoing_movies WHERE id = ?", (id,))
+            cursor.execute("DELETE FROM ongoing_movies WHERE movies_id = ?", (id,))
             del self.ongoing_movies_dict[id]
             conn.commit()
             conn.close()
@@ -246,7 +246,7 @@ class Database:
         if id in self.ongoing_series_dict:
             conn = sqlite3.connect("database.db")
             cursor = conn.cursor()
-            cursor.execute("DELETE FROM ongoing_series WHERE id = ?", (id,))
+            cursor.execute("DELETE FROM ongoing_series WHERE series_id = ?", (id,))
             del self.ongoing_series_dict[id]
             conn.commit()
             conn.close()
@@ -255,7 +255,7 @@ class Database:
         if id in self.review_movies_dict:
             conn = sqlite3.connect("database.db")
             cursor = conn.cursor()
-            cursor.execute("DELETE FROM review_movies WHERE id = ?", (id,))
+            cursor.execute("DELETE FROM review_movies WHERE movies_id = ?", (id,))
             del self.review_movies_dict[id]
             conn.commit()
             conn.close()
@@ -264,7 +264,7 @@ class Database:
         if id in self.review_series_dict:
             conn = sqlite3.connect("database.db")
             cursor = conn.cursor()
-            cursor.execute("DELETE FROM review_series WHERE id = ?", (id,))
+            cursor.execute("DELETE FROM review_series WHERE series_id = ?", (id,))
             del self.review_series_dict[id]
             conn.commit()
             conn.close()
@@ -273,7 +273,7 @@ class Database:
         if id in self.watchlist_movies_dict:
             conn = sqlite3.connect("database.db")
             cursor = conn.cursor()
-            cursor.execute("DELETE FROM watchlist_movies WHERE id = ?", (id,))
+            cursor.execute("DELETE FROM watchlist_movies WHERE movies_id = ?", (id,))
             del self.watchlist_movies_dict[id]
             conn.commit()
             conn.close()
@@ -282,7 +282,7 @@ class Database:
         if id in self.watchlist_series_dict:
             conn = sqlite3.connect("database.db")
             cursor = conn.cursor()
-            cursor.execute("DELETE FROM watchlist_series WHERE id = ?", (id,))
+            cursor.execute("DELETE FROM watchlist_series WHERE series_id = ?", (id,))
             del self.watchlist_series_dict[id]
             conn.commit()
             conn.close()

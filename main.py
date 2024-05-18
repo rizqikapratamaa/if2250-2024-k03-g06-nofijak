@@ -12,7 +12,6 @@ def main(page: ft.Page):
     page.bgcolor = "#000D20"
 
     page.vertical_alignment = ft.MainAxisAlignment.START
-    # edit_page = SeriesAddPage(page, database.getMovies, database.getOngoingMovies(), database.getReviewMovies, database.getWatchlistMovies(), database.getFinishedMovies(), database.getSeries() series_dict, ongoing_series_dict, review_series_dict, watchlist_series_dict, finished_series_dict)
-    # edit_page.show_page(page)
+    print(database.getMovies())
 
 ft.app(target=main, upload_dir="assets/img", assets_dir="assets")
