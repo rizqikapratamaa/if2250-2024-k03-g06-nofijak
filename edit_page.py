@@ -311,61 +311,69 @@ class EditPage:
         print(f"Date picker dismissed, value is {self.date_picker.value}")
 
     def show_page(self, page: ft.Page):
+        page.clean()
         page.overlay.append(self.date_picker)
         page.overlay.append(self.file_picker)
+        page.bgcolor = "#000D20"
         page.add(
-        ft.IconButton(ft.icons.ARROW_BACK, icon_color="#FED466", on_click=lambda e: page.update_async()),
-        ft.Container(
-            content= 
-            ft.Row([
-                ft.Container(
-                    ft.Column([
-                        self.edit_text,
-                        self.name_text,
-                        self.name_table,
-                        ft.Row([
-                            self.duration_text,
-                            self.watch_progress_text
-                        ]),
-                        ft.Row([
-                            self.duration_table,
-                            self.watch_progress_table,
-                        ]),
-                        self.release_year_text,
-                        ft.Row([
-                            self.release_year_table,
-                            self.calendar
-                        ]),
-                        ft.Row([
-                            self.genre_text,
-                            self.rating_text
-                        ]),
-                        ft.Row([
-                            self.genre,
+                [
+                    ft.Container(
+                        bgcolor="#000D20",
+                        content = ft.Row([
                             ft.Container(
-                                self.rating,
-                                padding=ft.padding.only(left=10)
+                                ft.Column([
+                                    ft.Container(
+                                        ft.IconButton(ft.icons.ARROW_BACK, icon_color="#FED466", on_click=lambda e: page.go("/"))
+                                    ),
+                                    ft.Container(
+                                        ft.Column([
+                                            self.edit_text,
+                                            self.name_text,
+                                            self.name_table,
+                                            ft.Row([
+                                                self.duration_text,
+                                                self.watch_progress_text
+                                            ]),
+                                            ft.Row([
+                                                self.duration_table,
+                                                self.watch_progress_table,
+                                            ]),
+                                            self.release_year_text,
+                                            ft.Row([
+                                                self.release_year_table,
+                                                self.calendar
+                                            ]),
+                                            ft.Row([
+                                                self.genre_text,
+                                                self.rating_text
+                                            ]),
+                                            ft.Row([
+                                                self.genre,
+                                                self.rating
+                                            ]),
+                                            ft.Row([
+                                                self.summary_text
+                                            ]),
+                                            self.summary
+                                        ]),
+                                        padding=ft.padding.only(left=50,right=50)
+                                    ),
+                                    
+                                ]),
+                            ),
+                            ft.Container(
+                                ft.Column([
+                                    self.poster,
+                                    self.poster_button,
+                                    self.submit_button,
+                                    ],
+                                    horizontal_alignment=ft.CrossAxisAlignment.CENTER
+                                ),
+                                padding=ft.padding.only(left=150)
                             )
                         ]),
-                        ft.Row([
-                            self.summary_text
-                        ]),
-                        self.summary,
-                    ])
-                ),
-                ft.Container(
-                    ft.Column([
-                        self.poster,
-                        self.poster_button,
-                        self.submit_button,
-                        ],
-                        horizontal_alignment=ft.CrossAxisAlignment.CENTER
-                    ),
-                    padding=ft.padding.only(left=150)
-                )
-            ]),
-            padding=ft.padding.only(left=50,right=50)
-        ),
+                    )
+                ]
         )
         
 class MovieEditPage(EditPage):
@@ -716,80 +724,92 @@ class SeriesEditPage(EditPage):
     def show_page(self, page: ft.Page):
         page.overlay.append(self.date_picker)
         page.overlay.append(self.file_picker)
-        page.add(
-        ft.IconButton(ft.icons.ARROW_BACK, icon_color="#FED466", on_click=lambda e: page.update_async()),
-        ft.Container(
-            content= 
-            ft.Row([
-                ft.Container(
-                    ft.Column([
-                        self.edit_text,
-                        self.name_text,
-                        self.name_table,
-                        ft.Row([
-                            self.season_text,
-                            self.season_progress_text
-                        ]),
-                        ft.Row([
-                            self.season_table,
+        page.bgcolor = "#000D20"
+        page.views.append(
+            ft.View(
+                "/edit-film-series",
+                [
+                    ft.Container(
+                        bgcolor="#000D20",
+                        content = ft.Row([
                             ft.Container(
-                                self.season_progress_table,
-                                padding=ft.padding.only(left=50)
+                                ft.Column([
+                                    ft.Container(
+                                        ft.IconButton(ft.icons.ARROW_BACK, icon_color="#FED466", on_click=lambda e: page.go("/"))
+                                    ),
+                                    ft.Container(
+                                        ft.Column([
+                                            self.edit_text,
+                                            self.name_text,
+                                            self.name_table,
+                                            ft.Row([
+                                                self.season_text,
+                                                self.season_progress_text
+                                            ]),
+                                            ft.Row([
+                                                self.season_table,
+                                                ft.Container(
+                                                    self.season_progress_table,
+                                                    padding=ft.padding.only(left=50)
+                                                ),
+                                            ]),
+                                            ft.Row([
+                                                self.episode_text,
+                                                self.episode_progress_text
+                                            ]),
+                                            ft.Row([
+                                                self.episode_table,
+                                                ft.Container(
+                                                    self.episode_progress_table,
+                                                    padding=ft.padding.only(left=50)
+                                                )
+                                            ]),
+                                            ft.Row([
+                                                self.duration_text,
+                                                self.watch_progress_text
+                                            ]),
+                                            ft.Row([
+                                                self.duration_table,
+                                                self.watch_progress_table,
+                                            ]),
+                                            self.release_year_text,
+                                            ft.Row([
+                                                self.release_year_table,
+                                                self.calendar
+                                            ]),
+                                            ft.Row([
+                                                self.genre_text,
+                                                self.rating_text
+                                            ]),
+                                            ft.Row([
+                                                self.genre,
+                                                ft.Container(
+                                                    self.rating,
+                                                    padding=ft.padding.only(left=10)
+                                                )
+                                            ]),
+                                            ft.Row([
+                                                self.summary_text
+                                            ]),
+                                            self.summary
+                                        ]),
+                                        padding=ft.padding.only(left=50,right=50)
+                                    ),
+                                    
+                                ]),
                             ),
-                        ]),
-                        ft.Row([
-                            self.episode_text,
-                            self.episode_progress_text
-                        ]),
-                        ft.Row([
-                            self.episode_table,
                             ft.Container(
-                                self.episode_progress_table,
-                                padding=ft.padding.only(left=50)
+                                ft.Column([
+                                    self.poster,
+                                    self.poster_button,
+                                    self.submit_button,
+                                    ],
+                                    horizontal_alignment=ft.CrossAxisAlignment.CENTER
+                                ),
+                                padding=ft.padding.only(left=150)
                             )
                         ]),
-                        ft.Row([
-                            self.duration_text,
-                            self.watch_progress_text
-                        ]),
-                        ft.Row([
-                            self.duration_table,
-                            self.watch_progress_table,
-                        ]),
-                        self.release_year_text,
-                        ft.Row([
-                            self.release_year_table,
-                            self.calendar
-                        ]),
-                        ft.Row([
-                            self.genre_text,
-                            self.rating_text
-                        ]),
-                        ft.Row([
-                            self.genre,
-                            ft.Container(
-                                self.rating,
-                                padding=ft.padding.only(left=10)
-                            )
-                        ]),
-                        ft.Row([
-                            self.summary_text
-                        ]),
-                        self.summary,
-                    ])
-                ),
-                ft.Container(
-                    ft.Column([
-                        self.poster,
-                        self.poster_button,
-                        self.submit_button,
-                        ],
-                        horizontal_alignment=ft.CrossAxisAlignment.CENTER
-                    ),
-                    padding=ft.padding.only(left=150)
-                )
-            ]),
-            padding=ft.padding.only(left=50,right=50)
-        ),
+                    )
+                ],
+            )
         )
-

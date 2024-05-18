@@ -2,124 +2,14 @@ import flet as ft
 import sys
 import os
 import sqlite3
-
+from database import *
+from add_page import *
 
 from content import Movie, Series
 from film_series_information import FilmInformation, SeriesInformation
 
 # TODO: Refactor pengelolaan basis data dalam bentuk objek atau class
-conn = sqlite3.connect("database.db")
-
-movies_dict = {}
-series_dict = {}
-try:
-    # Create a cursor object
-    cursor = conn.cursor()
-
-    # Commit changes
-    conn.commit()
-
-    # Retrieve data from the table
-    # Fetch movies and store in a dictionary
-    cursor.execute("SELECT * FROM movies")
-    movies = cursor.fetchall()
-    
-    for row in movies:
-        movies_dict[row[0]] = list(row)
-
-    # Fetch series and store in a dictionary
-    cursor.execute("SELECT * FROM series")
-    series = cursor.fetchall()
-    for row in series:
-        series_dict[row[0]] = list(row)
-
-    # Fetch finished movies and store in a dictionary
-    cursor.execute("SELECT * FROM finished_movies")
-    finished_movies = cursor.fetchall()
-    finished_movies_dict = {}
-    for row in finished_movies:
-        finished_movies_dict[row[0]] = list(row)
-
-    
-
-    cursor.execute("SELECT * FROM finished_series")
-    finished_series = cursor.fetchall()
-    finished_series_dict = {}
-    for row in finished_series:
-        finished_series_dict[row[0]] = list(row)
-
-    cursor.execute("SELECT * FROM ongoing_movies")
-    ongoing_movies = cursor.fetchall()
-    ongoing_movies_dict = {}
-    for row in ongoing_movies:
-        ongoing_movies_dict[row[0]] = list(row)
-    
-    cursor.execute("SELECT * FROM ongoing_series")
-    ongoing_series = cursor.fetchall()
-    ongoing_series_dict = {}
-    for row in ongoing_series:
-        ongoing_series_dict[row[0]] = list(row)
-
-
-    cursor.execute("SELECT * FROM review_movies")
-    review_movies = cursor.fetchall()
-    review_movies_dict = {}
-    for row in review_movies:
-        review_movies_dict[row[0]] = list(row)
-
-    cursor.execute("SELECT * FROM review_series")
-    review_series = cursor.fetchall()
-    review_series_dict = {}
-    for row in review_series:
-        review_series_dict[row[0]] = list(row)
-
-    cursor.execute("SELECT * FROM watchlist_movies")
-    watchlist_movies = cursor.fetchall()
-    watchlist_movies_dict = {}
-    for row in watchlist_movies:
-        watchlist_movies_dict[row[0]] = list(row)
-
-
-    cursor.execute("SELECT * FROM watchlist_series")
-    watchlist_series = cursor.fetchall()
-    watchlist_series_dict = {}
-    for row in watchlist_series:
-        watchlist_series_dict[row[0]] = list(row)
-        
-    def make_movies(id):
-        id = movies_dict[id][0] if id in movies_dict else None
-        name = movies_dict[id][1] if id in movies_dict else None
-        releaseDate = movies_dict[id][3] if id in movies_dict else None
-        duration = movies_dict[id][2] if id in movies_dict else 0
-        synopsis = movies_dict[id][5] if id in movies_dict else None
-        genre = movies_dict[id][4] if id in movies_dict else None
-        rating = review_movies_dict[id][1] if id in review_movies_dict else None
-        watchProgress = ongoing_movies_dict[id][1] if id in ongoing_movies_dict else 0
-
-        return Movie(id, name, releaseDate, duration, synopsis, genre, rating, watchProgress, "assets/img/" + str(id) + ".jpg")
-    
-    def make_series(id):
-        id = series_dict[id][0] if id in series_dict else None
-        name = series_dict[id][1] if id in series_dict else None
-        releaseDate = series_dict[id][3] if id in series_dict else None
-        duration = series_dict[id][2] if id in series_dict else None
-        synopsis = series_dict[id][5] if id in series_dict else None
-        genre = series_dict[id][4] if id in series_dict else None
-        rating = review_series_dict[id][1] if id in review_series_dict else None
-        watchProgress = ongoing_series_dict[id][3] if id in ongoing_series_dict else None
-        season = series_dict[id][6] if id in series_dict else None
-        episode = series_dict[id][7] if id in series_dict else None
-        current_season = ongoing_series_dict[id][1] if id in ongoing_series_dict else None
-        current_episode = ongoing_series_dict[id][2] if id in ongoing_series_dict else None
-        return Series(id, name, releaseDate, duration, synopsis, genre, rating, watchProgress, "assets/img/" + str(id) + ".jpg", season, episode, current_season, current_episode)
-
-except sqlite3.Error as e:
-    print("An error occurred:", e)
-
-
-finally:
-    # Close connection
-    conn.close()
+database = Database()
 
 class informasiFilmSeries(ft.Container):
     def __init__(self, page):
@@ -134,7 +24,7 @@ class EntryCardMovie(ft.ElevatedButton):
         super().__init__()
         self.width = 900
         self.bgcolor = "#092143"
-        self.on_click = lambda _: self.informasiFilm(movie, page, informasi)
+        self.on_click = lambda _: self.informasiFilm(movie, page, informasi, database)
         self.style=ft.ButtonStyle(
                 shape=ft.RoundedRectangleBorder(radius=10),
             )
@@ -158,10 +48,10 @@ class EntryCardMovie(ft.ElevatedButton):
         ],
         spacing=18)
     
-    def informasiFilm(self, movie: Movie , page, informasi : ft.Column):
+    def informasiFilm(self, movie: Movie , page, informasi : ft.Column, database: Database):
         informasi.controls.clear()
         informasi.controls.append(
-            FilmInformation(movie, page, informasi)
+            FilmInformation(movie, page, informasi, database)
         )
         page.go("/informasi-film-series")
 
@@ -171,7 +61,7 @@ class EntryCardSeries(ft.ElevatedButton):
         super().__init__()
         self.width = 900
         self.bgcolor = "#092143"
-        self.on_click = lambda _: self.informasiSeries(series, page, informasi)
+        self.on_click = lambda _: self.informasiSeries(series, page, informasi, database)
         self.style=ft.ButtonStyle(
                 shape=ft.RoundedRectangleBorder(radius=10),
             )
@@ -196,10 +86,10 @@ class EntryCardSeries(ft.ElevatedButton):
         ],
         spacing=18)
     
-    def informasiSeries(self, series: Series , page, informasi : ft.Column):
+    def informasiSeries(self, series: Series , page, informasi : ft.Column, database: Database):
         informasi.controls.clear()
         informasi.controls.append(
-            SeriesInformation(series, page, informasi)
+            SeriesInformation(series, page, informasi, database)
         )
         page.go("/informasi-film-series")
 
@@ -262,10 +152,16 @@ def main(page: ft.Page):
         )
     )
 
+    movie_add_page = MovieAddPage(page, database.getMovies(), database.getOngoingMovies(), database.getReviewMovies(), database.getWatchlistMovies(), database.getFinishedMovies())
+    series_add_page = SeriesAddPage(page, database.getSeries(), database.getOngoingSeries(), database.getReviewSeries(), database.getWatchlistSeries(), database.getFinishedSeries())
+
     # Functions
-    def tambahFilmSeries(e):
-        #TODO: Implementasi halaman untuk menambah film/series (Contoh bisa dilihat pada method informasiFilm dan informasiSeries)
-        page.go("/tambah-film-series")
+    def tambahFilm(e):
+        page.go("/tambah-film-series/film")
+        page.update()
+
+    def tambahSeries(e):
+        page.go("/tambah-film-series/series")
         page.update()
     
     def textbox_changed(e):
@@ -288,16 +184,16 @@ def main(page: ft.Page):
         dropdownFilter.value
         scrollCard.inisialisasiCard()
         if(dropdownFilter.value == "Movies"):
-            for i in movies_dict:
-                movie = make_movies(i)
+            for i in database.getMovies():
+                movie = database.make_movies(i)
                 scrollCard.tambahCardMovie(
                     movie,
                     page,
                     kolomHalaman
                 )
         if(dropdownFilter.value == "Series"):
-            for i in series_dict:
-                series = make_series(i)
+            for i in database.getSeries():
+                series = database.make_series(i)
                 scrollCard.tambahCardSeries(
                     series,
                     page,
@@ -367,7 +263,7 @@ def main(page: ft.Page):
     actionButton = ft.Container(
         alignment=ft.alignment.bottom_right,
         padding=ft.padding.only(right=50),
-        content=ft.FloatingActionButton(icon=ft.icons.ADD, on_click=tambahFilmSeries, bgcolor=BUTTON_ON_COLOR, foreground_color='#000000', shape=ft.RoundedRectangleBorder(radius=50))
+        content=ft.FloatingActionButton(icon=ft.icons.ADD, on_click=tambahFilm, bgcolor=BUTTON_ON_COLOR, foreground_color='#000000', shape=ft.RoundedRectangleBorder(radius=50))
     )
 
     
@@ -394,16 +290,16 @@ def main(page: ft.Page):
     # ==============================================
     # ================== Database ==================
     # ==============================================
-    for i in movies_dict:
-        movie = make_movies(i)
+    for i in database.getMovies():
+        movie = database.make_movies(i)
         scrollCard.tambahCardMovie(
             movie,
             page,
             kolomHalaman
         )
 
-    for i in series_dict:
-        series = make_series(i)
+    for i in database.getSeries():
+        series = database.make_series(i)
         scrollCard.tambahCardSeries(
             series,
             page,
@@ -460,19 +356,13 @@ def main(page: ft.Page):
                     ],
                 )
             )
-        if page.route == "/tambah-film-series":
-            page.views.append(
-                ft.View(
-                    "/tambah-film-series",
-                    [
-                        # TODO: Impelementasi halaman tambah film/series
-                        # Construct Kelas pada View ini jadi tidak perlu clear dan append kolom pada page
-                        # karena halaman page sudah pasti/tidak berubah seperti halaman informasi-film-series
-                        
+        if page.route == "/tambah-film-series/film":
+            page.clean()
+            movie_add_page.movies_show_page(page)
+        
+        if page.route == "/tambah-film-series/series":
+            series_add_page.series_show_page(page)
 
-                    ],
-                )
-            )
         if page.route == "/edit-film-series":
             page.views.append(
                 ft.View(

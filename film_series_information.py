@@ -1,10 +1,14 @@
 import flet as ft
 from content import Content, Movie, Series
+from popup import *
+from database import Database
+from edit_page import MovieEditPage, SeriesEditPage 
+import sqlite3
 
 import flet as ft
 
 class FilmInformation(ft.Container):
-    def __init__(self, movie : Movie, page: ft.Page, kolomHalaman: ft.Column):
+    def __init__(self, movie : Movie, page: ft.Page, kolomHalaman: ft.Column, database: Movie):
         super().__init__()
         self.width = page.window_width
         self.height = page.window_height
@@ -61,7 +65,7 @@ class FilmInformation(ft.Container):
         edit = ft.Container(
             padding=ft.padding.only(right=25),
             content=ft.Row([
-                ft.ElevatedButton("Edit Information",  bgcolor='#DAAB2D',on_click = lambda _: self.handleEditMovie(movie,page,kolomHalaman), color='#000000')
+                ft.ElevatedButton("Edit Information",  bgcolor='#DAAB2D',on_click = lambda _: self.handleEditMovie(movie,page,kolomHalaman, database), color='#000000')
             ], alignment=ft.MainAxisAlignment.END)
         )
 
@@ -94,7 +98,7 @@ class FilmInformation(ft.Container):
         delete = ft.Container(
             padding=ft.padding.only(right=50),
             content=ft.Row([
-                ft.ElevatedButton("Delete Film", bgcolor=ft.colors.RED, on_click= lambda _: self.deleteMovie(movie),color = '#ffffff')
+                ft.ElevatedButton("Delete Film", bgcolor=ft.colors.RED, on_click= lambda _: self.deleteMovie(movie, database),color = '#ffffff')
             ], alignment=ft.MainAxisAlignment.END)
         )
         
@@ -108,21 +112,34 @@ class FilmInformation(ft.Container):
     def go_back(self):
         self.page.go("/")
     
-    def handleEditMovie(self, movie:Movie, page: ft.Page, kolomHalaman: ft.Column):
+    def handleEditMovie(self, movie:Movie, page: ft.Page, kolomHalaman: ft.Column, database: Database):
         #TODO: Implementasi injeksi objek Edit Movie pada halaman edit film series (pakai variabel kolomHalaman dan jangan lupa clear isi kolomHalaman sebelum melakukan append)
         kolomHalaman.controls.clear()
         kolomHalaman.controls.append(
             #TODO: append Objek Edit Movie
-            ft.Text("Edit Movie")
+            [
+                
+            ]
         )
         page.go("/edit-film-series")
 
-    def deleteMovie(self, movie : Movie):
+    def deleteMovie(self, movie : Movie, database: Database):
         #TODO: Implementasi penghapusan film dari database
-        self.page.go("/")
+        proceed_popup = YesOrNo("You may lost this movie permanently. Do you want to proceed?", self.page)
+        proceed_popup.open_dlg_modal(None, self.page)
+        if proceed_popup.action == True:
+            database.removeMovie(movie.getId())
+            database.removeWatchlistMovie(movie.getId())
+            database.removeFinishedMovie(movie.getId())
+            database.removeOngoingMovie(movie.getId())
+            database.removeReviewMovie(movie.getId())
+            success_popup = PopUp("Success", "Movie has been deleted", self.page)
+            success_popup.open_dlg_modal(None, self.page)
+            if success_popup.clicked == True:
+                self.page.go("/")
 
 class SeriesInformation(ft.Container):
-    def __init__(self, series : Series, page: ft.Page, kolomHalaman: ft.Column):
+    def __init__(self, series : Series, page: ft.Page, kolomHalaman: ft.Column, database: Database):
         super().__init__()
         self.width = page.window_width
         self.height = page.window_height
@@ -181,7 +198,7 @@ class SeriesInformation(ft.Container):
         edit = ft.Container(
             padding=ft.padding.only(right=25),
             content=ft.Row([
-                ft.ElevatedButton("Edit Information",  bgcolor='#DAAB2D', color='#000000', on_click = lambda _: self.handleEditSeries(series,page,kolomHalaman))
+                ft.ElevatedButton("Edit Information",  bgcolor='#DAAB2D', color='#000000', on_click = lambda _: self.handleEditSeries(series,page,kolomHalaman,database))
             ], alignment=ft.MainAxisAlignment.END)
         )
 
@@ -214,7 +231,7 @@ class SeriesInformation(ft.Container):
         delete = ft.Container(
             padding=ft.padding.only(right=50),
             content=ft.Row([
-                ft.ElevatedButton("Delete Film", bgcolor=ft.colors.RED, color = '#ffffff', on_click = lambda _: self.deleteSeries(series))
+                ft.ElevatedButton("Delete Film", bgcolor=ft.colors.RED, color = '#ffffff', on_click = lambda _: self.deleteSeries(series, database))
             ], alignment=ft.MainAxisAlignment.END)
         )
         
@@ -226,7 +243,7 @@ class SeriesInformation(ft.Container):
         self.page = page
     
 
-    def handleEditSeries(self, series:Series, page: ft.Page, kolomHalaman: ft.Column):
+    def handleEditSeries(self, series:Series, page: ft.Page, kolomHalaman: ft.Column, database: Database):
         #TODO: Implementasi injeksi objek Series Movie pada halaman edit film series (pakai variabel kolomHalaman dan jangan lupa clear isi kolomHalaman sebelum melakukan append)
         kolomHalaman.controls.clear()
         kolomHalaman.controls.append(
@@ -235,9 +252,20 @@ class SeriesInformation(ft.Container):
         )
         page.go("/edit-film-series")
 
-    def deleteSeries(self, movie : Movie):
+    def deleteSeries(self, series : Series, database: Database):
         #TODO: Implementasi penghapusan series dari database
-        self.page.go("/")
+        proceed_popup = YesOrNo("You may lost this series permanently. Do you want to proceed?", self.page)
+        proceed_popup.open_dlg_modal(None, self.page)
+        if proceed_popup.action == True:
+            database.removeSeries(series.getId())
+            database.removeWatchlistSeries(series.getId())
+            database.removeFinishedSeries(series.getId())
+            database.removeOngoingSeries(series.getId())
+            database.removeReviewSeries(series.getId())
+            success_popup = PopUp("Success", "Series has been deleted", self.page)
+            success_popup.open_dlg_modal(None, self.page)
+            if success_popup.clicked == True:
+                self.page.go("/")
 
     def go_back(self, e):
         self.page.go("/")
