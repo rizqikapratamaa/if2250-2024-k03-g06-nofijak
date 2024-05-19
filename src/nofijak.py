@@ -76,7 +76,7 @@ def main(page: ft.Page):
 
 
     movie_add_page = MovieAddPage(page, kolomHalaman, kolomHalamanEdit, scrollCard, database.getMovies(), database.getOngoingMovies(), database.getReviewMovies(), database.getWatchlistMovies(), database.getFinishedMovies(), database)
-    series_add_page = SeriesAddPage(page, database.getSeries(), database.getOngoingSeries(), database.getReviewSeries(), database.getWatchlistSeries(), database.getFinishedSeries())
+    series_add_page = SeriesAddPage(page, kolomHalaman, kolomHalamanEdit, scrollCard, database.getSeries(), database.getOngoingSeries(), database.getReviewSeries(), database.getWatchlistSeries(), database.getFinishedSeries(), database)
     
     page.title = "NoFiJak"
     page.overlay.append(movie_add_page.date_picker)
