@@ -221,7 +221,7 @@ class EditPage(ft.Container):
                 color=ft.colors.BLACK
             )
         
-        self.file_picker = ft.FilePicker(on_result=self.on_file_picker_result)
+        self.file_picker = ft.FilePicker(on_result= lambda e: self.on_file_picker_result(e, page))
 
         self.poster_button = ft.Container(
             ft.ElevatedButton("Upload File", on_click=lambda _: self.file_picker.pick_files()),
@@ -246,10 +246,6 @@ class EditPage(ft.Container):
             label_style= ft.TextStyle(color="#FED466", font_family="Consolas")
         )
 
-        self.poster = ft.Container(
-            ft.Image(content.getGambar(), width=300, height=450, border_radius=30),
-            padding=ft.padding.only(left=20, top=70)
-        )
         self.submit_button = ft.Container(
             ft.Row([
                 SubmitButton("Submit", on_click=lambda e: self.submit_click(e, content, page, movies_dict, ongoing_movies_dict, review_movies_dict, watchlist_movies_dict, finished_movies_dict))
@@ -257,13 +253,21 @@ class EditPage(ft.Container):
             padding=ft.padding.only(top=20, left= 20)
         )
 
+        self.poster = ft.Image(content.getGambar(), width=300, height=450, border_radius=30)
+
+        self.gambar = content.getGambar()
+
+        self.poster_text = ft.Text(value="", size=20)
+
+        self.go_back_button = ft.IconButton(ft.icons.ARROW_BACK, icon_color="#FED466", on_click=lambda e: self.go_back(page))
+
         self.content = ft.Container(
                         bgcolor="#000D20",
                         content = ft.Row([
                             ft.Container(
                                 ft.Column([
                                     ft.Container(
-                                        ft.IconButton(ft.icons.ARROW_BACK, icon_color="#FED466", on_click=lambda _: self.go_back(page))
+                                        self.go_back_button
                                     ),
                                     ft.Container(
                                         ft.Column([
@@ -304,6 +308,7 @@ class EditPage(ft.Container):
                             ft.Container(
                                 ft.Column([
                                     self.poster,
+                                    self.poster_text,
                                     self.poster_button,
                                     self.submit_button,
                                     ],
@@ -316,17 +321,25 @@ class EditPage(ft.Container):
         page.overlay.append(self.date_picker)
         page.overlay.append(self.file_picker)
 
+        
+
     def go_back(self, page: ft.Page):
         page.go("/informasi-film-series")
+        self.poster.src = self.gambar
+        self.poster_text.value = ""
 
     def hours_to_seconds(self, hours, minutes, seconds):
         return int(hours) * 3600 + int(minutes) * 60 + int(seconds)
 
 
-    def on_file_picker_result(self, e: ft.FilePickerResultEvent):
+    def on_file_picker_result(self, e: ft.FilePickerResultEvent, page: ft.Page):
         if e.files is not None:
-            for f in e.files:
-                print(f"File name: {f.name}, size: {f.size} bytes")
+            file_name = e.files[0].name
+            file_path = e.files[0].path
+            self.poster_text.value = file_name
+            print(f"Selected file: {file_name}")
+            self.poster.src = file_path
+            page.update()
 
 
     def submit_click(self, e,  content: Content, page: ft.Page,  movies_dict: dict, ongoing_movies_dict: dict, review_movies_dict: dict, watchlist_movies_dict: dict, finished_movies_dict: dict):
@@ -527,9 +540,7 @@ class MovieEditPage(EditPage):
         finally:
             conn.close()
 
-        PopUp("Success!","Movie information has been updated", page).open_dlg_modal(e, page)
         
-        page.update()
 
         print("Nama: ", movie.getName())
         print("Durasi: ", movie.getDuration())
@@ -540,7 +551,15 @@ class MovieEditPage(EditPage):
         print("Synopsis: ", movie.getSummary())
 
 
-        page.go("/")
+        def navigate_to_information():
+            page.go("/informasi-film-series")
+            page.update()
+
+        popup = PopUp("Success!", "Movie information has been updated", navigate_to_information)
+
+        popup.dlg_modal.open = True
+        page.overlay.append(popup.dlg_modal)
+        page.update()
 
 class SeriesEditPage(EditPage):
     def __init__(self, series: Series, page: ft.Page, series_dict: dict, ongoing_series_dict: dict, review_series_dict: dict, watchlist_series_dict: dict, finished_series_dict: dict):
@@ -638,7 +657,7 @@ class SeriesEditPage(EditPage):
                             ft.Container(
                                 ft.Column([
                                     ft.Container(
-                                        ft.IconButton(ft.icons.ARROW_BACK, icon_color="#FED466", on_click=lambda e: page.go("/informasi-film-series"))
+                                        self.go_back_button
                                     ),
                                     ft.Container(
                                         ft.Column([
@@ -704,6 +723,7 @@ class SeriesEditPage(EditPage):
                             ft.Container(
                                 ft.Column([
                                     self.poster,
+                                    self.poster_text,
                                     self.poster_button,
                                     self.submit_button,
                                     ],
@@ -900,10 +920,6 @@ class SeriesEditPage(EditPage):
         finally:
             conn.close()
 
-        PopUp("Success!", "Changes saved successfully", page).open_dlg_modal(e, page)
-        
-        page.update()
-
         print("Name: ", series.getName())
         print("Season: ", series.getSeason())
         print("Season Progress: ", series.getSeasonProgress())
@@ -917,7 +933,15 @@ class SeriesEditPage(EditPage):
         print("Summary: ", series.getSummary())
 
 
-        page.go("/")
+        def navigate_to_information():
+            page.go("/informasi-film-series")
+            page.update()
+
+        popup = PopUp("Success!", "Series information has been updated", navigate_to_information)
+
+        popup.dlg_modal.open = True
+        page.overlay.append(popup.dlg_modal)
+        page.update()
 
     def show_page(self, page: ft.Page):
         page.overlay.append(self.date_picker)

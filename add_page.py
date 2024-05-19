@@ -246,11 +246,6 @@ class AddPage:
 
         self.poster = ft.Image("assets/img/blank.png", width=300, height=450, border_radius=30)
 
-        self.poster_container = ft.Container(
-            padding=ft.padding.only(left=20, top=70),
-            on_click=lambda e: self.file_picker.pick_files()
-        )
-
         self.poster_text = ft.Text(value="", size=20)
 
         self.option_button = ft.Container(
@@ -281,7 +276,7 @@ class AddPage:
         self.poster_text.value = ""
     
     def on_file_picker_result(self, e: ft.FilePickerResultEvent, page: ft.Page):
-        if e.files:
+        if e.files is not None:
             file_name = e.files[0].name
             file_path = e.files[0].path
             self.poster_text.value = file_name
@@ -418,10 +413,15 @@ class MovieAddPage(AddPage):
 
         print("id: ", id, "name: ", name, "releaseDate: ", release_year, "duration: ", duration, "synopsis: ", synopsis, "genre: ", genre, "rating: ", rating, "watchProgress: ", watchProgress)
 
-        PopUp("Success!", "Movie added successfully", page).open_dlg_modal(e, page)
+        def navigate_to_root():
+            page.go("/")
+            page.update()
 
+        popup = PopUp("Success!", "Movie information has been updated", navigate_to_root)
+
+        popup.dlg_modal.open = True
+        page.overlay.append(popup.dlg_modal)
         page.update()
-        page.go("/")
 
 
     def movies_show_page(self, page: ft.Page):

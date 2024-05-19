@@ -2,27 +2,31 @@ import flet as ft
 import time
 
 class PopUp:
-    def __init__(self, title, text, page: ft.Page):
+    def __init__(self, title, text, on_close):
         self.clicked = False
+        self.on_close = on_close
         self.dlg_modal = ft.AlertDialog(
             modal=True,
             title=ft.Text(title),
             content=ft.Text(text),
             actions=[
-                ft.TextButton("Ok", on_click=lambda e: self.close_dlg(e, page),)
+                ft.TextButton("Ok", on_click=self.close_dlg)
             ],
             actions_alignment=ft.MainAxisAlignment.END,
-            on_dismiss=lambda e: print("Modal dialog dismissed!"),
+            on_dismiss=self.on_dismiss,
         )
 
     def getClicked(self):
         return self.clicked
 
-    def close_dlg(self,e, page: ft.Page):
+    def close_dlg(self, e):
         self.dlg_modal.open = False
         self.clicked = True
         print(self.clicked)
-        page.update()
+        self.on_close()  # Call the provided callback function
+
+    def on_dismiss(self, e):
+        print("Modal dialog dismissed!")
 
 
     def open_dlg_modal(self,e, page: ft.Page):
@@ -69,7 +73,7 @@ class YesOrNo:
             self.no_callback(e)
         self.page.update()
 
-    def open_dlg_modal_yes_no(self, e, yes_callback, no_callback):
+    def open_dlg_modal_yes_no(self, e, yes_callback, no_callback=None):
         self.yes_callback = yes_callback
         self.no_callback = no_callback
         self.page.dialog = self.dlg_modal
