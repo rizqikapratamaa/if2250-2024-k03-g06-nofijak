@@ -47,10 +47,11 @@ Modul ini berisi halaman mengenai informasi film atau series
 | Tugas | Nama  | NIM |
 |-------|-------|-----|
 | All Entries                                           | Aland Mulia Pratama | 13522124 |
-| Watchlists, Ongoing, Completed, Informasi film/series | Muhammad Rasheed Qais Tandjung | | 13522158
+| Watchlists, Ongoing, Completed, Informasi film/series | Muhammad Rasheed Qais Tandjung | 13522158 | 
 | Tambah film/series                                    | Muhammad Dzaki Arta    | 13522149 |
 | edit Informasi film/series page                       | Rizqika Mulia Pratama | 13522126 | 
 | Database Aplikasi                                     | Ikhwan Al Hakim | 13522147 | 
+
 
 ## Daftar Tabel Basisdata
 
