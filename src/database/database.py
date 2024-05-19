@@ -3,10 +3,10 @@ from utils.content import *
 
 class Database:
     def __init__(self):
+        # Create a cursor object
+        conn = sqlite3.connect("database/database.db")
+        cursor = conn.cursor()
         try:
-            # Create a cursor object
-            conn = sqlite3.connect("database/database.db")
-            cursor = conn.cursor()
 
             # Retrieve data from the table
             # Fetch movies and store in a dictionary
