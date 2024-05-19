@@ -3,14 +3,57 @@
 
 Sebuah aplikasi untuk memudahkan menonton film
 
-## Deskripsi Singkat
+## Daftar Isi
 
+- [Deskripsi Singkat](#deskripsi-singkat)
+- [Cara menjalankan Aplikasi](#cara-menjalankan-aplikasi)
+- [Daftar Modul](#daftar-modul)
+- [Daftar Tabel Basisdata](#daftar-tabel-basisdata)
+
+## Deskripsi Singkat
 
 Aplikasi ini dirancang untuk penggemar film dan serial yang sering menonton konten secara bajakan dan mengalami kesulitan melacak progress menonton mereka. Aplikasi ini ringan, berjalan secara lokal tanpa memerlukan koneksi internet, menghemat storage perangkat dan kuota internet. Fitur utamanya mencakup pelacakan progress menonton, di mana pengguna dapat menandai film atau serial sebagai ongoing dan melanjutkan dari titik terakhir yang ditonton. Pengguna juga dapat menyimpan manual menit yang telah ditonton untuk memastikan progress tidak hilang. Selain itu, terdapat fitur watchlist untuk menambahkan konten yang ingin ditonton di masa mendatang, lengkap dengan sinopsis, gambar, dan genre. Pengguna dapat memberikan rating setelah menyelesaikan menonton, serta mengurutkan dan memfilter konten berdasarkan rating dan genre untuk menemukan preferensi mereka dengan mudah. Fitur tambahan memungkinkan pengguna menghapus film dari watchlist dan menghentikan tanda ongoing untuk menjaga daftar tetap terorganisir dan up-to-date. Aplikasi ini bertujuan memberikan pengalaman menonton yang lebih teratur, terorganisir, dan menyenangkan.
 
+## Cara menjalankan Aplikasi 
+
+
+## Daftar Modul
+
+- [Modul Q1 : Modul Halaman All / Watchlist / Ongoing / Completed](#modul-1--modul-halaman-all--watchlist--ongoing--completed)
+- [Modul 2 : Modul Halaman Informasi Film/Series](#modul-2--modul-halaman-informasi-filmseries)
+
+### Modul 1 : Modul Halaman All / Watchlist / Ongoing / Completed
+
+Modul ini berisi halaman utama untuk aplikasi Nofijak
+
+![Gambar All Entries Main Page](tests/All%20entries%20main%20page.png)
+![Gambar Watchlist Main Page](tests/watchlist%20main%20page.png)
+![Gambar Ongoing Main Page](tests/ongoing%20main%20page.png)
+![Gambar Completed Main Page](tests/completed%20main%20page.png)
+
+### Modul 2 : Modul Halaman Informasi Film/Series
+
+Modul ini berisi halaman mengenai informasi film atau series
+
+![Gambar Information Film](tests/Information%20Film.png)
+![Gambar Information Series](tests/Information%20Series.png)
+![Gambar Add Movies](tests/add%20Movies.png)
+![Gambar Edit Movies](tests/edit%20Movies.png)
+![Gambar Add Series](tests/add%20Series.png)
+![Gambar Edit Series](tests/edit%20Series.png)
+
+### Pembagian Tugas
+
+| Tugas | Nama  | NIM |
+|-------|-------|-----|
+| All Entries                                           | Aland Mulia Pratama | 13522124 |
+| Watchlists, Ongoing, Completed, Informasi film/series | Muhammad Rasheed Qais Tandjung | | 13522158
+| Tambah film/series                                    | Muhammad Dzaki Arta    | 13522149 |
+| edit Informasi film/series page                       | Rizqika Mulia Pratama | 13522126 | 
+| Database Aplikasi                                     | Ikhwan Al Hakim | 13522147 | 
+
 ## Daftar Tabel Basisdata
 
-## Daftar Isi
 1. [Tabel dan Atribut](#tabel-dan-atribut)
     - [Tabel 1: finished_movies](#tabel-1-finished_movies)
     - [Tabel 2: finished_series](#tabel-2-finished_series)
