@@ -570,7 +570,7 @@ class SeriesEditPage(EditPage):
 
         self.submit_button = ft.Container(
             ft.Row([
-                SubmitButton("Add", on_click=lambda e: self.submit_click(e, series, page, series_dict, ongoing_series_dict, review_series_dict, watchlist_series_dict, finished_series_dict))
+                SubmitButton("Submit", on_click=lambda e: self.submit_click(e, series, page, series_dict, ongoing_series_dict, review_series_dict, watchlist_series_dict, finished_series_dict))
             ]),
             padding=ft.padding.only(top=20, left= 20)
         )
@@ -743,6 +743,9 @@ class SeriesEditPage(EditPage):
 
         def show_popup(message):
             PopUp("Warning!", message, call_back_dummpy).open_dlg_modal(e, page)
+        
+        def hours_to_seconds(hours, minutes, seconds):
+            return int(hours) * 3600 + int(minutes) * 60 + int(seconds)
 
         # Validate fields
         try:
@@ -750,8 +753,8 @@ class SeriesEditPage(EditPage):
             season_progress = int(self.season_progress_table.value)
             episode = int(self.episode_table.value)
             episode_progress = int(self.episode_progress_table.value)
-            watch_progress = int(self.watch_progress_table.value) if self.watch_progress_table.value else 0
-            rating = float(self.rating.value) if self.rating.value else None
+            watch_progress = hours_to_seconds(self.jam_watch_progress.value, self.menit_watch_progress.value, self.detik_watch_progress.value)
+            rating = float(self.rating.value) if self.rating.value != "" else None
         except ValueError:
             show_popup("All numeric fields must be valid numbers")
             return
@@ -940,7 +943,7 @@ class SeriesEditPage(EditPage):
             page.go("/informasi-film-series")
             page.update()
 
-        popup = PopUp("Success!", "Your series has successfully deleted", navigate_to_information)
+        popup = PopUp("Success!", "Your series has successfully edited", navigate_to_information)
         popup.open_dlg_modal(e, page)
 
     def show_page(self, page: ft.Page):
