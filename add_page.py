@@ -222,7 +222,7 @@ class AddPage:
         self.file_picker = ft.FilePicker(on_result= lambda e: self.on_file_picker_result(e, page))
 
         self.poster_button = ft.Container(
-            ft.ElevatedButton("Upload File", on_click=lambda _: self.file_picker.pick_files()),
+            ft.ElevatedButton("Upload Image", on_click=lambda _: self.file_picker.pick_files()),
             padding=ft.padding.only(left=20)
         )
 
@@ -339,30 +339,33 @@ class MovieAddPage(AddPage):
         # Additional debugging statements to trace the values
         print(f"Name: {self.name_table.value}, Rating: {self.rating.value}, Duration: {self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value)}, Release Year: {self.release_year_table.value}, Genre: {self.genre.value}")
 
+        def call_back_dummpy(e):
+            page.update()
+
         if self.name_table.value == "":
             print("Name is empty")  # Debugging statement
-            PopUp("Warning!", "Name cannot be empty", page).open_dlg_modal(e, page)
+            PopUp("Warning!", "Name cannot be empty", call_back_dummpy).open_dlg_modal(e, page)
             return
         elif self.rating.value != "":
             if not 0 <= float(self.rating.value) <= 10:
                 print("Invalid rating value")  # Debugging statement
-                PopUp("Warning!", "Rating must be between 0 and 10", page).open_dlg_modal(e, page)
+                PopUp("Warning!", "Rating must be between 0 and 10", call_back_dummpy).open_dlg_modal(e, page)
                 return
         elif self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value) == 0:
             print("Duration is zero")  # Debugging statement
-            PopUp("Warning!", "Duration cannot be 0", page).open_dlg_modal(e, page)
+            PopUp("Warning!", "Duration cannot be 0", call_back_dummpy).open_dlg_modal(e, page)
             return
         elif self.release_year_table.value is None:
             print("Release year is empty")  # Debugging statement
-            PopUp("Warning!", "Release Date cannot be empty", page).open_dlg_modal(e, page)
+            PopUp("Warning!", "Release Date cannot be empty", call_back_dummpy).open_dlg_modal(e, page)
             return
         elif self.genre.value is None:
             print("Genre is empty")  # Debugging statement
-            PopUp("Warning!", "Genre cannot be empty", page).open_dlg_modal(e, page)
+            PopUp("Warning!", "Genre cannot be empty", call_back_dummpy).open_dlg_modal(e, page)
             return
         elif is_overlap():
             print("Watch progress is more than duration")  # Debugging statement
-            PopUp("Warning!", "Watch Progress cannot be more than Duration", page).open_dlg_modal(e, page)
+            PopUp("Warning!", "Watch Progress cannot be more than Duration", call_back_dummpy).open_dlg_modal(e, page)
             return
         
         print("All conditions passed")  # Debugging statement
@@ -413,15 +416,12 @@ class MovieAddPage(AddPage):
 
         print("id: ", id, "name: ", name, "releaseDate: ", release_year, "duration: ", duration, "synopsis: ", synopsis, "genre: ", genre, "rating: ", rating, "watchProgress: ", watchProgress)
 
-        def navigate_to_root():
+        def navigate_to_root(e):
             page.go("/")
             page.update()
 
-        popup = PopUp("Success!", "Movie information has been updated", navigate_to_root)
-
-        popup.dlg_modal.open = True
-        page.overlay.append(popup.dlg_modal)
-        page.update()
+        popup = PopUp("Success!", "Movie has been added", navigate_to_root)
+        popup.open_dlg_modal(e, page)
 
 
     def movies_show_page(self, page: ft.Page):
@@ -629,6 +629,9 @@ class SeriesAddPage(AddPage):
     def submit_click(self, e, page: ft.Page, series_dict: dict, ongoing_series_dict: dict, review_series_dict: dict, watchlist_series_dict: dict, finished_series_dict: dict):
         print("Submit button clicked")  # Debugging statement
         
+        def call_back_dummpy(e):
+            page.update()
+
         def is_overlap():
             return self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value) <= self.hours_to_seconds(self.jam_watch_progress.value, self.menit_watch_progress.value, self.detik_watch_progress.value)
 
@@ -637,36 +640,36 @@ class SeriesAddPage(AddPage):
 
         if self.name_table.value == "":
             print("Name is empty")  # Debugging statement
-            PopUp("Warning!", "Name cannot be empty", page).open_dlg_modal(e, page)
+            PopUp("Warning!", "Name cannot be empty", call_back_dummpy).open_dlg_modal(e, page)
             return
         elif self.rating.value != "":
             if not 0 <= float(self.rating.value) <= 10:
                 print("Invalid rating value")  # Debugging statement
-                PopUp("Warning!", "Rating must be between 0 and 10", page).open_dlg_modal(e, page)
+                PopUp("Warning!", "Rating must be between 0 and 10", call_back_dummpy).open_dlg_modal(e, page)
                 return
         elif self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value) == 0:
             print("Duration is zero")  # Debugging statement
-            PopUp("Warning!", "Duration cannot be 0", page).open_dlg_modal(e, page)
+            PopUp("Warning!", "Duration cannot be 0", call_back_dummpy).open_dlg_modal(e, page)
             return
         elif self.release_year_table.value is None:
             print("Release year is empty")  # Debugging statement
-            PopUp("Warning!", "Release Date cannot be empty", page).open_dlg_modal(e, page)
+            PopUp("Warning!", "Release Date cannot be empty", call_back_dummpy).open_dlg_modal(e, page)
             return
         elif self.genre.value is None:
             print("Genre is empty")  # Debugging statement
-            PopUp("Warning!", "Genre cannot be empty", page).open_dlg_modal(e, page)
+            PopUp("Warning!", "Genre cannot be empty", call_back_dummpy).open_dlg_modal(e, page)
             return
         elif is_overlap():
             print("Watch progress is more than duration")  # Debugging statement
-            PopUp("Warning!", "Watch Progress cannot be more than Duration", page).open_dlg_modal(e, page)
+            PopUp("Warning!", "Watch Progress cannot be more than Duration", call_back_dummpy).open_dlg_modal(e, page)
             return
         elif self.season_table.value == 0:
             print("Season is empty")  # Debugging statement
-            PopUp("Warning!", "Season cannot be empty", page).open_dlg_modal(e, page)
+            PopUp("Warning!", "Season cannot be empty", call_back_dummpy).open_dlg_modal(e, page)
             return
         elif self.episode_table.value == "":
             print("Episode is empty")  # Debugging statement
-            PopUp("Warning!", "Episode cannot be empty", page).open_dlg_modal(e, page)
+            PopUp("Warning!", "Episode cannot be empty", call_back_dummpy).open_dlg_modal(e, page)
             return
     
         print("All conditions passed")  # Debugging statement
@@ -726,10 +729,12 @@ class SeriesAddPage(AddPage):
 
         print("id: ", id, "name: ", name, "releaseDate: ", release_year, "duration: ", duration, "synopsis: ", synopsis, "genre: ", genre, "rating: ", rating, "watchProgress: ", watchProgress, "season: ", season, "episode: ", episode, "current_season: ", season_progress, "current_episode: ", episode_progress)
 
-        PopUp("Success!", "Movie added successfully", page).open_dlg_modal(e, page)
+        def navigate_to_root(e):
+            page.go("/")
+            page.update()
 
-        page.update()
-        page.go("/")
+        popup = PopUp("Success!", "series has been added", navigate_to_root)
+        popup.open_dlg_modal(e, page)
 
 
     def series_show_page(self, page: ft.Page):

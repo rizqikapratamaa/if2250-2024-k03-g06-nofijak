@@ -23,13 +23,12 @@ class PopUp:
         self.dlg_modal.open = False
         self.clicked = True
         print(self.clicked)
-        self.on_close()  # Call the provided callback function
+        self.on_close(e)  # Call the provided callback function with event argument
 
     def on_dismiss(self, e):
         print("Modal dialog dismissed!")
 
-
-    def open_dlg_modal(self,e, page: ft.Page):
+    def open_dlg_modal(self, e, page: ft.Page):
         page.dialog = self.dlg_modal
         self.dlg_modal.open = True
         page.update()
@@ -73,7 +72,7 @@ class YesOrNo:
             self.no_callback(e)
         self.page.update()
 
-    def open_dlg_modal_yes_no(self, e, yes_callback, no_callback=None):
+    def open_dlg_modal_yes_no(self, e, yes_callback, no_callback):
         self.yes_callback = yes_callback
         self.no_callback = no_callback
         self.page.dialog = self.dlg_modal

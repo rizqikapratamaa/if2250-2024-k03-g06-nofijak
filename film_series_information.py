@@ -240,8 +240,13 @@ class FilmInformation(ft.Container):
             if os.path.isfile(image_path):
                 os.remove(image_path)
 
-            success_popup = PopUp("Success!", "Movie has been deleted", page)
-            success_popup.open_dlg_modal(e, page)
+            def navigate_to_root(e):
+                page.go("/")
+                page.update()
+
+            popup = PopUp("Success!", "Your series has successfully deleted", navigate_to_root)
+            popup.open_dlg_modal(e, page)
+            
             scrollCard.inisialisasiCard()
             for i in database.getMovies():
                 moviee = database.make_movies(i)
@@ -260,16 +265,12 @@ class FilmInformation(ft.Container):
                     kolomHalaman,
                     kolomHalamanEdit
                 )
-
-            page.update()
-            success_popup.dlg_modal.on_dismiss = lambda e: page.go("/")
             
         
         def on_no(e):
             pass
 
-        proceed_popup = YesOrNo("You may lose this movie permanently. Do you want to proceed?", page)
-        
+        proceed_popup = YesOrNo("You may lose this movies permanently. Do you want to proceed?", page)
         proceed_popup.open_dlg_modal_yes_no(e, on_yes, on_no)
 
 class SeriesInformation(ft.Container):
@@ -400,8 +401,12 @@ class SeriesInformation(ft.Container):
             if os.path.isfile(image_path):
                 os.remove(image_path)
 
-            success_popup = PopUp("Success!", "Series has been deleted", page)
-            success_popup.open_dlg_modal(e, page)
+            def navigate_to_root(e):
+                page.go("/")
+                page.update()
+
+            popup = PopUp("Success!", "Your series has successfully deleted", navigate_to_root)
+            popup.open_dlg_modal(e, page)
 
             scrollCard.inisialisasiCard()
             for i in database.getMovies():
@@ -421,16 +426,11 @@ class SeriesInformation(ft.Container):
                     kolomHalaman,
                     kolomHalamanEdit
                 )
-
-            page.update()
-
-            success_popup.dlg_modal.on_dismiss = lambda e: page.go("/")
         
         def on_no(e):
             pass
 
         proceed_popup = YesOrNo("You may lose this series permanently. Do you want to proceed?", page)
-        
         proceed_popup.open_dlg_modal_yes_no(e, on_yes, on_no)
 
     def go_back(self, page):

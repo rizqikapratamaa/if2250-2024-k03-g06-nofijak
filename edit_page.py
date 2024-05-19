@@ -224,7 +224,7 @@ class EditPage(ft.Container):
         self.file_picker = ft.FilePicker(on_result= lambda e: self.on_file_picker_result(e, page))
 
         self.poster_button = ft.Container(
-            ft.ElevatedButton("Upload File", on_click=lambda _: self.file_picker.pick_files()),
+            ft.ElevatedButton("Upload Image", on_click=lambda _: self.file_picker.pick_files()),
             padding=ft.padding.only(left=20)
         )
 
@@ -300,7 +300,7 @@ class EditPage(ft.Container):
                                             ]),
                                             self.summary
                                         ]),
-                                        padding=ft.padding.only(left=50,right=50, bottom=100)
+                                        padding=ft.padding.only(left=50, right=50, bottom=100)
                                     ),
                                     
                                 ]),
@@ -415,8 +415,11 @@ class MovieEditPage(EditPage):
         def is_overlap():
             return self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value) <= self.hours_to_seconds(self.jam_watch_progress.value, self.menit_watch_progress.value, self.detik_watch_progress.value)
 
+        def call_back_dummpy(e):
+            page.update()
+
         def show_popup(message):
-            PopUp(message, page).open_dlg_modal(e, page)
+            PopUp("Warning!", message, call_back_dummpy).open_dlg_modal(e, page)
 
         # Check for empty name
         if self.name_table.value == "":
@@ -551,15 +554,12 @@ class MovieEditPage(EditPage):
         print("Synopsis: ", movie.getSummary())
 
 
-        def navigate_to_information():
+        def navigate_to_information(e):
             page.go("/informasi-film-series")
             page.update()
 
-        popup = PopUp("Success!", "Movie information has been updated", navigate_to_information)
-
-        popup.dlg_modal.open = True
-        page.overlay.append(popup.dlg_modal)
-        page.update()
+        popup = PopUp("Success!", "Your movies has successfully deleted", navigate_to_information)
+        popup.open_dlg_modal(e, page)
 
 class SeriesEditPage(EditPage):
     def __init__(self, series: Series, page: ft.Page, series_dict: dict, ongoing_series_dict: dict, review_series_dict: dict, watchlist_series_dict: dict, finished_series_dict: dict):
@@ -738,8 +738,11 @@ class SeriesEditPage(EditPage):
         def is_overlap():
             return self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value) <= self.hours_to_seconds(self.jam_watch_progress.value, self.menit_watch_progress.value, self.detik_watch_progress.value)
 
+        def call_back_dummpy(e):
+            page.update()
+
         def show_popup(message):
-            PopUp(message, page).open_dlg_modal(e, page)
+            PopUp("Warning!", message, call_back_dummpy).open_dlg_modal(e, page)
 
         # Validate fields
         try:
@@ -933,15 +936,12 @@ class SeriesEditPage(EditPage):
         print("Summary: ", series.getSummary())
 
 
-        def navigate_to_information():
+        def navigate_to_information(e):
             page.go("/informasi-film-series")
             page.update()
 
-        popup = PopUp("Success!", "Series information has been updated", navigate_to_information)
-
-        popup.dlg_modal.open = True
-        page.overlay.append(popup.dlg_modal)
-        page.update()
+        popup = PopUp("Success!", "Your series has successfully deleted", navigate_to_information)
+        popup.open_dlg_modal(e, page)
 
     def show_page(self, page: ft.Page):
         page.overlay.append(self.date_picker)
