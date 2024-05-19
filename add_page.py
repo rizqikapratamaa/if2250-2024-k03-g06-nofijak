@@ -4,6 +4,8 @@ from popup import *
 import flet as ft
 from content import *
 from button import OptionButton, SubmitButton
+import os
+import shutil
 
 class AddPage:
     def __init__(self, page: ft.Page):
@@ -229,9 +231,7 @@ class AddPage:
             padding=ft.padding.only(left=10, right=10, top=10)
         )
 
-        self.summary = ft.Container(
-            padding=ft.padding.only(bottom=25),
-            content = ft.TextField(
+        self.summary = ft.TextField(
                 value=None,
                 text_align=ft.TextAlign.LEFT,
                 width=480, shift_enter=True,
@@ -242,20 +242,11 @@ class AddPage:
                 focused_border_color="#FED466",
                 selection_color="#FED466",
                 label_style= ft.TextStyle(color="#FED466", font_family="Consolas"),
-            ),
-
-        )
+            )
 
         self.poster = ft.Container(
             ft.Image("assets/img/blank.png", width=300, height=450, border_radius=30),
             padding=ft.padding.only(left=20, top=70)
-        )
-        
-        self.submit_button = ft.Container(
-            ft.Row([
-                SubmitButton("Add", on_click=lambda e: self.submit_click(e, page))
-            ]),
-            padding=ft.padding.only(top=20, left= 20)
         )
 
         self.option_button = ft.Container(
@@ -277,20 +268,11 @@ class AddPage:
             padding=0,
             shape= ft.RoundedRectangleBorder(radius=30)
         )
-
-    def show_series(page: ft.Page):
-        return SeriesAddPage(page).show_page(page)
-    
-    def show_movie(page: ft.Page):
-        return MovieAddPage(page).show_page(page)
     
     def on_file_picker_result(self, e: ft.FilePickerResultEvent):
         if e.files is not None:
             for f in e.files:
                 print(f"File name: {f.name}, size: {f.size} bytes")
-
-    def submit_click(self, e, page: ft.Page, series_dict, ongoing_series_dict, review_series_dict, watchlist_series_dict):
-        return
 
     def change_date(self, e, page: ft.Page):
             self.release_year_table.value = self.date_picker.value.year
@@ -302,65 +284,6 @@ class AddPage:
         
     def hours_to_seconds(self, hours, minutes, seconds):
         return int(hours) * 3600 + int(minutes) * 60 + int(seconds)
-    
-    def show_page(self, page: ft.Page):
-        page.clean()
-        page.overlay.append(self.date_picker)
-        page.overlay.append(self.file_picker)
-        route = page.route
-        page.add(
-        ft.IconButton(ft.icons.ARROW_BACK, icon_color="#FED466", on_click=lambda e: page.update_async()),
-        ft.Container(
-            content= 
-            ft.Row([
-                ft.Container(
-                    ft.Column([
-                        self.option_button,
-                        self.edit_text,
-                        self.name_text,
-                        self.name_table,
-                        ft.Row([
-                            self.duration_text,
-                            self.watch_progress_text
-                        ]),
-                        ft.Row([
-                            self.duration_table,
-                            self.watch_progress_table,
-                        ]),
-                        self.release_year_text,
-                        ft.Row([
-                            self.release_year_table,
-                            self.calendar
-                        ]),
-                        ft.Row([
-                            self.genre_text,
-                            self.rating_text
-                        ]),
-                        ft.Row([
-                            self.genre,
-                            self.rating
-                        ]),
-                        ft.Row([
-                            self.summary_text
-                        ]),
-                        self.summary,
-                    ])
-                ),
-                ft.Container(
-                    ft.Column([
-                        # self.switch_button,
-                        self.poster,
-                        self.poster_button,
-                        self.submit_button,
-                        ],
-                        horizontal_alignment=ft.CrossAxisAlignment.CENTER
-                    ),
-                    padding=ft.padding.only(left=150)
-                )
-            ]),
-            padding=ft.padding.only(left=50,right=50)
-        ),
-        )
         
 class MovieAddPage(AddPage):
     def __init__(self, page: ft.Page, movie_dict: dict, ongoing_movie_dict: dict, review_movie_dict: dict, watchlist_movie_dict: dict, finished_movie_dict: dict):
@@ -389,9 +312,9 @@ class MovieAddPage(AddPage):
             shape= ft.RoundedRectangleBorder(radius=30)
         )
 
-        self.submit_button = ft.Container(
+        self.add_button = ft.Container(
             ft.Row([
-                SubmitButton("Submit", on_click=lambda e: self.submit_click(e, page, movie_dict, ongoing_movie_dict, review_movie_dict, watchlist_movie_dict, finished_movie_dict))
+                SubmitButton("Add", on_click=lambda e: self.submit_click(e, page, movie_dict, ongoing_movie_dict, review_movie_dict, watchlist_movie_dict, finished_movie_dict))
             ]),
             padding=ft.padding.only(top=20, left= 20)
         )
@@ -421,9 +344,6 @@ class MovieAddPage(AddPage):
         else:
             conn = sqlite3.connect('database.db')
             cursor = conn.cursor()
-            # if self.file_picker.result != None and self.file_picker.result.files != None:
-            #     for f in self.file_picker.result.files:
-            #         shutil.copy(f.path, os.path.join('assets/img/', movie.getId() + '.jpg'))
             def generate_new_key(dictionary):
                 key = 1
                 while key in dictionary:
@@ -437,6 +357,11 @@ class MovieAddPage(AddPage):
             genre = self.genre.value
             rating = self.rating.value
             synopsis = self.summary.value
+
+            if self.file_picker.result != None and self.file_picker.result.files != None:
+                for f in self.file_picker.result.files:
+                    shutil.copy(f.path, os.path.join('assets/img/', id + '.jpg'))
+
             cursor.execute("INSERT INTO movies VALUES (?, ?, ?, ?, ?, ?)", (id, name, duration, release_year, genre, synopsis))
             movie_dict[id] = [id, name, duration, release_year, genre, synopsis]
             cursor.execute("INSERT INTO review_movies VALUES (?, ?)", (id, rating))
@@ -452,6 +377,11 @@ class MovieAddPage(AddPage):
                 cursor.execute("INSERT INTO finished_movies VALUES (?, CURDATE())", (id))
                 finished_movie_dict[id] = [id]
             conn.commit()
+
+            print("id: ", id, "name: ", name, "releaseDate: ", release_year, "duration: ", duration, "synopsis: ", synopsis, "genre: ", genre, "rating: ", rating, "watchProgress: ", watchProgress)
+
+        page.update()
+        page.go("/")
             
 
     def movies_show_page(self, page: ft.Page):
@@ -529,7 +459,7 @@ class MovieAddPage(AddPage):
                                         [
                                             self.poster,
                                             self.poster_button,
-                                            self.submit_button,
+                                            self.add_button,
                                         ],
                                         horizontal_alignment=ft.CrossAxisAlignment.CENTER
                                     ),
@@ -572,9 +502,9 @@ class SeriesAddPage(AddPage):
             shape= ft.RoundedRectangleBorder(radius=30)
         )
 
-        self.submit_button = ft.Container(
+        self.add_button = ft.Container(
             ft.Row([
-                SubmitButton("Submit", on_click=lambda e: self.submit_click(e, page, series_dict, ongoing_series_dict, review_series_dict, watchlist_series_dict, finished_series_dict))
+                SubmitButton("Add", on_click=lambda e: self.submit_click(e, page, series_dict, ongoing_series_dict, review_series_dict, watchlist_series_dict, finished_series_dict))
             ]),
             padding=ft.padding.only(top=20, left= 20)
         )
@@ -656,8 +586,7 @@ class SeriesAddPage(AddPage):
         )
 
     def submit_click(self, e, page: ft.Page, series_dict: dict, ongoing_series_dict: dict, review_series_dict: dict, watchlist_series_dict: dict, finished_series_dict: dict):
-        
-        
+
         def is_overlap():
             return self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value) <= self.hours_to_seconds(self.jam_watch_progress.value, self.menit_watch_progress.value, self.detik_watch_progress.value)
         if self.name_table.value == "":
@@ -707,6 +636,10 @@ class SeriesAddPage(AddPage):
             rating = self.rating.value
             synopsis = self.summary.value
 
+            if self.file_picker.result != None and self.file_picker.result.files != None:
+                for f in self.file_picker.result.files:
+                    shutil.copy(f.path, os.path.join('assets/img/', id + '.jpg'))
+
             cursor.execute("INSERT INTO series VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (id, name, duration, release_year, genre, synopsis, season, episode))
             series_dict[id] = [id, name, duration, release_year, genre, synopsis, season, episode]
 
@@ -729,6 +662,9 @@ class SeriesAddPage(AddPage):
             conn.commit()
 
             print("id: ", id, "name: ", name, "releaseDate: ", release_year, "duration: ", duration, "synopsis: ", synopsis, "genre: ", genre, "rating: ", rating, "watchProgress: ", watchProgress, "season: ", season, "episode: ", episode, "current_season: ", season_progress, "current_episode: ", episode_progress)
+
+        page.update()
+        page.go("/")
 
     def series_show_page(self, page: ft.Page):
         page.overlay.append(self.date_picker)
@@ -812,7 +748,7 @@ class SeriesAddPage(AddPage):
                                 ft.Column([
                                     self.poster,
                                     self.poster_button,
-                                    self.submit_button,
+                                    self.add_button,
                                     ],
                                     horizontal_alignment=ft.CrossAxisAlignment.CENTER
                                 ),

@@ -217,12 +217,12 @@ class FilmInformation(ft.Container):
     
     def handleEditMovie(self, movie:Movie, page: ft.Page, kolomHalaman: ft.Column, database: Database):
         #TODO: Implementasi injeksi objek Edit Movie pada halaman edit film series (pakai variabel kolomHalaman dan jangan lupa clear isi kolomHalaman sebelum melakukan append)
-        page.overlay.append(MovieEditPage(movie, page, database.getMovies(),database.getOngoingMovies(), database.getReviewMovies(), database.getWatchlistMovies()).file_picker)
-        page.overlay.append(MovieEditPage(movie, page, database.getMovies(),database.getOngoingMovies(), database.getReviewMovies(), database.getWatchlistMovies()).date_picker)
+        page.overlay.append(MovieEditPage(movie, page, database.getMovies(),database.getOngoingMovies(), database.getReviewMovies(), database.getWatchlistMovies(), database.getFinishedMovies()).file_picker)
+        page.overlay.append(MovieEditPage(movie, page, database.getMovies(),database.getOngoingMovies(), database.getReviewMovies(), database.getWatchlistMovies(), database.getFinishedMovies()).date_picker)
         kolomHalaman.controls.clear()
         kolomHalaman.controls.append(
             #TODO: append Objek Edit Movie
-            MovieEditPage(movie, page, database.getMovies(),database.getOngoingMovies(), database.getReviewMovies(), database.getWatchlistMovies())
+            MovieEditPage(movie, page, database.getMovies(),database.getOngoingMovies(), database.getReviewMovies(), database.getWatchlistMovies(), database.getFinishedMovies())
         )
         
         page.go("/edit-film-series")
@@ -236,7 +236,7 @@ class FilmInformation(ft.Container):
             database.removeReviewMovie(movie.getId())
 
             # Delete image file
-            image_path = f"assets/img/{movie.getId()}.jpg"  # Adjust the file extension if necessary
+            image_path = f"assets/img/{movie.getId()}m.jpg"  # Adjust the file extension if necessary
             if os.path.isfile(image_path):
                 os.remove(image_path)
 
@@ -379,10 +379,12 @@ class SeriesInformation(ft.Container):
 
     def handleEditSeries(self, series:Series, page: ft.Page, kolomHalamanEdit: ft.Column, database: Database):
         #TODO: Implementasi injeksi objek Series Movie pada halaman edit film series (pakai variabel kolomHalaman dan jangan lupa clear isi kolomHalaman sebelum melakukan append)
+        page.overlay.append(SeriesEditPage(series, page, database.getSeries(),database.getOngoingSeries(), database.getReviewSeries(), database.getWatchlistSeries()).file_picker)
+        page.overlay.append(SeriesEditPage(series, page, database.getSeries(),database.getOngoingSeries(), database.getReviewSeries(), database.getWatchlistSeries()).date_picker)
         kolomHalamanEdit.controls.clear()
         kolomHalamanEdit.controls.append(
             #TODO: append Objek Edit Series
-            SeriesEditPage(series, page, database.getSeries(),database.getOngoingSeries(), database.getReviewSeries(), database.getWatchlistSeries())
+            SeriesEditPage(series, page, database.getSeries(),database.getOngoingSeries(), database.getReviewSeries(), database.getWatchlistSeries(), database.getFinishedSeries())
         )
         page.go("/edit-film-series")
 
@@ -394,7 +396,7 @@ class SeriesInformation(ft.Container):
             database.removeOngoingSeries(series.getId())
             database.removeReviewSeries(series.getId())
 
-            image_path = f"assets/img/{series.getId()}.jpg"
+            image_path = f"assets/img/{series.getId()}s.jpg"
             if os.path.isfile(image_path):
                 os.remove(image_path)
 

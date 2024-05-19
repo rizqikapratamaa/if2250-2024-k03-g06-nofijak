@@ -9,7 +9,7 @@ from button import SubmitButton
 import sqlite3
 
 class EditPage(ft.Container):
-    def __init__(self, content: Content, page: ft.Page,  movies_dict: dict, ongoing_movies_dict: dict, review_movies_dict: dict, watchlist_movies_dict: dict):
+    def __init__(self, content: Content, page: ft.Page,  movies_dict: dict, ongoing_movies_dict: dict, review_movies_dict: dict, watchlist_movies_dict: dict, finished_movies_dict):
         super().__init__()
         self.width = page.window_width
         self.height = page.window_height
@@ -252,7 +252,7 @@ class EditPage(ft.Container):
         )
         self.submit_button = ft.Container(
             ft.Row([
-                SubmitButton("Submit", on_click=lambda e: self.submit_click(e, content, page, movies_dict, ongoing_movies_dict, review_movies_dict, watchlist_movies_dict))
+                SubmitButton("Submit", on_click=lambda e: self.submit_click(e, content, page, movies_dict, ongoing_movies_dict, review_movies_dict, watchlist_movies_dict, finished_movies_dict))
             ]),
             padding=ft.padding.only(top=20, left= 20)
         )
@@ -329,7 +329,7 @@ class EditPage(ft.Container):
                 print(f"File name: {f.name}, size: {f.size} bytes")
 
 
-    def submit_click(self, e,  content: Content, page: ft.Page,  movies_dict: dict, ongoing_movies_dict: dict, review_movies_dict: dict, watchlist_movies_dict: dict):
+    def submit_click(self, e,  content: Content, page: ft.Page,  movies_dict: dict, ongoing_movies_dict: dict, review_movies_dict: dict, watchlist_movies_dict: dict, finished_movies_dict: dict):
         def is_overlap():
             return self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value) <= self.hours_to_seconds(self.jam_watch_progress.value, self.menit_watch_progress.value, self.detik_watch_progress.value)
         if self.name_table.value == "":
@@ -388,17 +388,17 @@ class EditPage(ft.Container):
         )
         
 class MovieEditPage(EditPage):
-    def __init__(self, movie: Movie, page: ft.Page, movies_dict: dict, ongoing_movies_dict: dict, review_movies_dict: dict, watchlist_movies_dict: dict):
-        super().__init__(movie, page, movies_dict, ongoing_movies_dict, review_movies_dict, watchlist_movies_dict)
+    def __init__(self, movie: Movie, page: ft.Page, movies_dict: dict, ongoing_movies_dict: dict, review_movies_dict: dict, watchlist_movies_dict: dict, finished_movies_dict: dict):
+        super().__init__(movie, page, movies_dict, ongoing_movies_dict, review_movies_dict, watchlist_movies_dict, finished_movies_dict)
         self.width = page.window_width,
         self.height = page.window_height+100,
         self.submit_button = ft.Container(
             ft.Row([
-                SubmitButton("Submit", on_click=lambda e: self.submit_click(e, movie, page, movies_dict, ongoing_movies_dict, review_movies_dict, watchlist_movies_dict))
+                SubmitButton("Submit", on_click=lambda e: self.submit_click(e, movie, page, movies_dict, ongoing_movies_dict, review_movies_dict, watchlist_movies_dict, finished_movies_dict))
             ]),
             padding=ft.padding.only(top=20, left= 20)
         )
-    def submit_click(self, e, movie: Content, page: ft.Page, movies_dict: dict, ongoing_movies_dict: dict, review_movies_dict: dict, watchlist_movies_dict: dict):
+    def submit_click(self, e, movie: Content, page: ft.Page, movies_dict: dict, ongoing_movies_dict: dict, review_movies_dict: dict, watchlist_movies_dict: dict, finished_movies_dict: dict):
         def is_overlap():
             return self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value) <= self.hours_to_seconds(self.jam_watch_progress.value, self.menit_watch_progress.value, self.detik_watch_progress.value)
 
@@ -431,7 +431,7 @@ class MovieEditPage(EditPage):
             # Handle file upload
             if self.file_picker.result and self.file_picker.result.files:
                 for f in self.file_picker.result.files:
-                    shutil.copy(f.path, os.path.join('assets/img/', f'{movie.getId()}.jpg'))
+                    shutil.copy(f.path, os.path.join('assets/img/', f'{movie.getId()}m.jpg'))
 
             # Update movie name
             movie.setName(self.name_table.value)
@@ -445,14 +445,37 @@ class MovieEditPage(EditPage):
             cursor.execute("UPDATE movies SET duration = ? WHERE movies_id = ?", (movie.getDuration(), movie.getId()))
 
             # Update watch progress
+            duration = self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value)
             watch_progress = self.hours_to_seconds(self.jam_watch_progress.value, self.menit_watch_progress.value, self.detik_watch_progress.value)
-            if movie.getWatchProgress() == 0 and watch_progress != 0:
+            
+            if watch_progress == duration:
+                movie.setWatchProgress(duration)
+                movie.setDuration(duration)
+                finished_movies_dict[movie.getId()] = [movie.getId()]
+                if movie.getId() in watchlist_movies_dict:
+                    watchlist_movies_dict.pop(movie.getId())
+                    cursor.execute("DELETE FROM watchlist_movies WHERE movies_id = ?", (movie.getId(),))
+                if movie.getId() in ongoing_movies_dict:
+                    ongoing_movies_dict.pop(movie.getId())
+                    cursor.execute("DELETE FROM ongoing_movies WHERE movies_id = ?", (movie.getId(),))
+                cursor.execute("INSERT INTO finished_movies (movies_id) VALUES (?)", (movie.getId(),))
+
+            elif watch_progress != duration and watch_progress != 0:
+                if movie.getId() in finished_movies_dict:
+                    finished_movies_dict.pop(movie.getId())
+                    cursor.execute("DELETE FROM finished_movies WHERE movies_id = ?", (movie.getId(),))
+                movie.setWatchProgress(watch_progress)
+                ongoing_movies_dict[movie.getId()] = [movie.getId(), watch_progress]
+                cursor.execute("INSERT INTO ongoing_movies (movies_id, watched_duration) VALUES (?, ?)", (movie.getId(), watch_progress))
+            
+            elif movie.getWatchProgress() == 0 and watch_progress != 0:
                 movie.setWatchProgress(watch_progress)
                 if movie.getId() in watchlist_movies_dict:
                     watchlist_movies_dict.pop(movie.getId())
                     cursor.execute("DELETE FROM watchlist_movies WHERE movies_id = ?", (movie.getId(),))
                 ongoing_movies_dict[movie.getId()] = [movie.getId(), watch_progress]
                 cursor.execute("INSERT INTO ongoing_movies (movies_id, watched_duration) VALUES (?, ?)", (movie.getId(), watch_progress))
+
             elif movie.getWatchProgress() != 0 and watch_progress == 0:
                 movie.setWatchProgress(0)
                 if movie.getId() in ongoing_movies_dict:
@@ -460,10 +483,13 @@ class MovieEditPage(EditPage):
                     cursor.execute("DELETE FROM ongoing_movies WHERE movies_id = ?", (movie.getId(),))
                 watchlist_movies_dict[movie.getId()] = [movie.getId()]
                 cursor.execute("INSERT INTO watchlist_movies (movies_id) VALUES (?)", (movie.getId(),))
-            elif movie.getWatchProgress() != 0:
+                
+
+            elif watch_progress != 0:
                 movie.setWatchProgress(watch_progress)
                 ongoing_movies_dict[movie.getId()][1] = movie.getWatchProgress()
                 cursor.execute("UPDATE ongoing_movies SET watched_duration = ? WHERE movies_id = ?", (movie.getWatchProgress(), movie.getId()))
+
 
             # Update release year
             if self.date_picker.value:
@@ -477,7 +503,7 @@ class MovieEditPage(EditPage):
             cursor.execute("UPDATE movies SET genre = ? WHERE movies_id = ?", (movie.getGenre(), movie.getId()))
 
             # Update rating
-            if rating is not None:
+            if rating is not None or rating != 0:
                 movie.setRating(rating)
                 if movie.getId() in review_movies_dict:
                     review_movies_dict[movie.getId()][1] = movie.getRating()
@@ -517,15 +543,15 @@ class MovieEditPage(EditPage):
         page.go("/")
 
 class SeriesEditPage(EditPage):
-    def __init__(self, series: Series, page: ft.Page, series_dict: dict, ongoing_series_dict: dict, review_series_dict: dict, watchlist_series_dict: dict):
-        super().__init__(series, page, series_dict, ongoing_series_dict, review_series_dict, watchlist_series_dict)
+    def __init__(self, series: Series, page: ft.Page, series_dict: dict, ongoing_series_dict: dict, review_series_dict: dict, watchlist_series_dict: dict, finished_series_dict: dict):
+        super().__init__(series, page, series_dict, ongoing_series_dict, review_series_dict, watchlist_series_dict, finished_series_dict)
         self.width = page.window_width,
         self.height = page.window_height+150,
         self.body = series
 
         self.submit_button = ft.Container(
             ft.Row([
-                SubmitButton("Submit", on_click=lambda e: self.submit_click(e, series, page, series_dict, ongoing_series_dict, review_series_dict, watchlist_series_dict))
+                SubmitButton("Add", on_click=lambda e: self.submit_click(e, series, page, series_dict, ongoing_series_dict, review_series_dict, watchlist_series_dict, finished_series_dict))
             ]),
             padding=ft.padding.only(top=20, left= 20)
         )
@@ -688,7 +714,7 @@ class SeriesEditPage(EditPage):
                         ]),
                     )
 
-    def submit_click(self, e, series: Series, page: ft.Page, series_dict: dict, ongoing_series_dict: dict, review_series_dict: dict, watchlist_series_dict: dict):
+    def submit_click(self, e, series: Series, page: ft.Page, series_dict: dict, ongoing_series_dict: dict, review_series_dict: dict, watchlist_series_dict: dict, finished_series_dict: dict):
         def is_overlap():
             return self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value) <= self.hours_to_seconds(self.jam_watch_progress.value, self.menit_watch_progress.value, self.detik_watch_progress.value)
 
@@ -760,7 +786,7 @@ class SeriesEditPage(EditPage):
             # Handle file upload
             if self.file_picker.result and self.file_picker.result.files:
                 for f in self.file_picker.result.files:
-                    shutil.copy(f.path, os.path.join('assets/img/', f'{series.getId()}.jpg'))
+                    shutil.copy(f.path, os.path.join('assets/img/', f'{series.getId()}s.jpg'))
 
             # Update series name
             series.setName(self.name_table.value)
@@ -829,6 +855,16 @@ class SeriesEditPage(EditPage):
             ongoing_series_dict[series.getId()][3] = series.getWatchProgress()
             cursor.execute("UPDATE ongoing_series SET watched_duration = ? WHERE series_id = ?", (series.getWatchProgress(), series.getId()))
 
+            if watch_progress == duration and episode_progress == episode and season_progress == season:
+                finished_series_dict[series.getId()] = [series.getId()]
+                if series.getId() in watchlist_series_dict:
+                    watchlist_series_dict.pop(series.getId())
+                    cursor.execute("DELETE FROM watchlist_series WHERE series_id = ?", (series.getId(),))
+                if series.getId() in ongoing_series_dict:
+                    ongoing_series_dict.pop(series.getId())
+                    cursor.execute("DELETE FROM ongoing_series WHERE series_id = ?", (series.getId(),))
+                cursor.execute("INSERT INTO finished_series (series_id) VALUES (?)", (series.getId(),))
+
             # Update release year
             if self.date_picker.value:
                 series.setReleaseYear(self.date_picker.value.year)
@@ -854,7 +890,6 @@ class SeriesEditPage(EditPage):
                 review_series_dict.pop(series.getId())
                 cursor.execute("DELETE FROM review_series WHERE series_id = ?", (series.getId(),))
 
-            # Update summary
             series.setSummary(self.summary.value)
             series_dict[series.getId()][5] = series.getSummary()
             cursor.execute("UPDATE series SET synopsis = ? WHERE series_id = ?", (series.getSummary(), series.getId()))

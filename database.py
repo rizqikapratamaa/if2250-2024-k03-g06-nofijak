@@ -297,7 +297,7 @@ class Database:
         rating = self.review_movies_dict[id][1] if id in self.review_movies_dict else None
         watchProgress = self.ongoing_movies_dict[id][1] if id in self.ongoing_movies_dict else 0
 
-        return Movie(id, name, releaseDate, duration, synopsis, genre, rating, watchProgress, "assets/img/" + str(id) + ".jpg")
+        return Movie(id, name, releaseDate, duration, synopsis, genre, rating, watchProgress, "assets/img/" + str(id) + "m.jpg")
     
     def make_series(self, id):
         id = self.series_dict[id][0] if id in self.series_dict else None
@@ -313,4 +313,4 @@ class Database:
         current_season = self.ongoing_series_dict[id][1] if id in self.ongoing_series_dict else None
         current_episode = self.ongoing_series_dict[id][2] if id in self.ongoing_series_dict else None
         
-        return Series(id, name, releaseDate, duration, synopsis, genre, rating, watchProgress, "assets/img/" + str(id) + ".jpg", season, episode, current_season, current_episode)
+        return Series(id, name, releaseDate, duration, synopsis, genre, rating, watchProgress, "assets/img/" + str(id) + "s.jpg", season, episode, current_season, current_episode)
