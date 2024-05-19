@@ -1,6 +1,8 @@
 
 # Nofijak
 
+![logo](./assets/icon.png)
+
 Sebuah aplikasi untuk memudahkan menonton film
 
 ## Daftar Isi
