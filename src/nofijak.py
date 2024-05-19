@@ -18,30 +18,8 @@ class informasiFilmSeries(ft.Container):
 
 
 def main(page: ft.Page):
-    movie_add_page = MovieAddPage(page, database.getMovies(), database.getOngoingMovies(), database.getReviewMovies(), database.getWatchlistMovies(), database.getFinishedMovies())
-    series_add_page = SeriesAddPage(page, database.getSeries(), database.getOngoingSeries(), database.getReviewSeries(), database.getWatchlistSeries(), database.getFinishedSeries())
-    
-    page.title = "NoFiJak"
-    page.overlay.append(movie_add_page.date_picker)
-    page.overlay.append(movie_add_page.file_picker)
-    page.window_resizable = False
-    
-    page.vertical_alignment = ft.MainAxisAlignment.CENTER
-    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+    scrollCard = ScrollableCard()
 
-    # >> Color constants
-    BUTTON_ON_COLOR = '#DAAB2D'
-    BUTTON_OFF_COLOR = '#4F3D09'
-    
-    # >> Header button logic
-    current_view = 'all-entries'
-    
-    ALL_ENTRIES = 'all-entries'
-    COMPLETED = 'completed'
-    ONGOING = 'on-going'
-    WATCHLIST = 'watchlist'
-    
-    header_buttons = []
     kolomHalaman = ft.Column(
         width = page.window_width-50,
         height = page.window_height,
@@ -75,7 +53,52 @@ def main(page: ft.Page):
             ]
         )
     )
+    # ==============================================
+    # ================== Database ==================
+    # ==============================================
+    for i in database.getMovies():
+        movie = database.make_movies(i)
+        scrollCard.tambahCardMovie(
+            movie,
+            page,
+            kolomHalaman,
+            kolomHalamanEdit
+        )
 
+    for i in database.getSeries():
+        series = database.make_series(i)
+        scrollCard.tambahCardSeries(
+            series,
+            page,
+            kolomHalaman,
+            kolomHalamanEdit
+        )
+
+
+    movie_add_page = MovieAddPage(page, kolomHalaman, kolomHalamanEdit, scrollCard, database.getMovies(), database.getOngoingMovies(), database.getReviewMovies(), database.getWatchlistMovies(), database.getFinishedMovies(), database)
+    series_add_page = SeriesAddPage(page, database.getSeries(), database.getOngoingSeries(), database.getReviewSeries(), database.getWatchlistSeries(), database.getFinishedSeries())
+    
+    page.title = "NoFiJak"
+    page.overlay.append(movie_add_page.date_picker)
+    page.overlay.append(movie_add_page.file_picker)
+    page.window_resizable = False
+    
+    page.vertical_alignment = ft.MainAxisAlignment.CENTER
+    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+
+    # >> Color constants
+    BUTTON_ON_COLOR = '#DAAB2D'
+    BUTTON_OFF_COLOR = '#4F3D09'
+    
+    # >> Header button logic
+    current_view = 'all-entries'
+    
+    ALL_ENTRIES = 'all-entries'
+    COMPLETED = 'completed'
+    ONGOING = 'on-going'
+    WATCHLIST = 'watchlist'
+    
+    header_buttons = []
 
     # Functions
     def tambahFilm(e):
@@ -319,8 +342,6 @@ def main(page: ft.Page):
     
     # >>>> Watchlist button
     watchlist = HeaderButton("Watchlist", WATCHLIST, ft.padding.only(left=350,right=50))
-
-    scrollCard = ScrollableCard()
     
     # >>>> List of header buttons
     header_buttons = [allEntries, completed, ongoing, watchlist]
@@ -383,28 +404,6 @@ def main(page: ft.Page):
         ])
     )
 
-    scrollCard = ScrollableCard()
-    
-    # ==============================================
-    # ================== Database ==================
-    # ==============================================
-    for i in database.getMovies():
-        movie = database.make_movies(i)
-        scrollCard.tambahCardMovie(
-            movie,
-            page,
-            kolomHalaman,
-            kolomHalamanEdit
-        )
-
-    for i in database.getSeries():
-        series = database.make_series(i)
-        scrollCard.tambahCardSeries(
-            series,
-            page,
-            kolomHalaman,
-            kolomHalamanEdit
-        )
 
     # >> Contoh fungsi untuk meload database ke dalam Scroll Card
     # def load_data():

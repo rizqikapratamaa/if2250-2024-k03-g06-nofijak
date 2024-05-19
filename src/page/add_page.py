@@ -296,7 +296,7 @@ class AddPage:
         return int(hours) * 3600 + int(minutes) * 60 + int(seconds)
         
 class MovieAddPage(AddPage):
-    def __init__(self, page: ft.Page, movie_dict: dict, ongoing_movie_dict: dict, review_movie_dict: dict, watchlist_movie_dict: dict, finished_movie_dict: dict):
+    def __init__(self, page: ft.Page, kolomHalaman : ft.Column, kolomHalamanEdit : ft.Column, scrollCard, movie_dict: dict, ongoing_movie_dict: dict, review_movie_dict: dict, watchlist_movie_dict: dict, finished_movie_dict: dict, database):
         super().__init__(page)
         self.edit_text = ft.Container(
             ft.Text("Add Movie", size=20, color="#FFFFFF")
@@ -324,13 +324,13 @@ class MovieAddPage(AddPage):
 
         self.add_button = ft.Container(
             ft.Row([
-                SubmitButton("Add", on_click=lambda e: self.submit_click(e, page, movie_dict, ongoing_movie_dict, review_movie_dict, watchlist_movie_dict, finished_movie_dict))
+                SubmitButton("Add", on_click=lambda e: self.submit_click(e, page, kolomHalaman, kolomHalamanEdit, scrollCard, movie_dict, ongoing_movie_dict, review_movie_dict, watchlist_movie_dict, finished_movie_dict, database))
             ]),
             padding=ft.padding.only(top=20, left= 20)
         )
 
 
-    def submit_click(self, e, page: ft.Page, movie_dict: dict, ongoing_movie_dict: dict, review_movie_dict: dict, watchlist_movie_dict: dict, finished_movie_dict: dict):
+    def submit_click(self, e, page: ft.Page, kolomHalaman, kolomHalamanEdit, scrollCard, movie_dict: dict, ongoing_movie_dict: dict, review_movie_dict: dict, watchlist_movie_dict: dict, finished_movie_dict: dict, database):
         print("Submit button clicked")  # Debugging statement
         
         def is_overlap():
@@ -413,7 +413,25 @@ class MovieAddPage(AddPage):
             print(f"Error during database operations: {ex}")  # Debugging statement
         finally:
             conn.close()
+        
+        scrollCard.inisialisasiCard()
+        for i in database.getMovies():
+            moviee = database.make_movies(i)
+            scrollCard.tambahCardMovie(
+                moviee,
+                page,
+                kolomHalaman,
+                kolomHalamanEdit
+            )
 
+        for i in database.getSeries():
+            seriess = database.make_series(i)
+            scrollCard.tambahCardSeries(
+                seriess,
+                page,
+                kolomHalaman,
+                kolomHalamanEdit
+            )
         print("id: ", id, "name: ", name, "releaseDate: ", release_year, "duration: ", duration, "synopsis: ", synopsis, "genre: ", genre, "rating: ", rating, "watchProgress: ", watchProgress)
 
         def navigate_to_root(e):
