@@ -534,7 +534,7 @@ class MovieAddPage(AddPage):
         page.update()  
     
 class SeriesAddPage(AddPage):
-    def __init__(self, page: ft.Page, series_dict, ongoing_series_dict, review_series_dict, watchlist_series_dict, finished_series_dict):
+    def __init__(self, page: ft.Page, kolomHalaman : ft.Column, kolomHalamanEdit : ft.Column, scrollCard, series_dict, ongoing_series_dict, review_series_dict, watchlist_series_dict, finished_series_dict, database):
         super().__init__(page)
 
         self.edit_text = ft.Container(
@@ -563,7 +563,7 @@ class SeriesAddPage(AddPage):
 
         self.add_button = ft.Container(
             ft.Row([
-                SubmitButton("Add", on_click=lambda e: self.submit_click(e, page, series_dict, ongoing_series_dict, review_series_dict, watchlist_series_dict, finished_series_dict))
+                SubmitButton("Add", on_click=lambda e: self.submit_click(e, page, kolomHalaman, kolomHalamanEdit, scrollCard, series_dict, ongoing_series_dict, review_series_dict, watchlist_series_dict, finished_series_dict, database))
             ]),
             padding=ft.padding.only(top=20, left= 20)
         )
@@ -644,7 +644,7 @@ class SeriesAddPage(AddPage):
             input_filter=ft.InputFilter(allow=True ,regex_string = r'\b[0-9]+\b', replacement_string="")
         )
 
-    def submit_click(self, e, page: ft.Page, series_dict: dict, ongoing_series_dict: dict, review_series_dict: dict, watchlist_series_dict: dict, finished_series_dict: dict):
+    def submit_click(self, e, page: ft.Page, kolomHalaman : ft.Column, kolomHalamanEdit : ft.Column, scrollCard, series_dict: dict, ongoing_series_dict: dict, review_series_dict: dict, watchlist_series_dict: dict, finished_series_dict: dict, database):
         print("Submit button clicked")  # Debugging statement
         
         def call_back_dummpy(e):
@@ -745,6 +745,25 @@ class SeriesAddPage(AddPage):
             print(f"Error during database operations: {ex}")  # Debugging statement
         finally:
             conn.close()
+
+        scrollCard.inisialisasiCard()
+        for i in database.getMovies():
+            moviee = database.make_movies(i)
+            scrollCard.tambahCardMovie(
+                moviee,
+                page,
+                kolomHalaman,
+                kolomHalamanEdit
+            )
+
+        for i in database.getSeries():
+            seriess = database.make_series(i)
+            scrollCard.tambahCardSeries(
+                seriess,
+                page,
+                kolomHalaman,
+                kolomHalamanEdit
+            )
 
         print("id: ", id, "name: ", name, "releaseDate: ", release_year, "duration: ", duration, "synopsis: ", synopsis, "genre: ", genre, "rating: ", rating, "watchProgress: ", watchProgress, "season: ", season, "episode: ", episode, "current_season: ", season_progress, "current_episode: ", episode_progress)
 
