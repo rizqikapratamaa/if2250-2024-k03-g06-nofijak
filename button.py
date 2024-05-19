@@ -11,8 +11,5 @@ class OptionButton(ft.TextButton):
 
 class SubmitButton(ft.ElevatedButton):
     def __init__(self, text, on_click):
-        super().__init__()
-        self.bgcolor = "#FED466"
-        self.color = ft.colors.BLACK
-        self.text = text
-        self.on_click = on_click
+        super().__init__(text=text, on_click=on_click, bgcolor="#FED466", color=ft.colors.BLACK)
+

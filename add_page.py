@@ -320,47 +320,64 @@ class MovieAddPage(AddPage):
         )
 
     def submit_click(self, e, page: ft.Page, movie_dict: dict, ongoing_movie_dict: dict, review_movie_dict: dict, watchlist_movie_dict: dict, finished_movie_dict: dict):
+        print("Submit button clicked")  # Debugging statement
+        
         def is_overlap():
             return self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value) <= self.hours_to_seconds(self.jam_watch_progress.value, self.menit_watch_progress.value, self.detik_watch_progress.value)
+
+        # Additional debugging statements to trace the values
+        print(f"Name: {self.name_table.value}, Rating: {self.rating.value}, Duration: {self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value)}, Release Year: {self.release_year_table.value}, Genre: {self.genre.value}")
+
         if self.name_table.value == "":
+            print("Name is empty")  # Debugging statement
             PopUp("Warning!", "Name cannot be empty", page).open_dlg_modal(e, page)
             return
         elif self.rating.value != "":
             if not 0 <= float(self.rating.value) <= 10:
+                print("Invalid rating value")  # Debugging statement
                 PopUp("Warning!", "Rating must be between 0 and 10", page).open_dlg_modal(e, page)
                 return
         elif self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value) == 0:
+            print("Duration is zero")  # Debugging statement
             PopUp("Warning!", "Duration cannot be 0", page).open_dlg_modal(e, page)
             return
         elif self.release_year_table.value is None:
+            print("Release year is empty")  # Debugging statement
             PopUp("Warning!", "Release Date cannot be empty", page).open_dlg_modal(e, page)
             return
         elif self.genre.value is None:
+            print("Genre is empty")  # Debugging statement
             PopUp("Warning!", "Genre cannot be empty", page).open_dlg_modal(e, page)
             return
         elif is_overlap():
+            print("Watch progress is more than duration")  # Debugging statement
             PopUp("Warning!", "Watch Progress cannot be more than Duration", page).open_dlg_modal(e, page)
             return
-        else:
-            conn = sqlite3.connect('database.db')
-            cursor = conn.cursor()
-            def generate_new_key(dictionary):
-                key = 1
-                while key in dictionary:
-                    key += 1
-                return key
-            id = generate_new_key(movie_dict)
-            name = self.name_table.value
-            duration = self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value)
-            watchProgress = self.hours_to_seconds(self.jam_watch_progress.value, self.menit_watch_progress.value, self.detik_watch_progress.value)
-            release_year = self.release_year_table.value
-            genre = self.genre.value
-            rating = self.rating.value
-            synopsis = self.summary.value
+        
+        print("All conditions passed")  # Debugging statement
+        conn = sqlite3.connect('database.db')
+        cursor = conn.cursor()
 
-            if self.file_picker.result != None and self.file_picker.result.files != None:
+        def generate_new_key(dictionary):
+            key = 1
+            while key in dictionary:
+                key += 1
+            return key
+
+        id = generate_new_key(movie_dict)
+        name = self.name_table.value
+        duration = self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value)
+        watchProgress = self.hours_to_seconds(self.jam_watch_progress.value, self.menit_watch_progress.value, self.detik_watch_progress.value)
+        release_year = self.release_year_table.value
+        genre = self.genre.value
+        rating = self.rating.value
+        synopsis = self.summary.value
+
+        print("Inserting data into database")  # Debugging statement
+        try:
+            if self.file_picker.result is not None and self.file_picker.result.files is not None:
                 for f in self.file_picker.result.files:
-                    shutil.copy(f.path, os.path.join('assets/img/', id + '.jpg'))
+                    shutil.copy(f.path, os.path.join('assets/img/', str(id) + 'm.jpg'))
 
             cursor.execute("INSERT INTO movies VALUES (?, ?, ?, ?, ?, ?)", (id, name, duration, release_year, genre, synopsis))
             movie_dict[id] = [id, name, duration, release_year, genre, synopsis]
@@ -370,19 +387,26 @@ class MovieAddPage(AddPage):
                 cursor.execute("INSERT INTO ongoing_movies VALUES (?, ?)", (id, watchProgress))
                 ongoing_movie_dict[id] = [id, watchProgress]
             else:
-                cursor.execute("INSERT INTO watchlist_movies VALUES (?)", (id))
+                cursor.execute("INSERT INTO watchlist_movies VALUES (?)", (id,))
                 watchlist_movie_dict[id] = [id]
 
             if duration == watchProgress:
-                cursor.execute("INSERT INTO finished_movies VALUES (?, CURDATE())", (id))
+                cursor.execute("INSERT INTO finished_movies VALUES (?, DATE('now'))", (id,))
                 finished_movie_dict[id] = [id]
             conn.commit()
+            print("Data inserted successfully")  # Debugging statement
+        except Exception as ex:
+            print(f"Error during database operations: {ex}")  # Debugging statement
+        finally:
+            conn.close()
 
-            print("id: ", id, "name: ", name, "releaseDate: ", release_year, "duration: ", duration, "synopsis: ", synopsis, "genre: ", genre, "rating: ", rating, "watchProgress: ", watchProgress)
+        print("id: ", id, "name: ", name, "releaseDate: ", release_year, "duration: ", duration, "synopsis: ", synopsis, "genre: ", genre, "rating: ", rating, "watchProgress: ", watchProgress)
+
+        PopUp("Success!", "Movie added successfully", page).open_dlg_modal(e, page)
 
         page.update()
         page.go("/")
-            
+
 
     def movies_show_page(self, page: ft.Page):
         page.clean()
@@ -586,37 +610,53 @@ class SeriesAddPage(AddPage):
         )
 
     def submit_click(self, e, page: ft.Page, series_dict: dict, ongoing_series_dict: dict, review_series_dict: dict, watchlist_series_dict: dict, finished_series_dict: dict):
-
+        print("Submit button clicked")  # Debugging statement
+        
         def is_overlap():
             return self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value) <= self.hours_to_seconds(self.jam_watch_progress.value, self.menit_watch_progress.value, self.detik_watch_progress.value)
+
+        # Additional debugging statements to trace the values
+        print(f"Name: {self.name_table.value}, Rating: {self.rating.value}, Duration: {self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value)}, Release Year: {self.release_year_table.value}, Genre: {self.genre.value}, Season: {self.season_table.value}, Episode: {self.episode_table.value}")
+
         if self.name_table.value == "":
+            print("Name is empty")  # Debugging statement
             PopUp("Warning!", "Name cannot be empty", page).open_dlg_modal(e, page)
             return
         elif self.rating.value != "":
             if not 0 <= float(self.rating.value) <= 10:
+                print("Invalid rating value")  # Debugging statement
                 PopUp("Warning!", "Rating must be between 0 and 10", page).open_dlg_modal(e, page)
                 return
         elif self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value) == 0:
+            print("Duration is zero")  # Debugging statement
             PopUp("Warning!", "Duration cannot be 0", page).open_dlg_modal(e, page)
             return
         elif self.release_year_table.value is None:
+            print("Release year is empty")  # Debugging statement
             PopUp("Warning!", "Release Date cannot be empty", page).open_dlg_modal(e, page)
             return
         elif self.genre.value is None:
+            print("Genre is empty")  # Debugging statement
             PopUp("Warning!", "Genre cannot be empty", page).open_dlg_modal(e, page)
             return
         elif is_overlap():
+            print("Watch progress is more than duration")  # Debugging statement
             PopUp("Warning!", "Watch Progress cannot be more than Duration", page).open_dlg_modal(e, page)
             return
-        elif self.season_table.value != 0:
+        elif self.season_table.value == 0:
+            print("Season is empty")  # Debugging statement
             PopUp("Warning!", "Season cannot be empty", page).open_dlg_modal(e, page)
             return
-        elif self.episode_table.value != "":
+        elif self.episode_table.value == "":
+            print("Episode is empty")  # Debugging statement
             PopUp("Warning!", "Episode cannot be empty", page).open_dlg_modal(e, page)
             return
-        else:
+    
+        print("All conditions passed")  # Debugging statement
+        try:
             conn = sqlite3.connect('database.db')
             cursor = conn.cursor()
+
             def generate_new_key(dictionary):
                 key = 1
                 while key in dictionary:
@@ -636,9 +676,10 @@ class SeriesAddPage(AddPage):
             rating = self.rating.value
             synopsis = self.summary.value
 
-            if self.file_picker.result != None and self.file_picker.result.files != None:
+            print("Inserting data into database")  # Debugging statement
+            if self.file_picker.result is not None and self.file_picker.result.files is not None:
                 for f in self.file_picker.result.files:
-                    shutil.copy(f.path, os.path.join('assets/img/', id + '.jpg'))
+                    shutil.copy(f.path, os.path.join('assets/img/', str(id) + '.jpg'))
 
             cursor.execute("INSERT INTO series VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (id, name, duration, release_year, genre, synopsis, season, episode))
             series_dict[id] = [id, name, duration, release_year, genre, synopsis, season, episode]
@@ -648,23 +689,31 @@ class SeriesAddPage(AddPage):
                 review_series_dict[id] = [id, rating, "Selamat anda menemukan easter egg"]
             
             if (season_progress == "" or season_progress == 0) or (episode_progress == "" or episode_progress == 0):
-                cursor.execute("INSERT INTO watchlist_series VALUES (?)", (id))
+                cursor.execute("INSERT INTO watchlist_series VALUES (?)", (id,))
                 watchlist_series_dict[id] = [id]
             
-            if (season_progress is not None or season_progress != 0) or (episode_progress is not None or episode_progress != 0):
+            if (season_progress is not None and season_progress != 0) or (episode_progress is not None and episode_progress != 0):
                 cursor.execute("INSERT INTO ongoing_series VALUES (?, ?, ?, ?)", (id, season_progress, episode_progress, watchProgress))
                 ongoing_series_dict[id] = [id, season_progress, episode_progress, watchProgress]
             
             if season == season_progress and episode == episode_progress and duration == watchProgress:
-                cursor.execute("INSERT INTO finished_series VALUES (?, CURDATE())", (id))
+                cursor.execute("INSERT INTO finished_series VALUES (?, DATE('now'))", (id,))
                 finished_series_dict[id] = [id]
             
             conn.commit()
+            print("Data inserted successfully")  # Debugging statement
+        except Exception as ex:
+            print(f"Error during database operations: {ex}")  # Debugging statement
+        finally:
+            conn.close()
 
-            print("id: ", id, "name: ", name, "releaseDate: ", release_year, "duration: ", duration, "synopsis: ", synopsis, "genre: ", genre, "rating: ", rating, "watchProgress: ", watchProgress, "season: ", season, "episode: ", episode, "current_season: ", season_progress, "current_episode: ", episode_progress)
+        print("id: ", id, "name: ", name, "releaseDate: ", release_year, "duration: ", duration, "synopsis: ", synopsis, "genre: ", genre, "rating: ", rating, "watchProgress: ", watchProgress, "season: ", season, "episode: ", episode, "current_season: ", season_progress, "current_episode: ", episode_progress)
+
+        PopUp("Success!", "Movie added successfully", page).open_dlg_modal(e, page)
 
         page.update()
         page.go("/")
+
 
     def series_show_page(self, page: ft.Page):
         page.overlay.append(self.date_picker)
