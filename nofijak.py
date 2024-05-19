@@ -4,6 +4,7 @@ import os
 import sqlite3
 from database import *
 from add_page import *
+from search import *
 
 from content import Movie, Series
 from film_series_information import ScrollableCard
@@ -199,8 +200,30 @@ def main(page: ft.Page):
                 )
         page.update()
 
+    def searchButtonHandler(e):
+        scrollCard = ScrollableCard()
+        moviesResult = searchMovies(searchField.value)
+        seriesResult = searchSeries(searchField.value)
+        
+        for movie in moviesResult:
+            scrollCard.tambahCardMovie(
+                movie,
+                page,
+                kolomHalaman,
+                kolomHalamanEdit
+            )
 
+        for serie in seriesResult:
+            scrollCard.tambahCardSeries(
+                serie,
+                page,
+                kolomHalaman,
+                kolomHalamanEdit
+            )
 
+        print(moviesResult)
+        print(seriesResult)
+            
     
     # ==============================================
     # ============== Custom Controls ===============
@@ -271,19 +294,27 @@ def main(page: ft.Page):
     
     # >> Search box
     t = ft.Text()
+    searchField = ft.TextField(
+                width=550,
+                text_style=ft.TextStyle(color='#000000'),
+                border_radius=50,
+                bgcolor='#ffffff',
+                border_color='',
+                on_change=textbox_changed
+            )
+    searchButton = ft.IconButton(
+        ft.icons.SEARCH,
+        icon_color='#ffffff',
+        on_click=searchButtonHandler
+    )
     textbox = ft.Container(
         padding = ft.padding.only(top=20),
         alignment=ft.alignment.center,
         shape=ft.RoundedRectangleBorder(radius=50),
-        content = ft.TextField(
-            width=550,
-            text_style=ft.TextStyle(color='#000000'),
-            prefix_icon= ft.icons.SEARCH,
-            border_radius=50,
-            bgcolor='#ffffff',
-            border_color='',
-            on_change=textbox_changed
-        )
+        content = ft.Row([
+            searchButton,
+            searchField  
+        ])
     )
 
     scrollCard = ScrollableCard()
