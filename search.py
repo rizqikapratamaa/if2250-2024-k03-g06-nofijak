@@ -17,18 +17,18 @@ def searchMovies(movieName):
         cursor.execute("SELECT rating FROM review_movies WHERE movies_id = " + str(id[i][0]))
         rating = cursor.fetchall()
         if len(rating) == 0:
-            rating = None
+            rating = 0
         else:
             rating = rating[0][0]
 
         cursor.execute("SELECT watched_duration FROM ongoing_movies WHERE movies_id = " + str(id[i][0]))
         duration = cursor.fetchall()
         if len(duration) == 0:
-            duration = None
+            duration = 0
         else:
             duration = duration[0][0]
 
-        result.append(Movie(id[i][0], movie[0][0], movie[0][1], movie[0][2], movie[0][3], movie[0][4], rating, duration, str(id)))
+        result.append(Movie(id[i][0], movie[0][0], movie[0][1], movie[0][2], movie[0][3], movie[0][4], rating, duration, str(id) + "m"))
 
     return result
 
@@ -48,19 +48,20 @@ def searchSeries(serieName):
         cursor.execute("SELECT rating FROM review_series WHERE series_id = " + str(id[i][0]))
         rating = cursor.fetchall()
         if len(rating) == 0:
-            rating = None
+            rating = 0
         else:
             rating = rating[0][0]
 
         cursor.execute("SELECT watched_duration, season_progress, episode_progress FROM ongoing_series WHERE series_id = " + str(id[i][0]))
         duration = cursor.fetchall()
-        seasonProgress = None
-        episodeProgress = None
+        watchProgress = 0
+        seasonProgress = 0
+        episodeProgress = 0
         if len(duration) != 0:
             watchProgress = duration[0][0]
             seasonProgress = duration[0][1]
             episodeProgress = duration[0][2]
 
-        result.append(Series(id[i][0], series[0][0], series[0][1], series[0][2], series[0][3], series[0][4], rating, watchProgress, str(id), series[0][5], series[0][6], seasonProgress, episodeProgress))
+        result.append(Series(id[i][0], series[0][0], series[0][1], series[0][2], series[0][3], series[0][4], rating, watchProgress, str(id) + "s", series[0][5], series[0][6], seasonProgress, episodeProgress))
 
     return result
