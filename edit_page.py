@@ -296,7 +296,7 @@ class EditPage(ft.Container):
                                             ]),
                                             self.summary
                                         ]),
-                                        padding=ft.padding.only(left=50,right=50)
+                                        padding=ft.padding.only(left=50,right=50, bottom=100)
                                     ),
                                     
                                 ]),
@@ -696,7 +696,7 @@ class SeriesEditPage(EditPage):
                                             ]),
                                             self.summary
                                         ]),
-                                        padding=ft.padding.only(left=50,right=50, bottom=300)
+                                        padding=ft.padding.only(left=50,right=50, bottom=100)
                                     ),
                                     
                                 ]),

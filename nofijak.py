@@ -27,6 +27,7 @@ def main(page: ft.Page):
     page.title = "NoFiJak"
     page.overlay.append(movie_add_page.date_picker)
     page.overlay.append(movie_add_page.file_picker)
+    page.window_resizable = False
     
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
@@ -200,8 +201,9 @@ def main(page: ft.Page):
                 )
         page.update()
 
-    def searchButtonHandler(e):
-        scrollCard = ScrollableCard()
+    def searchButtonHandler(scrollCard : ScrollableCard):
+        scrollCard.inisialisasiCard()
+        print(searchField.value)
         moviesResult = searchMovies(searchField.value)
         seriesResult = searchSeries(searchField.value)
         
@@ -220,9 +222,10 @@ def main(page: ft.Page):
                 kolomHalaman,
                 kolomHalamanEdit
             )
-
+        
         print(moviesResult)
         print(seriesResult)
+        page.update()
             
     
     # ==============================================
@@ -305,15 +308,14 @@ def main(page: ft.Page):
     searchButton = ft.IconButton(
         ft.icons.SEARCH,
         icon_color='#ffffff',
-        on_click=searchButtonHandler
+        on_click= lambda _: searchButtonHandler(scrollCard)
     )
     textbox = ft.Container(
-        padding = ft.padding.only(top=20),
-        alignment=ft.alignment.center,
+        padding = ft.padding.only(left=315,top=20),
         shape=ft.RoundedRectangleBorder(radius=50),
         content = ft.Row([
-            searchButton,
-            searchField  
+                searchButton,
+                searchField, 
         ])
     )
 
@@ -340,28 +342,29 @@ def main(page: ft.Page):
             kolomHalamanEdit
         )
 
-    def load_data():
-        scrollCard = ScrollableCard()
+    # >> Contoh fungsi untuk meload database ke dalam Scroll Card
+    # def load_data():
+    #     scrollCard = ScrollableCard()
 
-        for i in database.getMovies():
-            movie = database.make_movies(i)
-            scrollCard.tambahCardMovie(
-                movie,
-                page,
-                kolomHalaman,
-                kolomHalamanEdit
-            )
+    #     for i in database.getMovies():
+    #         movie = database.make_movies(i)
+    #         scrollCard.tambahCardMovie(
+    #             movie,
+    #             page,
+    #             kolomHalaman,
+    #             kolomHalamanEdit
+    #         )
 
-        for i in database.getSeries():
-            series = database.make_series(i)
-            scrollCard.tambahCardSeries(
-                series,
-                page,
-                kolomHalaman,
-                kolomHalamanEdit
-            )
+    #     for i in database.getSeries():
+    #         series = database.make_series(i)
+    #         scrollCard.tambahCardSeries(
+    #             series,
+    #             page,
+    #             kolomHalaman,
+    #             kolomHalamanEdit
+    #         )
 
-        return scrollCard
+    #     return scrollCard
 
     def route_change(route):
         page.views.clear(),
