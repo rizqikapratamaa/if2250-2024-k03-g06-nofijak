@@ -237,15 +237,35 @@ def main(page: ft.Page):
                     )
 
         if(dropdownSort.value == "Genre"):
-            print("Genre")
-            # for i in database.getSeries():
-            #     series = database.make_series(i)
-            #     scrollCard.tambahCardSeries(
-            #         series,
-            #         page,
-            #         kolomHalaman,
-            #         kolomHalamanEdit
-            #     )
+            all_content = []
+            for id in database.getMovies():
+                all_content.append(database.make_movies(id))
+            for id in database.getSeries():
+                all_content.append(database.make_series(id))
+
+            # Hapus None dari all_content jika ada
+            all_content = [content for content in all_content if content is not None]
+
+            # Urutkan berdasarkan genre
+            sorted_content = sorted(all_content, key=lambda x: x.getGenre())
+
+            # Tambahkan konten yang sudah diurutkan ke scrollCard
+            for content in sorted_content:
+                if isinstance(content, Movie):
+                    scrollCard.tambahCardMovie(
+                        content,
+                        page,
+                        kolomHalaman,
+                        kolomHalamanEdit
+                    )
+                elif isinstance(content, Series):
+                    scrollCard.tambahCardSeries(
+                        content,
+                        page,
+                        kolomHalaman,
+                        kolomHalamanEdit
+                    )
+
         page.update()
 
     def searchButtonHandler(scrollCard : ScrollableCard):
