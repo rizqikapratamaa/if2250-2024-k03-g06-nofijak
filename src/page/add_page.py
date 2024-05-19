@@ -334,8 +334,12 @@ class MovieAddPage(AddPage):
         print("Submit button clicked")  # Debugging statement
         
         def is_overlap():
-            return self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value) <= self.hours_to_seconds(self.jam_watch_progress.value, self.menit_watch_progress.value, self.detik_watch_progress.value)
-
+            # Check if watching progress is greater than duration
+            if self.hours_to_seconds(self.jam_watch_progress.value, self.menit_watch_progress.value, self.detik_watch_progress.value) > self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value):
+                return True
+            else:
+                return False
+            
         # Additional debugging statements to trace the values
         print(f"Name: {self.name_table.value}, Rating: {self.rating.value}, Duration: {self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value)}, Release Year: {self.release_year_table.value}, Genre: {self.genre.value}")
 
@@ -651,8 +655,12 @@ class SeriesAddPage(AddPage):
             page.update()
 
         def is_overlap():
-            return self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value) <= self.hours_to_seconds(self.jam_watch_progress.value, self.menit_watch_progress.value, self.detik_watch_progress.value)
-
+            # Check if watching progress is greater than duration
+            if self.hours_to_seconds(self.jam_watch_progress.value, self.menit_watch_progress.value, self.detik_watch_progress.value) > self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value):
+                return True
+            else:
+                return False
+            
         # Additional debugging statements to trace the values
         print(f"Name: {self.name_table.value}, Rating: {self.rating.value}, Duration: {self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value)}, Release Year: {self.release_year_table.value}, Genre: {self.genre.value}, Season: {self.season_table.value}, Episode: {self.episode_table.value}")
 
@@ -714,7 +722,7 @@ class SeriesAddPage(AddPage):
             rating = self.rating.value
             synopsis = self.summary.value
 
-            print("Inserting data into database")  # Debugging statement
+            print("Inserting data into database")
 
             if self.file_picker.result is not None and self.file_picker.result.files is not None:
                 for f in self.file_picker.result.files:
