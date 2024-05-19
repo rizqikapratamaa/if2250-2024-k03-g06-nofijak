@@ -19,8 +19,9 @@ Aplikasi ini dirancang untuk penggemar film dan serial yang sering menonton kont
 
 ## Daftar Modul
 
-- [Modul Q1 : Modul Halaman All / Watchlist / Ongoing / Completed](#modul-1--modul-halaman-all--watchlist--ongoing--completed)
+- [Modul 1 : Modul Halaman All / Watchlist / Ongoing / Completed](#modul-1--modul-halaman-all--watchlist--ongoing--completed)
 - [Modul 2 : Modul Halaman Informasi Film/Series](#modul-2--modul-halaman-informasi-filmseries)
+- [Pembagian Tugas](#pembagian-tugas)
 
 ### Modul 1 : Modul Halaman All / Watchlist / Ongoing / Completed
 
