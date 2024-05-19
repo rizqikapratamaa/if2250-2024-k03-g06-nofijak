@@ -3,7 +3,7 @@ import sqlite3
 
 @pytest.fixture(scope="module")
 def db_connection():
-    connection = sqlite3.connect("database.db")
+    connection = sqlite3.connect("src/database/database.db")
     connection.row_factory = sqlite3.Row
     
     cursor = connection.cursor()
