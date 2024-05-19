@@ -1,0 +1,8 @@
+image: python:3.9
+
+before_script:
+  - pip install pytest pymysql
+
+pytest:
+  script:
+    - pytest src/test_database.py

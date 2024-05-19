@@ -1,93 +1,222 @@
-# IF2250-2024-K03-G06-NoFiJak
 
+# Nofijak
 
+Sebuah aplikasi untuk memudahkan menonton film
 
-## Getting started
+## Daftar Isi
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+- [Deskripsi Singkat](#deskripsi-singkat)
+- [Cara menjalankan Aplikasi](#cara-menjalankan-aplikasi)
+- [Daftar Modul](#daftar-modul)
+- [Daftar Tabel Basisdata](#daftar-tabel-basisdata)
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## Deskripsi Singkat
 
-## Add your files
+Aplikasi ini dirancang untuk penggemar film dan serial yang sering menonton konten secara bajakan dan mengalami kesulitan melacak progress menonton mereka. Aplikasi ini ringan, berjalan secara lokal tanpa memerlukan koneksi internet, menghemat storage perangkat dan kuota internet. Fitur utamanya mencakup pelacakan progress menonton, di mana pengguna dapat menandai film atau serial sebagai ongoing dan melanjutkan dari titik terakhir yang ditonton. Pengguna juga dapat menyimpan manual menit yang telah ditonton untuk memastikan progress tidak hilang. Selain itu, terdapat fitur watchlist untuk menambahkan konten yang ingin ditonton di masa mendatang, lengkap dengan sinopsis, gambar, dan genre. Pengguna dapat memberikan rating setelah menyelesaikan menonton, serta mengurutkan dan memfilter konten berdasarkan rating dan genre untuk menemukan preferensi mereka dengan mudah. Fitur tambahan memungkinkan pengguna menghapus film dari watchlist dan menghentikan tanda ongoing untuk menjaga daftar tetap terorganisir dan up-to-date. Aplikasi ini bertujuan memberikan pengalaman menonton yang lebih teratur, terorganisir, dan menyenangkan.
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+## Cara menjalankan Aplikasi 
+
+### Prasyarat
+pastikan anda mempunyai python versi 3.7 atau yang lebih baru
+
+(download python disini jika anda belum punya python)
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.informatika.org/alandmprtma/if2250-2024-k03-g06-nofijak.git
-git branch -M main
-git push -uf origin main
+https://www.python.org/downloads/
 ```
 
-## Integrate with your tools
+### menjalankan aplikasi
 
-- [ ] [Set up project integrations](https://gitlab.informatika.org/alandmprtma/if2250-2024-k03-g06-nofijak/-/settings/integrations)
+clone repository ini 
+```
+git clone https://gitlab.informatika.org/alandmprtma/if2250-2024-k03-g06-nofijak.git
+```
 
-## Collaborate with your team
+Install dependencies
+```
+pip install -r requirements.txt
+```
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+pastikan anda berada pada root directory 
 
-## Test and Deploy
+```
+...\if2250-2024-k03-g06-nofijak>
+```
 
-Use the built-in continuous integration in GitLab.
+ubah directory ke src
+```
+cd src
+```
+Jalankan program menggunakan flet
+```
+flet run nofijak.py
+```
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+## Daftar Modul
 
-***
+- [Modul 1 : Modul Halaman All / Watchlist / Ongoing / Completed](#modul-1--modul-halaman-all--watchlist--ongoing--completed)
+- [Modul 2 : Modul Halaman Informasi Film/Series](#modul-2--modul-halaman-informasi-filmseries)
+- [Pembagian Tugas](#pembagian-tugas)
 
-# Editing this README
+### Modul 1 : Modul Halaman All / Watchlist / Ongoing / Completed
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+Modul ini berisi halaman utama untuk aplikasi Nofijak
 
-## Suggestions for a good README
+![Gambar All Entries Main Page](tests/All%20entries%20main%20page.png)
+![Gambar Watchlist Main Page](tests/watchlist%20main%20page.png)
+![Gambar Ongoing Main Page](tests/ongoing%20main%20page.png)
+![Gambar Completed Main Page](tests/completed%20main%20page.png)
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+### Modul 2 : Modul Halaman Informasi Film/Series
 
-## Name
-Choose a self-explaining name for your project.
+Modul ini berisi halaman mengenai informasi film atau series
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+![Gambar Information Film](tests/Information%20Film.png)
+![Gambar Information Series](tests/Information%20Series.png)
+![Gambar Add Movies](tests/add%20Movies.png)
+![Gambar Edit Movies](tests/edit%20Movies.png)
+![Gambar Add Series](tests/add%20Series.png)
+![Gambar Edit Series](tests/edit%20Series.png)
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+### Pembagian Tugas
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+| Tugas | Nama  | NIM |
+|-------|-------|-----|
+| All Entries                                           | Aland Mulia Pratama | 13522124 |
+| Watchlists, Ongoing, Completed, Informasi film/series | Muhammad Rasheed Qais Tandjung | 13522158 | 
+| Tambah film/series                                    | Muhammad Dzaki Arta    | 13522149 |
+| Edit Informasi film/series                            | Rizqika Mulia Pratama | 13522126 | 
+| Database Aplikasi                                     | Ikhwan Al Hakim | 13522147 | 
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+## Daftar Tabel Basisdata
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+1. [Tabel dan Atribut](#tabel-dan-atribut)
+    - [Tabel 1: finished_movies](#tabel-1-finished_movies)
+    - [Tabel 2: finished_series](#tabel-2-finished_series)
+    - [Tabel 3: movies](#tabel-3-movies)
+    - [Tabel 4: ongoing_movies](#tabel-4-ongoing_movies)
+    - [Tabel 5: ongoing_series](#tabel-5-ongoing_series)
+    - [Tabel 6: review_movies](#tabel-6-review_movies)
+    - [Tabel 7: review_series](#tabel-7-review_series)
+    - [Tabel 8: series](#tabel-8-series)
+    - [Tabel 9: watchlist_movies](#tabel-9-watchlist_movies)
+    - [Tabel 10: watchlist_series](#tabel-10-watchlist_series)
+2. [Hubungan Antar Tabel](#hubungan-antar-tabel)
+3. [Catatan](#catatan)
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+## Tabel dan Atribut
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+### Tabel 1: finished_movies
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+Tabel ini berisi data film yang sudah di tonton 
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+| Atribut       | Tipe Data     | Keterangan                           |
+|---------------|---------------|--------------------------------------|
+| movies_id     | INT           | Primary Key, Auto Increment          |
+| finished_date | date          | Tanggal selesai menonton	       |
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+### Tabel 2: finished_series
 
-## License
-For open source projects, say how it is licensed.
+Tabel ini berisi data series yang sudah ditonton
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+| Atribut       | Tipe Data     | Keterangan               |
+|---------------|---------------|-------------------------------|
+| series_id     | INT           | Foreign Key			|
+| finished_date | date          | Tanggal selesai menonton	|
+
+### Tabel 3: movies
+
+Tabel ini berisi seluruh data film
+
+| Atribut       | Tipe Data     | Keterangan                           |
+|---------------|---------------|--------------------------------------|
+| movies_id     | INT           | Primary Key, Auto Increment          |
+| name          | VARCHAR(255)  | Nama film                            |
+| duration      | INT		| durasi film                          |
+| release_year  | INT 		| Tahun film dirilis                   |
+| genre         | VARCHAR(255)  | genre dari film                      |
+| synopsis	| VARCHAR(255)  | berisi synopsis dari film            |
+
+### Tabel 4: ongoing_movies
+
+Tabel ini berisi data film yang sedang ditonton 
+
+| Atribut       | Tipe Data     | Keterangan                           |
+|---------------|---------------|--------------------------------------|
+|movies_id	| INT		| Foreign Key untuk movies_id		|
+| watched_duration | INT 	| berisi durasi film 			|
+
+### Tabel 5: ongoing_series
+
+Table ini berisi data series yang sedang ditonton 
+
+| Atribut       | Tipe Data     | Keterangan                           |
+|---------------|---------------|--------------------------------------|
+| series_id 	| INT		| Foreign Key untuk series_id		|
+| season_progress | INT 	| berisi season terakhir yang sedang ditonton |
+| episode_progress | INT 	| berisi episode terakhir yang sedang ditonton |
+| watched_duration | INT 	| beriis durasi episode series yang terakhir ditonton | 
+
+### Tabel 6: review_movies
+
+Tabel in berisi data review film 
+
+| Atribut       | Tipe Data     | Keterangan                           |
+|---------------|---------------|--------------------------------------|
+| movies_id 	| INT		| Foreign Key ke movies_id		|
+| rating	| INT 		| berisi rating film nilai dari 1 sampai 10 |
+
+### Tabel 7: review_series
+
+Table ini berisi data review series
+
+| Atribut       | Tipe Data     | Keterangan                           |
+|---------------|---------------|--------------------------------------|
+| series_id 	| INT 		| Foreign Key ke series_id	|
+| rating 	| INT 		| berisi rating film nilai dari 1 sampai 10 |
+| review 	| text		| berisi review dari pengguna 	|
+
+### Tabel 8: series
+
+Tabel ini berisi seluruh data series
+
+| Atribut       | Tipe Data     | Keterangan                           |
+|---------------|---------------|--------------------------------------|
+| series_id 	| INT 		| Primary Key Auto Increment		|
+| name		| VARCHAR(100)	| Berisi nama dari series		|
+| duration 	| INT 		| Berisi durasi dari series	|
+| release_year  | INT		| Berisi tahun rilis dari series	|
+| genre 	| VARCHAR(30)   | Berisi genre dari series		|
+| synopsis 	| text 		| Berisi dari  synopsis series 		|
+| season 	| INT 		| berisi banyak season dari series	|
+| episode 	| INT 		| Berisi banyak episode dari series |
+
+### Tabel 9: watchlist_movies
+
+Tabel ini berisi data watchlist film
+
+| Atribut       | Tipe Data     | Keterangan                           |
+|---------------|---------------|--------------------------------------|
+| movies_id 	| INT 		| Foreign Key ke movies_id pada table movies |
+
+### Tabel 10: watchlist_series
+
+Tabel ini berisi data watchlist series
+
+| Atribut       | Tipe Data     | Keterangan                           |
+|---------------|---------------|--------------------------------------|
+| series_id 	| INT 		| Foreign Key series_id pada table series |
+
+## Hubungan Antar Tabel
+
+- **finished_movies.movies_id** berhubungan dengan **movies.movies_id**
+- **finished_series.series_id** berhubungan dengan **series.series_id**
+- **ongoing_movies.movies_id** berhubungan dengan **movies.movies_id**
+- **ongoing_series.series_id** berhubungan dengan **series.series_id**
+- **review_movies.movies_id** berhubungan dengan **movies.movies_id**
+- **review_series.series_id** berhubungan dengan **series.series_id**
+- **watchlist_movies.movies_id** berhubungan dengan **movies.movies_id**
+- **watchlist_series.series_id** berhubungan dengan **series.series_id**
+
+---
