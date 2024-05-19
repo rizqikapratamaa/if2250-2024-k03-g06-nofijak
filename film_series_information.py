@@ -27,7 +27,7 @@ class ScrollableCard(ft.Column):
     
     def tambahCardSeries(self, series, page, Informasi, InformasiEdit):
         self.controls.append(
-            EntryCardSeries(series, page, Informasi, InformasiEdit)
+            EntryCardSeries(series, page, Informasi, InformasiEdit, scrollCard=self)
         )
 
     def inisialisasiCard(self):
@@ -72,11 +72,11 @@ class EntryCardMovie(ft.ElevatedButton):
 
 class EntryCardSeries(ft.ElevatedButton):
     # Constructor entry card dengan parameter
-    def __init__(self, series : Series, page, informasi, informasiEdit):
+    def __init__(self, series : Series, page, informasi, informasiEdit, scrollCard : ScrollableCard):
         super().__init__()
         self.width = 1000
         self.bgcolor = "#092143"
-        self.on_click = lambda _: self.informasiSeries(series, page, informasi, informasiEdit, database)
+        self.on_click = lambda _: self.informasiSeries(series, page, informasi, informasiEdit, database, scrollCard)
         self.style=ft.ButtonStyle(
                 shape=ft.RoundedRectangleBorder(radius=10),
             )
@@ -101,10 +101,10 @@ class EntryCardSeries(ft.ElevatedButton):
         ],
         spacing=18)
     
-    def informasiSeries(self, series: Series , page, informasi : ft.Column, informasiEdit : ft.Column, database: Database):
+    def informasiSeries(self, series: Series , page, informasi : ft.Column, informasiEdit : ft.Column, database: Database, scrollCard : ScrollableCard):
         informasi.controls.clear()
         informasi.controls.append(
-            SeriesInformation(series, page, informasi, informasiEdit, database)
+            SeriesInformation(series, page, informasi, informasiEdit, database, scrollCard)
         )
         page.go("/informasi-film-series")
 
@@ -273,7 +273,7 @@ class FilmInformation(ft.Container):
         proceed_popup.open_dlg_modal_yes_no(e, on_yes, on_no)
 
 class SeriesInformation(ft.Container):
-    def __init__(self, series : Series, page: ft.Page, kolomHalaman: ft.Column, database: Database):
+    def __init__(self, series : Series, page: ft.Page, kolomHalaman : ft.Column, kolomHalamanEdit: ft.Column, database: Database, scrollCard):
         super().__init__()
         self.width = page.window_width
         self.height = page.window_height
@@ -332,7 +332,7 @@ class SeriesInformation(ft.Container):
         edit = ft.Container(
             padding=ft.padding.only(right=25),
             content=ft.Row([
-                ft.ElevatedButton("Edit Information",  bgcolor='#DAAB2D', color='#000000', on_click = lambda _: self.handleEditSeries(series,page,kolomHalaman,database))
+                ft.ElevatedButton("Edit Information",  bgcolor='#DAAB2D', color='#000000', on_click = lambda _: self.handleEditSeries(series,page,kolomHalamanEdit,database))
             ], alignment=ft.MainAxisAlignment.END)
         )
 
@@ -365,7 +365,7 @@ class SeriesInformation(ft.Container):
         delete = ft.Container(
             padding=ft.padding.only(right=50),
             content=ft.Row([
-                ft.ElevatedButton("Delete Film", bgcolor=ft.colors.RED, color = '#ffffff', on_click = lambda _: self.deleteSeries(series, database))
+                ft.ElevatedButton("Delete Film", bgcolor=ft.colors.RED, color = '#ffffff', on_click = lambda _: self.deleteSeries(series, page, kolomHalaman, kolomHalamanEdit, database, scrollCard))
             ], alignment=ft.MainAxisAlignment.END)
         )
         
@@ -377,16 +377,16 @@ class SeriesInformation(ft.Container):
         self.page = page
     
 
-    def handleEditSeries(self, series:Series, page: ft.Page, kolomHalaman: ft.Column, database: Database):
+    def handleEditSeries(self, series:Series, page: ft.Page, kolomHalamanEdit: ft.Column, database: Database):
         #TODO: Implementasi injeksi objek Series Movie pada halaman edit film series (pakai variabel kolomHalaman dan jangan lupa clear isi kolomHalaman sebelum melakukan append)
-        kolomHalaman.controls.clear()
-        kolomHalaman.controls.append(
+        kolomHalamanEdit.controls.clear()
+        kolomHalamanEdit.controls.append(
             #TODO: append Objek Edit Series
             SeriesEditPage(series, page, database.getSeries(),database.getOngoingSeries(), database.getReviewSeries(), database.getWatchlistSeries())
         )
         page.go("/edit-film-series")
 
-    def deleteSeries(e, self, series : Series, page: ft.Page, database: Database):
+    def deleteSeries(e, series : Series, page: ft.Page, kolomHalaman: ft.Column, kolomHalamanEdit: ft.Column, database: Database, scrollCard : ScrollableCard):
         def on_yes(e):
             database.removeSeries(series.getId())
             database.removeWatchlistSeries(series.getId())
@@ -400,6 +400,28 @@ class SeriesInformation(ft.Container):
 
             success_popup = PopUp("Success!", "Series has been deleted", page)
             success_popup.open_dlg_modal(e, page)
+
+            scrollCard.inisialisasiCard()
+            for i in database.getMovies():
+                moviee = database.make_movies(i)
+                scrollCard.tambahCardMovie(
+                    moviee,
+                    page,
+                    kolomHalaman,
+                    kolomHalamanEdit
+                )
+
+            for i in database.getSeries():
+                seriess = database.make_series(i)
+                scrollCard.tambahCardSeries(
+                    seriess,
+                    page,
+                    kolomHalaman,
+                    kolomHalamanEdit
+                )
+
+            page.update()
+
             success_popup.dlg_modal.on_dismiss = lambda e: page.go("/")
         
         def on_no(e):
