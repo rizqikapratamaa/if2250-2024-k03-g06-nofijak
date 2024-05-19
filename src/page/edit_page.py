@@ -412,7 +412,11 @@ class MovieEditPage(EditPage):
         )
     def submit_click(self, e, movie: Content, page: ft.Page, movies_dict: dict, ongoing_movies_dict: dict, review_movies_dict: dict, watchlist_movies_dict: dict, finished_movies_dict: dict):
         def is_overlap():
-            return self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value) <= self.hours_to_seconds(self.jam_watch_progress.value, self.menit_watch_progress.value, self.detik_watch_progress.value)
+            # Check if watching progress is greater than duration
+            if self.hours_to_seconds(self.jam_watch_progress.value, self.menit_watch_progress.value, self.detik_watch_progress.value) > self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value):
+                return True
+            else:
+                return False
 
         def call_back_dummpy(e):
             page.update()
@@ -436,9 +440,8 @@ class MovieEditPage(EditPage):
 
         # Check for overlap
         if is_overlap():
-            show_popup("Watch progress must be less than duration")
+            show_popup("Watch progress must be less than or equal to duration")
             return
-
         try:
             conn = sqlite3.connect('database/database.db')
             cursor = conn.cursor()
@@ -735,8 +738,11 @@ class SeriesEditPage(EditPage):
 
     def submit_click(self, e, series: Series, page: ft.Page, series_dict: dict, ongoing_series_dict: dict, review_series_dict: dict, watchlist_series_dict: dict, finished_series_dict: dict):
         def is_overlap():
-            return self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value) <= self.hours_to_seconds(self.jam_watch_progress.value, self.menit_watch_progress.value, self.detik_watch_progress.value)
-
+            # Check if watching progress is greater than duration
+            if self.hours_to_seconds(self.jam_watch_progress.value, self.menit_watch_progress.value, self.detik_watch_progress.value) > self.hours_to_seconds(self.jam_duration.value, self.menit_duration.value, self.detik_duration.value):
+                return True
+            else:
+                return False
         def call_back_dummpy(e):
             page.update()
 
@@ -801,7 +807,7 @@ class SeriesEditPage(EditPage):
             show_popup("Rating must be between 0 and 10")
             return
         elif is_overlap():
-            show_popup("Watch progress must be less than duration")
+            show_popup("Watch progress must be less than or equal to duration")
             return
 
         try:
