@@ -8,8 +8,111 @@ import os
 
 import flet as ft
 
+database = Database()
+
+class ScrollableCard(ft.Column):
+    def __init__(self):
+        # Inisialisasi base class dari ft.ColumnF
+        super().__init__()
+        # Properti untuk scrollable card
+        self.height = 250
+        self.width = 1000
+        self.scroll = ft.ScrollMode.ALWAYS
+    
+    # Method untuk menambahkan film pada halaman entries
+    def tambahCardMovie(self, movie, page, Informasi, informasiEdit):
+        self.controls.append(
+            EntryCardMovie(movie, page, Informasi, informasiEdit, scrollCard=self)
+        )
+    
+    def tambahCardSeries(self, series, page, Informasi, InformasiEdit):
+        self.controls.append(
+            EntryCardSeries(series, page, Informasi, InformasiEdit)
+        )
+
+    def inisialisasiCard(self):
+        self.controls.clear()
+
+class EntryCardMovie(ft.ElevatedButton):
+    # Constructor entry card dengan parameter
+    def __init__(self, movie : Movie, page, informasi, informasiEdit, scrollCard : ScrollableCard):
+        super().__init__()
+        self.width = 1000
+        self.bgcolor = "#092143"
+        self.on_click = lambda _: self.informasiFilm(movie, page, informasi, informasiEdit, database, scrollCard)
+        self.style=ft.ButtonStyle(
+                shape=ft.RoundedRectangleBorder(radius=10),
+            )
+        self.content = ft.Row([
+            ft.Container(
+                padding=ft.padding.only(top=10, bottom=10, left=-15),
+                content=ft.Image(src=movie.getGambar(), width=115, height=115, fit=ft.ImageFit.COVER),
+            ),
+            ft.Column([
+                ft.Text(movie.getName(), size=20, color="#DAAB2D"),
+                ft.Text(movie.getGenre(), size=15),
+            ]),
+            ft.Column([
+                ft.Text("Progress", size=20, color="#DAAB2D"),
+                ft.Text("{:.2f}%".format(movie.getWatchProgress()/movie.getDuration()*100)),
+            ]),
+            ft.Column([
+                ft.Text("Rating", size=20, color="#DAAB2D"),
+                ft.Text(str(movie.getRating()))
+            ]),
+        ],
+        spacing=18)
+    
+    def informasiFilm(self, movie: Movie , page, informasi : ft.Column, informasiEdit : ft.Column, database: Database, scrollCard : ScrollableCard):
+        informasi.controls.clear()
+        informasi.controls.append(
+            FilmInformation(movie, page, informasi, informasiEdit, database, scrollCard)
+        )
+        page.go("/informasi-film-series")
+
+class EntryCardSeries(ft.ElevatedButton):
+    # Constructor entry card dengan parameter
+    def __init__(self, series : Series, page, informasi, informasiEdit):
+        super().__init__()
+        self.width = 1000
+        self.bgcolor = "#092143"
+        self.on_click = lambda _: self.informasiSeries(series, page, informasi, informasiEdit, database)
+        self.style=ft.ButtonStyle(
+                shape=ft.RoundedRectangleBorder(radius=10),
+            )
+        self.content = ft.Row([
+            ft.Container(
+                padding=ft.padding.only(top=10, bottom=10, left=-15),
+                content=ft.Image(src=series.getGambar(), width=115, height=115, fit=ft.ImageFit.COVER),
+            ),
+            ft.Column([
+                ft.Text(series.getName(), size=20, color="#DAAB2D"),
+                ft.Text(series.getGenre(), size=15),
+            ]),
+            ft.Column([
+                ft.Text("Progress", size=20, color="#DAAB2D"),
+                # ft.Text(series.getEpisodeProgress()),
+                ft.Text("{:.2f}%".format(int(series.getWatchProgress() or 0)/int(series.getDuration() or 1)*100)),
+            ]),
+            ft.Column([
+                ft.Text("Rating", size=20, color="#DAAB2D"),
+                ft.Text(str(series.getRating()))
+            ]),
+        ],
+        spacing=18)
+    
+    def informasiSeries(self, series: Series , page, informasi : ft.Column, informasiEdit : ft.Column, database: Database):
+        informasi.controls.clear()
+        informasi.controls.append(
+            SeriesInformation(series, page, informasi, informasiEdit, database)
+        )
+        page.go("/informasi-film-series")
+
+
+
+
 class FilmInformation(ft.Container):
-    def __init__(self, movie : Movie, page: ft.Page, informasiEdit : ft.Column, database: Movie):
+    def __init__(self, movie : Movie, page: ft.Page, informasi : ft.Column, informasiEdit : ft.Column, database: Movie, scrollCard : ScrollableCard):
         super().__init__()
         self.width = page.window_width
         self.height = page.window_height
@@ -99,7 +202,7 @@ class FilmInformation(ft.Container):
         delete = ft.Container(
             padding=ft.padding.only(right=50),
             content=ft.Row([
-                ft.ElevatedButton("Delete Film", bgcolor=ft.colors.RED, on_click= lambda e: self.deleteMovie(e, movie, page, database),color = '#ffffff')
+                ft.ElevatedButton("Delete Film", bgcolor=ft.colors.RED, on_click= lambda e: self.deleteMovie(e, movie, page, informasi, informasiEdit, database, scrollCard),color = '#ffffff')
             ], alignment=ft.MainAxisAlignment.END)
         )
         
@@ -124,7 +227,7 @@ class FilmInformation(ft.Container):
         
         page.go("/edit-film-series")
 
-    def deleteMovie(e, self, movie: Movie, page: ft.Page, database: Database):
+    def deleteMovie(e, self, movie: Movie, page: ft.Page, kolomHalaman : ft.Column, kolomHalamanEdit : ft.Column, database: Database, scrollCard : ScrollableCard):
         def on_yes(e):
             database.removeMovie(movie.getId())
             database.removeWatchlistMovie(movie.getId())
@@ -139,7 +242,26 @@ class FilmInformation(ft.Container):
 
             success_popup = PopUp("Success!", "Movie has been deleted", page)
             success_popup.open_dlg_modal(e, page)
+            scrollCard.inisialisasiCard()
+            for i in database.getMovies():
+                moviee = database.make_movies(i)
+                scrollCard.tambahCardMovie(
+                    moviee,
+                    page,
+                    kolomHalaman,
+                    kolomHalamanEdit
+                )
 
+            for i in database.getSeries():
+                seriess = database.make_series(i)
+                scrollCard.tambahCardSeries(
+                    seriess,
+                    page,
+                    kolomHalaman,
+                    kolomHalamanEdit
+                )
+
+            page.update()
             success_popup.dlg_modal.on_dismiss = lambda e: page.go("/")
             
         
