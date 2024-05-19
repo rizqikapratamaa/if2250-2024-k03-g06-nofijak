@@ -16,6 +16,41 @@ Aplikasi ini dirancang untuk penggemar film dan serial yang sering menonton kont
 
 ## Cara menjalankan Aplikasi 
 
+### Prasyarat
+pastikan anda mempunyai python versi 3.7 atau yang lebih baru
+
+(download python disini jika anda belum punya python)
+
+```
+https://www.python.org/downloads/
+```
+
+### menjalankan aplikasi
+
+clone repository ini 
+```
+git clone https://gitlab.informatika.org/alandmprtma/if2250-2024-k03-g06-nofijak.git
+```
+
+Install dependencies
+```
+pip install -r requirements.txt
+```
+
+pastikan anda berada pada root directory 
+
+```
+...\if2250-2024-k03-g06-nofijak>
+```
+
+ubah directory ke src
+```
+cd src
+```
+Jalankan program menggunakan flet
+```
+flet run nofijak.py
+```
 
 ## Daftar Modul
 
