@@ -379,8 +379,8 @@ class SeriesInformation(ft.Container):
 
     def handleEditSeries(self, series:Series, page: ft.Page, kolomHalamanEdit: ft.Column, database: Database):
         #TODO: Implementasi injeksi objek Series Movie pada halaman edit film series (pakai variabel kolomHalaman dan jangan lupa clear isi kolomHalaman sebelum melakukan append)
-        page.overlay.append(SeriesEditPage(series, page, database.getSeries(),database.getOngoingSeries(), database.getReviewSeries(), database.getWatchlistSeries()).file_picker)
-        page.overlay.append(SeriesEditPage(series, page, database.getSeries(),database.getOngoingSeries(), database.getReviewSeries(), database.getWatchlistSeries()).date_picker)
+        page.overlay.append(SeriesEditPage(series, page, database.getSeries(),database.getOngoingSeries(), database.getReviewSeries(), database.getWatchlistSeries(), database.getFinishedSeries()).file_picker)
+        page.overlay.append(SeriesEditPage(series, page, database.getSeries(),database.getOngoingSeries(), database.getReviewSeries(), database.getWatchlistSeries(), database.getFinishedSeries()).date_picker)
         kolomHalamanEdit.controls.clear()
         kolomHalamanEdit.controls.append(
             #TODO: append Objek Edit Series
