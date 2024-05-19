@@ -219,7 +219,7 @@ class AddPage:
                 color=ft.colors.BLACK
             )
 
-        self.file_picker = ft.FilePicker(on_result=self.on_file_picker_result)
+        self.file_picker = ft.FilePicker(on_result= lambda e: self.on_file_picker_result(e, page))
 
         self.poster_button = ft.Container(
             ft.ElevatedButton("Upload File", on_click=lambda _: self.file_picker.pick_files()),
@@ -244,10 +244,14 @@ class AddPage:
                 label_style= ft.TextStyle(color="#FED466", font_family="Consolas"),
             )
 
-        self.poster = ft.Container(
-            ft.Image("assets/img/blank.png", width=300, height=450, border_radius=30),
-            padding=ft.padding.only(left=20, top=70)
+        self.poster = ft.Image("assets/img/blank.png", width=300, height=450, border_radius=30)
+
+        self.poster_container = ft.Container(
+            padding=ft.padding.only(left=20, top=70),
+            on_click=lambda e: self.file_picker.pick_files()
         )
+
+        self.poster_text = ft.Text(value="", size=20)
 
         self.option_button = ft.Container(
             content= ft.Row(
@@ -268,11 +272,22 @@ class AddPage:
             padding=0,
             shape= ft.RoundedRectangleBorder(radius=30)
         )
+
+        self.go_back_button = ft.IconButton(ft.icons.ARROW_BACK, icon_color="#FED466", on_click=lambda e: self.back_clicked(page))
+
+    def back_clicked(self, page: ft.Page):
+        page.go("/")
+        self.poster.src = "assets/img/blank.png"
+        self.poster_text.value = ""
     
-    def on_file_picker_result(self, e: ft.FilePickerResultEvent):
-        if e.files is not None:
-            for f in e.files:
-                print(f"File name: {f.name}, size: {f.size} bytes")
+    def on_file_picker_result(self, e: ft.FilePickerResultEvent, page: ft.Page):
+        if e.files:
+            file_name = e.files[0].name
+            file_path = e.files[0].path
+            self.poster_text.value = file_name
+            print(f"Selected file: {file_name}")
+            self.poster.src = file_path
+            page.update()
 
     def change_date(self, e, page: ft.Page):
             self.release_year_table.value = self.date_picker.value.year
@@ -318,6 +333,7 @@ class MovieAddPage(AddPage):
             ]),
             padding=ft.padding.only(top=20, left= 20)
         )
+
 
     def submit_click(self, e, page: ft.Page, movie_dict: dict, ongoing_movie_dict: dict, review_movie_dict: dict, watchlist_movie_dict: dict, finished_movie_dict: dict):
         print("Submit button clicked")  # Debugging statement
@@ -425,7 +441,7 @@ class MovieAddPage(AddPage):
                                     content=ft.Column(
                                         [
                                             ft.Container(
-                                                content=ft.IconButton(ft.icons.ARROW_BACK, icon_color="#FED466", on_click=lambda e: page.go("/"))
+                                                content=self.go_back_button
                                             ),
                                             ft.Container(
                                                 content=ft.Column(
@@ -482,6 +498,7 @@ class MovieAddPage(AddPage):
                                     content=ft.Column(
                                         [
                                             self.poster,
+                                            self.poster_text,
                                             self.poster_button,
                                             self.add_button,
                                         ],
@@ -729,7 +746,7 @@ class SeriesAddPage(AddPage):
                             ft.Container(
                                 ft.Column([
                                     ft.Container(
-                                        ft.IconButton(ft.icons.ARROW_BACK, icon_color="#FED466", on_click=lambda e: page.go("/"))
+                                        content=self.go_back_button
                                     ),
                                     ft.Container(
                                         ft.Column([
@@ -796,6 +813,7 @@ class SeriesAddPage(AddPage):
                             ft.Container(
                                 ft.Column([
                                     self.poster,
+                                    self.poster_text,
                                     self.poster_button,
                                     self.add_button,
                                     ],
