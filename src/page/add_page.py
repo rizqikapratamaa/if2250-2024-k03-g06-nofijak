@@ -691,9 +691,9 @@ class SeriesAddPage(AddPage):
             return
     
         print("All conditions passed")  # Debugging statement
+        conn = sqlite3.connect('database/database.db')
+        cursor = conn.cursor()
         try:
-            conn = sqlite3.connect('databse/database.db')
-            cursor = conn.cursor()
 
             def generate_new_key(dictionary):
                 key = 1
@@ -715,9 +715,10 @@ class SeriesAddPage(AddPage):
             synopsis = self.summary.value
 
             print("Inserting data into database")  # Debugging statement
+
             if self.file_picker.result is not None and self.file_picker.result.files is not None:
                 for f in self.file_picker.result.files:
-                    shutil.copy(f.path, os.path.join('../assets/img/', str(id) + '.jpg'))
+                    shutil.copy(f.path, os.path.join('../assets/img/', str(id) + 's.jpg'))
 
             cursor.execute("INSERT INTO series VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (id, name, duration, release_year, genre, synopsis, season, episode))
             series_dict[id] = [id, name, duration, release_year, genre, synopsis, season, episode]
